@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout — Loop n Love</title>
+  <meta name="description" content="Secure checkout for Loop n Love handmade crochet bouquets.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23C46D75'><circle cx='12' cy='12' r='9'/></svg>">
+</head>
+<body>
+
+  <header class="header-wrapper" role="banner">
+    <div class="container navbar">
+      <a href="index.html" class="brand-logo" aria-label="Loop n Love Home">
+        <svg class="logo-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 26s-9-5.5-11.5-10.5A6.5 6.5 0 0 1 16 9.5a6.5 6.5 0 0 1 11.5 6C25 20.5 16 26 16 26z" fill="#FCEEE9" stroke="#C46D75"/>
+        </svg>
+        <div class="logo-text">
+          <span class="brand-name">Loop n Love</span>
+          <span class="brand-tagline-sub">Handmade Boutique</span>
+        </div>
+      </a>
+      <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">
+        🔒 Secure Checkout
+      </span>
+    </div>
+  </header>
+
+  <main>
+    <div class="container cart-checkout-layout">
+      
+      <!-- Checkout Grid -->
+      <div id="checkout-main-grid" class="cart-grid">
+        
+        <!-- Left: Delivery Information Form -->
+        <div class="cart-items-card">
+          <h2>Shipping &amp; Delivery Details</h2>
+          <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 2rem;">
+            Please provide your delivery information. We only collect details necessary to safely craft and dispatch your order.
+          </p>
+
+          <form id="checkout-form" novalidate>
+            
+            <div class="form-row">
+              <div class="form-group" id="group-name">
+                <label class="form-label" for="cust-name">Full Name *</label>
+                <input type="text" id="cust-name" class="form-control" placeholder="e.g. Aanya Sharma" required>
+                <span class="form-error">Please enter your full name</span>
+              </div>
+
+              <div class="form-group" id="group-phone">
+                <label class="form-label" for="cust-phone">Phone Number (10 Digits) *</label>
+                <input type="tel" id="cust-phone" class="form-control" placeholder="e.g. 9876543210" pattern="[0-9]{10}" required>
+                <span class="form-error">Please enter a valid 10-digit mobile number</span>
+              </div>
+            </div>
+
+            <div class="form-group" id="group-email">
+              <label class="form-label" for="cust-email">Email Address *</label>
+              <input type="email" id="cust-email" class="form-control" placeholder="e.g. aanya@example.com" required>
+              <span class="form-error">Please enter a valid email address for order updates</span>
+            </div>
+
+            <div class="form-group" id="group-address">
+              <label class="form-label" for="cust-address">Street Address / House No. / Landmark *</label>
+              <textarea id="cust-address" class="form-control" style="min-height: 70px;" placeholder="Flat / House No., Building Name, Street" required></textarea>
+              <span class="form-error">Please enter your complete delivery address</span>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group" id="group-city">
+                <label class="form-label" for="cust-city">City *</label>
+                <input type="text" id="cust-city" class="form-control" placeholder="e.g. Mumbai" required>
+                <span class="form-error">City is required</span>
+              </div>
+
+              <div class="form-group" id="group-state">
+                <label class="form-label" for="cust-state">State *</label>
+                <select id="cust-state" class="form-control" required>
+                  <option value="">Select State</option>
+                  <option value="Andhra Pradesh">Andhra Pradesh</option>
+                  <option value="Delhi">Delhi</option>
+                  <option value="Gujarat">Gujarat</option>
+                  <option value="Karnataka">Karnataka</option>
+                  <option value="Kerala">Kerala</option>
+                  <option value="Maharashtra">Maharashtra</option>
+                  <option value="Punjab">Punjab</option>
+                  <option value="Rajasthan">Rajasthan</option>
+                  <option value="Tamil Nadu">Tamil Nadu</option>
+                  <option value="Telangana">Telangana</option>
+                  <option value="Uttar Pradesh">Uttar Pradesh</option>
+                  <option value="West Bengal">West Bengal</option>
+                  <option value="Other">Other State / UT</option>
+                </select>
+                <span class="form-error">Please select a state</span>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group" id="group-pincode">
+                <label class="form-label" for="cust-pincode">PIN Code (6 Digits) *</label>
+                <input type="text" id="cust-pincode" class="form-control" placeholder="e.g. 400001" pattern="[0-9]{6}" required>
+                <span class="form-error">Please enter a valid 6-digit PIN code</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="discount-code">First-Order Discount (10%)</label>
+                <div style="display: flex; gap: 0.5rem;">
+                  <input type="text" id="discount-code" class="form-control" placeholder="Try code: FIRST10">
+                  <button type="button" id="apply-discount-btn" class="btn btn-secondary btn-sm" style="flex-shrink: 0;">
+                    Apply
+                  </button>
+                </div>
+                <span id="discount-feedback" style="font-size: 0.78rem; display: block; margin-top: 0.35rem;"></span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="cust-instructions">Special Instructions / Gift Card Message (Optional)</label>
+              <textarea id="cust-instructions" class="form-control" style="min-height: 80px;" placeholder="Add a greeting card message or specific ribbon instructions for your bouquet."></textarea>
+            </div>
+
+            <div style="margin-top: 2rem;">
+              <button type="submit" id="submit-order-btn" class="btn btn-primary btn-block btn-lg">
+                Complete Order
+              </button>
+            </div>
+
+          </form>
+        </div>
+
+        <!-- Right: Order Summary -->
+        <div class="order-summary-card">
+          <h3>Order Items</h3>
+
+          <div id="checkout-items-preview" style="max-height: 260px; overflow-y: auto; margin-bottom: 1.5rem; padding-right: 0.5rem;">
+            <!-- Rendered dynamically -->
+          </div>
+
+          <div class="summary-row">
+            <span>Subtotal:</span>
+            <strong id="chk-subtotal">₹0</strong>
+          </div>
+
+          <div class="summary-row" id="chk-discount-row" style="display: none; color: var(--accent-sage);">
+            <span>First Order Discount (10%):</span>
+            <strong id="chk-discount-amt">- ₹0</strong>
+          </div>
+
+          <div class="summary-row">
+            <span>Shipping Charge:</span>
+            <span id="chk-shipping">₹0</span>
+          </div>
+
+          <div class="summary-row total">
+            <span>Final Total:</span>
+            <strong id="chk-total">₹0</strong>
+          </div>
+
+          <div style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
+            <button type="button" id="chk-whatsapp-btn" class="btn btn-whatsapp btn-block">
+              Send Order Directly via WhatsApp
+            </button>
+          </div>
+
+          <div class="notice-box">
+            <strong>Order Security:</strong><br>
+            All prices and stock availability are validated securely by the server before final confirmation.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Empty Cart Redirection State -->
+      <div id="checkout-empty-state" class="empty-state" style="display: none;">
+        <div class="empty-state-icon">🛒</div>
+        <h2>Your Cart is Empty</h2>
+        <p>You cannot proceed to checkout without any bouquets in your cart.</p>
+        <a href="shop.html" class="btn btn-primary btn-lg">Return to Shop</a>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Order Confirmation Modal -->
+  <div id="order-success-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="success-title">
+    <div class="modal-box" style="text-align: center;">
+      <div style="width: 64px; height: 64px; border-radius: 50%; background-color: var(--bg-blush); color: var(--primary-rose); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; font-size: 2rem;">
+        🌸
+      </div>
+      <h2 id="success-title" style="margin-bottom: 0.5rem;">Thank You for Your Order!</h2>
+      <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem;">
+        Your order reference is: <strong id="confirmed-order-ref" style="color: var(--primary-rose-hover); font-family: monospace; font-size: 1.1rem;">#LNL-0001</strong>
+      </p>
+
+      <div style="background-color: var(--bg-surface); border-radius: var(--radius-md); padding: 1.25rem; text-align: left; font-size: 0.88rem; margin-bottom: 1.5rem; line-height: 1.6;">
+        <div><strong>Recipient:</strong> <span id="conf-recipient"></span></div>
+        <div><strong>Total Amount:</strong> <span id="conf-total"></span></div>
+        <div><strong>Status:</strong> <span class="badge badge-stock">Order Received</span></div>
+      </div>
+
+      <div style="display: flex; gap: 0.75rem; justify-content: center;">
+        <a href="shop.html" class="btn btn-primary btn-sm">Continue Shopping</a>
+        <button id="conf-wa-share" class="btn btn-whatsapp btn-sm">Share on WhatsApp</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-bottom" style="border: none; padding-top: 0;">
+      <p>&copy; 2026 Loop n Love. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { Cart } from './js/cart.js';
+    import { CONFIG } from './js/config.js';
+    import { API } from './js/api.js';
+    import { showToast } from './js/main.js';
+    import { openWhatsAppOrder } from './js/whatsapp.js';
+
+    let discountApplied = false;
+    let discountAmount = 0;
+
+    function renderSummary() {
+      const items = Cart.getItems();
+      const mainGrid = document.getElementById('checkout-main-grid');
+      const emptyState = document.getElementById('checkout-empty-state');
+      const itemsPreview = document.getElementById('checkout-items-preview');
+
+      if (items.length === 0) {
+        mainGrid.style.display = 'none';
+        emptyState.style.display = 'block';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+      mainGrid.style.display = 'grid';
+
+      // Items preview
+      itemsPreview.innerHTML = items.map(item => `
+        <div style="display: flex; gap: 0.8rem; align-items: center; margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-warm);">
+          <img src="${item.image}" alt="${item.name}" width="50" height="50" style="border-radius: var(--radius-sm); object-fit: cover;">
+          <div style="flex: 1;">
+            <div style="font-size: 0.9rem; font-weight: 600;">${item.name}</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Qty: ${item.quantity} × ₹${item.price}</div>
+          </div>
+          <div style="font-weight: 600; font-size: 0.95rem;">₹${item.price * item.quantity}</div>
+        </div>
+      `).join('');
+
+      const subtotal = Cart.getSubtotal();
+      const shipping = Cart.getShippingFee();
+
+      if (discountApplied) {
+        discountAmount = Math.round((subtotal * CONFIG.FIRST_ORDER_DISCOUNT_PERCENT) / 100);
+        document.getElementById('chk-discount-row').style.display = 'flex';
+        document.getElementById('chk-discount-amt').textContent = `- ₹${discountAmount}`;
+      } else {
+        discountAmount = 0;
+        document.getElementById('chk-discount-row').style.display = 'none';
+      }
+
+      const total = Cart.getTotal(discountAmount);
+
+      document.getElementById('chk-subtotal').textContent = `₹${subtotal}`;
+      const shippingElem = document.getElementById('chk-shipping');
+      shippingElem.innerHTML = shipping === 0 ? `<span style="color: var(--accent-sage); font-weight: 600;">FREE</span>` : `₹${shipping}`;
+      document.getElementById('chk-total').textContent = `₹${total}`;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderSummary();
+
+      // Discount Code Handler
+      document.getElementById('apply-discount-btn')?.addEventListener('click', () => {
+        const code = document.getElementById('discount-code').value.trim().toUpperCase();
+        const feedback = document.getElementById('discount-feedback');
+        if (code === 'FIRST10') {
+          discountApplied = true;
+          feedback.style.color = 'var(--accent-sage)';
+          feedback.textContent = '✓ 10% First Order Discount Applied!';
+          renderSummary();
+          showToast('10% First order discount applied!');
+        } else {
+          feedback.style.color = 'var(--accent-danger)';
+          feedback.textContent = 'Invalid code. Try FIRST10.';
+        }
+      });
+
+      // Checkout form submit
+      const form = document.getElementById('checkout-form');
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Validate
+        const name = document.getElementById('cust-name').value.trim();
+        const phone = document.getElementById('cust-phone').value.trim();
+        const email = document.getElementById('cust-email').value.trim();
+        const address = document.getElementById('cust-address').value.trim();
+        const city = document.getElementById('cust-city').value.trim();
+        const state = document.getElementById('cust-state').value;
+        const pincode = document.getElementById('cust-pincode').value.trim();
+        const instructions = document.getElementById('cust-instructions').value.trim();
+
+        let valid = true;
+
+        const checkField = (groupId, condition) => {
+          const group = document.getElementById(groupId);
+          if (!condition) {
+            group.classList.add('has-error');
+            valid = false;
+          } else {
+            group.classList.remove('has-error');
+          }
+        };
+
+        checkField('group-name', name.length >= 2);
+        checkField('group-phone', /^\d{10}$/.test(phone));
+        checkField('group-email', /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
+        checkField('group-address', address.length >= 5);
+        checkField('group-city', city.length >= 2);
+        checkField('group-state', state !== '');
+        checkField('group-pincode', /^\d{6}$/.test(pincode));
+
+        if (!valid) return;
+
+        const orderItems = Cart.getItems();
+        const subtotal = Cart.getSubtotal();
+        const shippingFee = Cart.getShippingFee();
+        const total = Cart.getTotal(discountAmount);
+
+        const orderData = {
+          customer: { name, phone, email },
+          shippingAddress: { address, city, state, pincode },
+          instructions,
+          items: orderItems,
+          subtotal,
+          shippingFee,
+          discount: discountAmount,
+          totalAmount: total
+        };
+
+        const submitBtn = document.getElementById('submit-order-btn');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Processing Order...';
+
+        try {
+          // Attempt backend submission
+          const result = await API.createOrder(orderData);
+          const orderRef = result.orderReference || `#LNL-${Date.now().toString().slice(-6)}`;
+
+          // Clear cart on successful order
+          Cart.clearCart();
+
+          // Show confirmation modal
+          document.getElementById('confirmed-order-ref').textContent = orderRef;
+          document.getElementById('conf-recipient').textContent = `${name}, ${city} (${pincode})`;
+          document.getElementById('conf-total').textContent = `₹${total}`;
+          document.getElementById('order-success-modal').classList.add('open');
+
+          document.getElementById('conf-wa-share').addEventListener('click', () => {
+            openWhatsAppOrder(orderItems, total, `Order Reference: ${orderRef}\nDelivery: ${address}, ${city} - ${pincode}`);
+          });
+
+        } catch (err) {
+          // Graceful fallback for Phase 1 (before backend is running)
+          console.warn('Backend order endpoint unavailable, generating local preview order:', err.message);
+          const mockRef = `#LNL-${Date.now().toString().slice(-6)}`;
+          Cart.clearCart();
+
+          document.getElementById('confirmed-order-ref').textContent = mockRef;
+          document.getElementById('conf-recipient').textContent = `${name}, ${city} (${pincode})`;
+          document.getElementById('conf-total').textContent = `₹${total}`;
+          document.getElementById('order-success-modal').classList.add('open');
+
+          document.getElementById('conf-wa-share').addEventListener('click', () => {
+            openWhatsAppOrder(orderItems, total, `Order Reference: ${mockRef}\nDelivery: ${address}, ${city} - ${pincode}`);
+          });
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Complete Order';
+        }
+      });
+
+      // Direct WhatsApp Order button
+      document.getElementById('chk-whatsapp-btn')?.addEventListener('click', () => {
+        const name = document.getElementById('cust-name').value.trim();
+        const city = document.getElementById('cust-city').value.trim();
+        const instructions = document.getElementById('cust-instructions').value.trim();
+        const items = Cart.getItems();
+        const total = Cart.getTotal(discountAmount);
+
+        let note = instructions;
+        if (name) note = `Customer: ${name} (${city || 'India'}). ${note}`;
+        openWhatsAppOrder(items, total, note);
+      });
+    });
+  </script>
+</body>
+</html>

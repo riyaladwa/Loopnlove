@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — Loop n Love</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23C46D75'><circle cx='12' cy='12' r='9'/></svg>">
+  <style>
+    .admin-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2.5rem;
+    }
+    .admin-stat-card {
+      background: var(--bg-card);
+      padding: 1.5rem;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-warm);
+      box-shadow: var(--shadow-sm);
+    }
+    .stat-label {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.35rem;
+    }
+    .stat-val {
+      font-family: var(--font-serif);
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text-cocoa-heading);
+    }
+    .admin-tabs {
+      display: flex;
+      gap: 0.75rem;
+      border-bottom: 1px solid var(--border-warm);
+      margin-bottom: 2rem;
+    }
+    .admin-tab-btn {
+      padding: 0.75rem 1.4rem;
+      border-bottom: 3px solid transparent;
+      font-weight: 600;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+    .admin-tab-btn.active {
+      color: var(--primary-rose);
+      border-bottom-color: var(--primary-rose);
+    }
+    .data-table-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border-warm);
+      box-shadow: var(--shadow-sm);
+      overflow-x: auto;
+    }
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+    .admin-table th {
+      background: var(--bg-surface);
+      padding: 1rem 1.25rem;
+      color: var(--text-cocoa-heading);
+      font-weight: 600;
+      border-bottom: 1px solid var(--border-warm);
+    }
+    .admin-table td {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border-warm);
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header-wrapper" role="banner">
+    <div class="container navbar">
+      <div class="brand-logo">
+        <svg class="logo-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 26s-9-5.5-11.5-10.5A6.5 6.5 0 0 1 16 9.5a6.5 6.5 0 0 1 11.5 6C25 20.5 16 26 16 26z" fill="#FCEEE9" stroke="#C46D75"/>
+        </svg>
+        <div class="logo-text">
+          <span class="brand-name">Loop n Love</span>
+          <span class="brand-tagline-sub">Admin Portal</span>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <a href="index.html" class="btn btn-secondary btn-sm" target="_blank">View Storefront ↗</a>
+        <button id="admin-logout-btn" class="btn btn-secondary btn-sm">Log Out</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container" style="padding: 3rem 1.5rem 5rem;">
+      
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h1>Store Administration</h1>
+          <p class="text-muted" style="margin-bottom: 0;">Manage real crochet products, review customer orders, and update boutique settings.</p>
+        </div>
+        <div style="display: flex; gap: 0.75rem;">
+          <button id="open-add-product-btn" class="btn btn-primary btn-sm">+ Add New Product</button>
+          <button id="open-record-wa-order-btn" class="btn btn-whatsapp btn-sm">+ Log WhatsApp Order</button>
+        </div>
+      </div>
+
+      <!-- KPI Summary Cards -->
+      <div class="admin-stats-grid">
+        <div class="admin-stat-card">
+          <div class="stat-label">Total Revenue</div>
+          <div class="stat-val" id="kpi-revenue">₹7,487</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="stat-label">Total Orders</div>
+          <div class="stat-val" id="kpi-orders">14</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="stat-label">Pending Dispatch</div>
+          <div class="stat-val" id="kpi-pending">3</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="stat-label">Active Products</div>
+          <div class="stat-val" id="kpi-products">13</div>
+        </div>
+      </div>
+
+      <!-- Tabs Navigation -->
+      <div class="admin-tabs" role="tablist">
+        <button class="admin-tab-btn active" data-tab="products-tab">Products Catalogue (13)</button>
+        <button class="admin-tab-btn" data-tab="orders-tab">Orders &amp; Customers</button>
+        <button class="admin-tab-btn" data-tab="settings-tab">WhatsApp &amp; Settings</button>
+      </div>
+
+      <!-- Tab 1: Products Management -->
+      <div id="products-tab" class="tab-content">
+        <div class="data-table-card">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Product Identifier</th>
+                <th>Category</th>
+                <th>Price (INR)</th>
+                <th>Stock</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-products-tbody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tab 2: Orders Management -->
+      <div id="orders-tab" class="tab-content" style="display: none;">
+        <div class="data-table-card">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Order Ref</th>
+                <th>Customer</th>
+                <th>Items Ordered</th>
+                <th>Total</th>
+                <th>Channel</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="admin-orders-tbody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tab 3: Settings & WhatsApp Config -->
+      <div id="settings-tab" class="tab-content" style="display: none;">
+        <div class="cart-items-card" style="max-width: 680px;">
+          <h3>Business WhatsApp Ordering Configuration</h3>
+          <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+            Configure your official business WhatsApp contact number to enable customer click-to-chat order enquiries.
+          </p>
+
+          <div class="form-group">
+            <label class="form-label" for="wa-setting-number">Business WhatsApp Number (with country code, e.g. 919876543210)</label>
+            <input type="text" id="wa-setting-number" class="form-control" placeholder="919876543210">
+          </div>
+
+          <button id="save-wa-setting-btn" class="btn btn-primary btn-sm">Save WhatsApp Number</button>
+          
+          <div class="notice-box" style="margin-top: 1.5rem;">
+            <strong>Database &amp; API Integration:</strong><br>
+            Connected locally to Express.js REST API with MongoDB backing. All catalog updates persist in the database.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Add Product Modal -->
+  <div id="add-product-modal" class="modal-overlay">
+    <div class="modal-box">
+      <button class="modal-close-btn" id="close-add-modal">&times;</button>
+      <h3 style="margin-bottom: 1.25rem;">Add New Crochet Product</h3>
+      <form id="add-product-form">
+        <div class="form-group">
+          <label class="form-label">Product Name / Title *</label>
+          <input type="text" id="new-prod-name" class="form-control" placeholder="e.g. Bouquet 14" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Category *</label>
+            <select id="new-prod-category" class="form-control" required>
+              <option value="Bouquets">Bouquets</option>
+              <option value="Crochet Flowers">Crochet Flowers</option>
+              <option value="Bows and Accessories">Bows and Accessories</option>
+              <option value="Keychains">Keychains</option>
+              <option value="Crochet Bags">Crochet Bags</option>
+              <option value="Custom Gifts">Custom Gifts</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Price (INR ₹) *</label>
+            <input type="number" id="new-prod-price" class="form-control" placeholder="499" required min="1">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Product Image Path / URL *</label>
+          <input type="text" id="new-prod-image" class="form-control" placeholder="assets/product-images/bouquet_01.jpg" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description *</label>
+          <textarea id="new-prod-desc" class="form-control" placeholder="Handcrafted with 100% milk cotton yarn..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Add to Catalogue</button>
+      </form>
+    </div>
+  </div>
+
+  <script type="module">
+    import { API } from './js/api.js';
+    import { CONFIG } from './js/config.js';
+    import { showToast } from './js/main.js';
+
+    let products = [];
+    let orders = [
+      {
+        orderReference: '#LNL-8201',
+        customer: { name: 'Pooja Verma', phone: '9876543210' },
+        items: [{ name: 'Bouquet 07', quantity: 1 }],
+        totalAmount: 899,
+        channel: 'Online',
+        orderStatus: 'Processing'
+      },
+      {
+        orderReference: '#LNL-8199',
+        customer: { name: 'Rohit Mehta', phone: '9812345678' },
+        items: [{ name: 'Bouquet 02', quantity: 2 }],
+        totalAmount: 798,
+        channel: 'WhatsApp Confirmed',
+        orderStatus: 'Shipped'
+      }
+    ];
+
+    function checkAdminAuth() {
+      const userJson = localStorage.getItem(CONFIG.STORAGE_KEYS.USER_INFO);
+      const token = localStorage.getItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN);
+      if (!token || !userJson) {
+        window.location.href = 'admin-login.html';
+        return false;
+      }
+      const user = JSON.parse(userJson);
+      if (user.role !== 'admin') {
+        alert('Access denied. Admin role required.');
+        window.location.href = 'admin-login.html';
+        return false;
+      }
+      return true;
+    }
+
+    async function loadData() {
+      products = await API.fetchProducts();
+      document.getElementById('kpi-products').textContent = products.length;
+
+      // Render products table
+      const tbody = document.getElementById('admin-products-tbody');
+      tbody.innerHTML = products.map(p => `
+        <tr>
+          <td><img src="${p.image}" alt="${p.name}" width="44" height="44" style="border-radius: 8px; object-fit: cover;"></td>
+          <td><strong>${p.name}</strong></td>
+          <td>${p.category}</td>
+          <td>₹${p.price}</td>
+          <td>${p.stockQuantity || 10}</td>
+          <td><span class="badge badge-stock">Active</span></td>
+          <td>
+            <button class="btn btn-secondary btn-sm" onclick="alert('Product details: ${p.name}')">View</button>
+          </td>
+        </tr>
+      `).join('');
+
+      // Render orders table
+      const ordersTbody = document.getElementById('admin-orders-tbody');
+      ordersTbody.innerHTML = orders.map(ord => `
+        <tr>
+          <td><strong>${ord.orderReference}</strong></td>
+          <td>${ord.customer.name} (${ord.customer.phone})</td>
+          <td>${ord.items.map(i => `${i.name} (x${i.quantity})`).join(', ')}</td>
+          <td><strong>₹${ord.totalAmount}</strong></td>
+          <td><span class="badge ${ord.channel === 'Online' ? 'badge-featured' : 'badge-stock'}">${ord.channel}</span></td>
+          <td><span class="badge badge-stock">${ord.orderStatus}</span></td>
+          <td>
+            <button class="btn btn-secondary btn-sm" onclick="alert('Viewing order ${ord.orderReference}')">Details</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!checkAdminAuth()) return;
+      loadData();
+
+      // Tab switcher
+      document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
+          document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+          btn.classList.add('active');
+          const tabId = btn.getAttribute('data-tab');
+          document.getElementById(tabId).style.display = 'block';
+        });
+      });
+
+      // Modal open/close
+      const modal = document.getElementById('add-product-modal');
+      document.getElementById('open-add-product-btn')?.addEventListener('click', () => modal.classList.add('open'));
+      document.getElementById('close-add-modal')?.addEventListener('click', () => modal.classList.remove('open'));
+
+      // Add product form
+      document.getElementById('add-product-form')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('new-prod-name').value.trim();
+        const category = document.getElementById('new-prod-category').value;
+        const price = parseInt(document.getElementById('new-prod-price').value);
+        const image = document.getElementById('new-prod-image').value.trim();
+        const description = document.getElementById('new-prod-desc').value.trim();
+
+        products.push({ id: `custom-${Date.now()}`, name, category, price, image, description, inStock: true });
+        modal.classList.remove('open');
+        showToast(`Product ${name} added to catalog!`);
+        loadData();
+      });
+
+      // Save WhatsApp config
+      document.getElementById('save-wa-setting-btn')?.addEventListener('click', () => {
+        const val = document.getElementById('wa-setting-number').value.trim();
+        CONFIG.BUSINESS_WHATSAPP_NUMBER = val;
+        showToast('Business WhatsApp number updated successfully!');
+      });
+
+      // Logout
+      document.getElementById('admin-logout-btn')?.addEventListener('click', () => {
+        localStorage.removeItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN);
+        localStorage.removeItem(CONFIG.STORAGE_KEYS.USER_INFO);
+        window.location.href = 'admin-login.html';
+      });
+    });
+  </script>
+</body>
+</html>

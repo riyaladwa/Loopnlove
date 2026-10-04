@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Details — Loop n Love</title>
+  <meta name="description" content="View handcrafted details, materials, and customization options for Loop n Love crochet bouquets.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23C46D75'><circle cx='12' cy='12' r='9'/></svg>">
+</head>
+<body>
+
+  <!-- Announcement Bar -->
+  <aside class="announcement-bar" aria-label="Store announcement">
+    ✨ Handcrafted in 100% Milk Cotton Yarn &bull; <strong>Free Delivery on orders over ₹999</strong>
+  </aside>
+
+  <!-- Navigation Header -->
+  <header class="header-wrapper" role="banner">
+    <div class="container navbar">
+      <a href="index.html" class="brand-logo" aria-label="Loop n Love Home">
+        <svg class="logo-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M16 26s-9-5.5-11.5-10.5A6.5 6.5 0 0 1 16 9.5a6.5 6.5 0 0 1 11.5 6C25 20.5 16 26 16 26z" fill="#FCEEE9" stroke="#C46D75"/>
+          <path d="M12 14c2-2 6-2 8 0" stroke="#C46D75"/>
+        </svg>
+        <div class="logo-text">
+          <span class="brand-name">Loop n Love</span>
+          <span class="brand-tagline-sub">Handmade Boutique</span>
+        </div>
+      </a>
+
+      <nav class="desktop-nav" aria-label="Main Navigation">
+        <ul class="nav-menu">
+          <li><a href="index.html" class="nav-link">Home</a></li>
+          <li><a href="shop.html" class="nav-link active">Shop Collection</a></li>
+          <li><a href="shop.html?category=Bouquets" class="nav-link">Bouquets</a></li>
+          <li><a href="contact.html" class="nav-link">Custom Orders</a></li>
+          <li><a href="contact.html" class="nav-link">Contact</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="wishlist.html" class="action-icon-btn" aria-label="View Wishlist" title="Wishlist">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
+          <span id="wishlist-badge" class="action-badge" style="display: none;">0</span>
+        </a>
+
+        <a href="cart.html" class="action-icon-btn" aria-label="View Shopping Cart" title="Cart">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+          </svg>
+          <span id="cart-badge" class="action-badge" style="display: none;">0</span>
+        </a>
+
+        <a href="login.html" id="account-nav-link" class="action-icon-btn" aria-label="My Account" title="Login or Account">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </a>
+
+        <button id="hamburger-toggle" class="hamburger-btn" aria-label="Toggle Navigation Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer Menu -->
+  <div id="mobile-overlay" class="mobile-nav-overlay" aria-hidden="true"></div>
+  <aside id="mobile-drawer" class="mobile-nav-drawer" aria-label="Mobile Navigation">
+    <div class="mobile-nav-header">
+      <span class="brand-name">Loop n Love</span>
+      <button id="mobile-drawer-close" class="modal-close-btn" aria-label="Close menu">&times;</button>
+    </div>
+    <ul class="mobile-menu-list">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="shop.html" class="nav-link active">Shop Collection</a></li>
+      <li><a href="wishlist.html" class="nav-link">My Wishlist</a></li>
+      <li><a href="cart.html" class="nav-link">Shopping Cart</a></li>
+      <li><a href="login.html" id="mobile-account-nav-link" class="nav-link">Login / Register</a></li>
+      <li><a href="contact.html" class="nav-link">Custom Crochet Orders</a></li>
+      <li><a href="contact.html" class="nav-link">Contact Us</a></li>
+    </ul>
+  </aside>
+
+  <main>
+    <div class="container product-detail-layout">
+      <!-- Breadcrumb Navigation -->
+      <nav class="page-breadcrumbs" style="justify-content: flex-start; margin-bottom: 2rem;">
+        <a href="index.html">Home</a>
+        <span>/</span>
+        <a href="shop.html">Shop</a>
+        <span>/</span>
+        <span id="breadcrumb-product-name">Product Details</span>
+      </nav>
+
+      <!-- Main Product View Container -->
+      <div id="product-detail-view" class="product-detail-grid">
+        
+        <!-- Gallery Column -->
+        <div class="product-gallery">
+          <div class="gallery-main-image">
+            <img id="detail-main-img" src="" alt="Handmade crochet bouquet" width="600" height="700">
+          </div>
+          <div id="detail-thumbnails" class="gallery-thumbnails">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Info Column -->
+        <div class="product-info-panel">
+          <div class="product-info-meta">
+            <span id="detail-category-badge" class="badge badge-pill">Bouquets</span>
+            <span id="detail-stock-badge" class="badge badge-stock">In Stock</span>
+            <span id="detail-source-badge" class="badge badge-featured">Authentic Handmade Design</span>
+          </div>
+
+          <h1 id="detail-title">Loading Bouquet...</h1>
+          
+          <div class="product-info-price">
+            <span id="detail-price">₹0</span>
+            <span style="font-size: 0.85rem; color: var(--text-muted); font-family: var(--font-sans); font-weight: normal; margin-left: 0.5rem;">
+              (Inclusive of all taxes)
+            </span>
+          </div>
+
+          <p id="detail-description" class="product-info-description">
+            Handcrafted with 100% premium milk cotton yarn.
+          </p>
+
+          <!-- Quantity Selector -->
+          <div class="product-options-group">
+            <label class="options-label" for="detail-qty-input">Quantity:</label>
+            <div class="quantity-control">
+              <button type="button" class="qty-btn" id="qty-minus" aria-label="Decrease quantity">-</button>
+              <input type="number" id="detail-qty-input" class="qty-input" value="1" min="1" max="20" aria-label="Quantity">
+              <button type="button" class="qty-btn" id="qty-plus" aria-label="Increase quantity">+</button>
+            </div>
+          </div>
+
+          <!-- Customization Note Input -->
+          <div class="product-options-group">
+            <label class="options-label" for="detail-notes">
+              Customization &amp; Gift Tag Instructions (Optional):
+            </label>
+            <textarea id="detail-notes" class="customization-input" placeholder="e.g., Please add a gift tag saying 'Happy Birthday Aanya!', or request specific ribbon color preference."></textarea>
+          </div>
+
+          <!-- CTA Buttons -->
+          <div class="product-cta-stack">
+            <button id="add-to-cart-action" class="btn btn-primary btn-lg btn-block">
+              Add to Cart
+            </button>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+              <button id="wishlist-toggle-action" class="btn btn-secondary btn-block">
+                <span>♡</span> Save to Wishlist
+              </button>
+              <button id="whatsapp-order-action" class="btn btn-whatsapp btn-block">
+                Order via WhatsApp
+              </button>
+            </div>
+          </div>
+
+          <!-- Trust & Craft Guarantees -->
+          <ul class="product-guarantee-list">
+            <li>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>100% Genuine handmade crochet from our artisan studio</span>
+            </li>
+            <li>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>Everlasting floral keepsake — zero water, zero wilting</span>
+            </li>
+            <li>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>Delivered in protective crush-proof boutique packaging</span>
+            </li>
+          </ul>
+
+          <div style="margin-top: 2rem;">
+            <a href="shop.html" style="font-size: 0.9rem; color: var(--primary-rose); font-weight: 600;">
+              ← Back to Bouquet Collection
+            </a>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Related Bouquets Section -->
+      <section style="margin-top: 5rem; padding-top: 3rem; border-top: 1px solid var(--border-warm);">
+        <div class="section-header" style="text-align: left; margin-bottom: 2rem;">
+          <span class="section-eyebrow">You Might Also Love</span>
+          <h2 class="section-title">Complementary Bouquets</h2>
+        </div>
+        <div id="related-products-grid" class="products-grid">
+          <!-- Populated dynamically -->
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <h3 class="brand-name">Loop n Love</h3>
+        <p class="brand-tagline-sub">Little loops. Lots of love.</p>
+        <p>A small handmade boutique dedicated to crafting everlasting crochet flower bouquets, hair accessories, and personalized handmade gifts.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Shop</h4>
+        <ul class="footer-links">
+          <li><a href="shop.html">All Bouquets</a></li>
+          <li><a href="shop.html?category=Bouquets">Flower Bouquets</a></li>
+          <li><a href="wishlist.html">My Wishlist</a></li>
+          <li><a href="cart.html">Shopping Cart</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Customer Care</h4>
+        <ul class="footer-links">
+          <li><a href="contact.html">Custom Orders</a></li>
+          <li><a href="shipping.html">Shipping &amp; Returns</a></li>
+          <li><a href="privacy.html">Privacy Policy</a></li>
+          <li><a href="terms.html">Terms &amp; Conditions</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Contact &amp; Studio</h4>
+        <div class="footer-contact-item">
+          <span>📍</span>
+          <span>India &bull; Handcrafted with care</span>
+        </div>
+        <div class="footer-contact-item">
+          <span>✉️</span>
+          <span>hello@loopnlove.com</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="container footer-bottom">
+      <p>&copy; 2026 Loop n Love. All rights reserved. Handcrafted with love.</p>
+      <div class="footer-bottom-links">
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Service</a>
+        <a href="shipping.html">Shipping Policy</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script type="module">
+    import { API } from './js/api.js';
+    import { Cart } from './js/cart.js';
+    import { Wishlist } from './js/wishlist.js';
+    import { showToast, renderProductCard, attachProductCardListeners } from './js/main.js';
+    import { openWhatsAppOrder } from './js/whatsapp.js';
+
+    let currentProduct = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const productId = urlParams.get('id') || 'bouquet-01';
+
+      try {
+        const allProducts = await API.fetchProducts();
+        currentProduct = allProducts.find(p => p.id === productId || p._id === productId) || allProducts[0];
+
+        if (!currentProduct) {
+          window.location.href = 'shop.html';
+          return;
+        }
+
+        // Set page title
+        document.title = `${currentProduct.name} (₹${currentProduct.price}) — Loop n Love`;
+
+        // Update breadcrumb & info
+        document.getElementById('breadcrumb-product-name').textContent = currentProduct.name;
+        document.getElementById('detail-title').textContent = currentProduct.name;
+        document.getElementById('detail-price').textContent = `₹${currentProduct.price}`;
+        document.getElementById('detail-description').textContent = currentProduct.description;
+        document.getElementById('detail-category-badge').textContent = currentProduct.category;
+
+        // Image Gallery
+        const mainImg = document.getElementById('detail-main-img');
+        mainImg.src = currentProduct.image;
+        mainImg.alt = `${currentProduct.name} - Authentic handmade crochet bouquet`;
+
+        const thumbsContainer = document.getElementById('detail-thumbnails');
+        const images = currentProduct.images && currentProduct.images.length > 0 ? currentProduct.images : [currentProduct.image];
+        thumbsContainer.innerHTML = images.map((imgSrc, i) => `
+          <div class="thumbnail-item ${i === 0 ? 'active' : ''}" data-thumb-src="${imgSrc}">
+            <img src="${imgSrc}" alt="${currentProduct.name} thumbnail" loading="lazy">
+          </div>
+        `).join('');
+
+        thumbsContainer.querySelectorAll('.thumbnail-item').forEach(th => {
+          th.addEventListener('click', () => {
+            thumbsContainer.querySelectorAll('.thumbnail-item').forEach(t => t.classList.remove('active'));
+            th.classList.add('active');
+            mainImg.src = th.getAttribute('data-thumb-src');
+          });
+        });
+
+        // Quantity controls
+        const qtyInput = document.getElementById('detail-qty-input');
+        document.getElementById('qty-minus').addEventListener('click', () => {
+          const val = parseInt(qtyInput.value) || 1;
+          if (val > 1) qtyInput.value = val - 1;
+        });
+        document.getElementById('qty-plus').addEventListener('click', () => {
+          const val = parseInt(qtyInput.value) || 1;
+          if (val < 20) qtyInput.value = val + 1;
+        });
+
+        // Add to cart
+        document.getElementById('add-to-cart-action').addEventListener('click', () => {
+          const qty = parseInt(qtyInput.value) || 1;
+          const notes = document.getElementById('detail-notes').value.trim();
+          Cart.addItem(currentProduct, qty, notes);
+          showToast(`Added ${qty} × ${currentProduct.name} to cart!`);
+        });
+
+        // Wishlist
+        const wishlistBtn = document.getElementById('wishlist-toggle-action');
+        const updateWishlistBtnText = () => {
+          const isSaved = Wishlist.isInWishlist(currentProduct.id);
+          wishlistBtn.innerHTML = isSaved 
+            ? `<span>♥</span> In Wishlist`
+            : `<span>♡</span> Save to Wishlist`;
+        };
+        updateWishlistBtnText();
+
+        wishlistBtn.addEventListener('click', () => {
+          const added = Wishlist.toggle(currentProduct);
+          updateWishlistBtnText();
+          showToast(added ? `Saved ${currentProduct.name} to wishlist!` : `Removed from wishlist.`);
+        });
+
+        // WhatsApp order action
+        document.getElementById('whatsapp-order-action').addEventListener('click', () => {
+          const qty = parseInt(qtyInput.value) || 1;
+          const notes = document.getElementById('detail-notes').value.trim();
+          openWhatsAppOrder([
+            {
+              name: currentProduct.name,
+              price: currentProduct.price,
+              quantity: qty,
+              customizationNotes: notes
+            }
+          ], currentProduct.price * qty, notes);
+        });
+
+        // Related bouquets
+        const relatedGrid = document.getElementById('related-products-grid');
+        const related = allProducts.filter(p => p.id !== currentProduct.id).slice(0, 3);
+        if (relatedGrid) {
+          relatedGrid.innerHTML = related.map(renderProductCard).join('');
+          attachProductCardListeners(relatedGrid, allProducts);
+        }
+
+      } catch (err) {
+        console.error('Error rendering product detail:', err);
+      }
+    });
+  </script>
+</body>
+</html>

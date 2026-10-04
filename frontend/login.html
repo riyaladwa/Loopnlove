@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Login — Loop n Love</title>
+  <meta name="description" content="Sign in to your Loop n Love customer account to track orders and save your favorite crochet bouquets.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23C46D75'><circle cx='12' cy='12' r='9'/></svg>">
+</head>
+<body>
+
+  <header class="header-wrapper" role="banner">
+    <div class="container navbar">
+      <a href="index.html" class="brand-logo" aria-label="Loop n Love Home">
+        <svg class="logo-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 26s-9-5.5-11.5-10.5A6.5 6.5 0 0 1 16 9.5a6.5 6.5 0 0 1 11.5 6C25 20.5 16 26 16 26z" fill="#FCEEE9" stroke="#C46D75"/>
+          <path d="M12 14c2-2 6-2 8 0" stroke="#C46D75"/>
+        </svg>
+        <div class="logo-text">
+          <span class="brand-name">Loop n Love</span>
+          <span class="brand-tagline-sub">Handmade Boutique</span>
+        </div>
+      </a>
+      <a href="index.html" style="font-size: 0.9rem; color: var(--primary-rose); font-weight: 500;">← Back to Store</a>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <div class="auth-wrapper">
+        <div class="auth-header">
+          <span class="section-eyebrow">Welcome Back</span>
+          <h2>Customer Login</h2>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">
+            Sign in to access your order history and saved crochet keepsakes.
+          </p>
+        </div>
+
+        <form id="login-form" novalidate>
+          <div class="form-group" id="group-login-email">
+            <label class="form-label" for="login-email">Email Address</label>
+            <input type="email" id="login-email" class="form-control" placeholder="you@example.com" required>
+            <span class="form-error">Please enter a valid email address</span>
+          </div>
+
+          <div class="form-group" id="group-login-password">
+            <label class="form-label" for="login-password">Password</label>
+            <input type="password" id="login-password" class="form-control" placeholder="••••••••" required minlength="6">
+            <span class="form-error">Password must be at least 6 characters</span>
+          </div>
+
+          <div id="login-alert" style="display: none; padding: 0.75rem; border-radius: var(--radius-md); font-size: 0.85rem; margin-bottom: 1rem;"></div>
+
+          <button type="submit" id="login-btn" class="btn btn-primary btn-block btn-lg">
+            Sign In
+          </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-muted);">
+          Don't have an account? <a href="register.html" style="color: var(--primary-rose); font-weight: 600;">Create one here</a>
+        </div>
+
+        <div class="notice-box" style="margin-top: 2rem;">
+          <strong>Security Notice:</strong><br>
+          Credentials are securely authenticated using hashed passwords and JWT tokens. Passwords are never stored in localStorage.
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-bottom" style="border: none; padding-top: 0;">
+      <p>&copy; 2026 Loop n Love. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { API } from './js/api.js';
+    import { CONFIG } from './js/config.js';
+    import { showToast } from './js/main.js';
+
+    const form = document.getElementById('login-form');
+    const alertBox = document.getElementById('login-alert');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+
+      let valid = true;
+      const groupEmail = document.getElementById('group-login-email');
+      const groupPass = document.getElementById('group-login-password');
+
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        groupEmail.classList.add('has-error');
+        valid = false;
+      } else {
+        groupEmail.classList.remove('has-error');
+      }
+
+      if (password.length < 6) {
+        groupPass.classList.add('has-error');
+        valid = false;
+      } else {
+        groupPass.classList.remove('has-error');
+      }
+
+      if (!valid) return;
+
+      const submitBtn = document.getElementById('login-btn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Signing in...';
+
+      try {
+        const res = await API.login({ email, password });
+        localStorage.setItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN, res.token);
+        localStorage.setItem(CONFIG.STORAGE_KEYS.USER_INFO, JSON.stringify(res.user));
+        showToast('Login successful! Welcome back.');
+        setTimeout(() => {
+          window.location.href = res.user.role === 'admin' ? 'admin.html' : 'account.html';
+        }, 800);
+      } catch (err) {
+        alertBox.style.display = 'block';
+        alertBox.style.backgroundColor = 'var(--accent-danger-bg)';
+        alertBox.style.color = 'var(--accent-danger)';
+        alertBox.textContent = err.message || 'Invalid credentials or backend service unreachable.';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Sign In';
+      }
+    });
+  </script>
+</body>
+</html>

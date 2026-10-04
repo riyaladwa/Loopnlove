@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Account — Loop n Love</title>
+  <meta name="description" content="Manage your customer account and view your handmade bouquet orders.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23C46D75'><circle cx='12' cy='12' r='9'/></svg>">
+</head>
+<body>
+
+  <aside class="announcement-bar" aria-label="Store announcement">
+    ✨ Free Delivery on orders over ₹999 &bull; Handcrafted with 100% Milk Cotton Yarn
+  </aside>
+
+  <header class="header-wrapper" role="banner">
+    <div class="container navbar">
+      <a href="index.html" class="brand-logo" aria-label="Loop n Love Home">
+        <svg class="logo-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M16 26s-9-5.5-11.5-10.5A6.5 6.5 0 0 1 16 9.5a6.5 6.5 0 0 1 11.5 6C25 20.5 16 26 16 26z" fill="#FCEEE9" stroke="#C46D75"/>
+          <path d="M12 14c2-2 6-2 8 0" stroke="#C46D75"/>
+        </svg>
+        <div class="logo-text">
+          <span class="brand-name">Loop n Love</span>
+          <span class="brand-tagline-sub">Handmade Boutique</span>
+        </div>
+      </a>
+
+      <nav class="desktop-nav" aria-label="Main Navigation">
+        <ul class="nav-menu">
+          <li><a href="index.html" class="nav-link">Home</a></li>
+          <li><a href="shop.html" class="nav-link">Shop Collection</a></li>
+          <li><a href="wishlist.html" class="nav-link">Wishlist</a></li>
+          <li><a href="cart.html" class="nav-link">Cart</a></li>
+          <li><a href="account.html" class="nav-link active">My Account</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="wishlist.html" class="action-icon-btn" aria-label="Wishlist">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+          <span id="wishlist-badge" class="action-badge" style="display: none;">0</span>
+        </a>
+        <a href="cart.html" class="action-icon-btn" aria-label="Cart">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+          <span id="cart-badge" class="action-badge" style="display: none;">0</span>
+        </a>
+        <button id="logout-btn" class="btn btn-secondary btn-sm">Log Out</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container catalog-layout">
+      <div class="section-header" style="text-align: left; margin-bottom: 2.5rem;">
+        <span class="section-eyebrow">Customer Account</span>
+        <h1 class="section-title">Welcome, <span id="user-display-name">Customer</span></h1>
+        <p class="section-subtitle">
+          Manage your account profile, track current shipments, and view your order history.
+        </p>
+      </div>
+
+      <div class="cart-grid">
+        <!-- Account Details Card -->
+        <div class="cart-items-card">
+          <h3>Profile Information</h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1rem;">
+            <div>
+              <span class="text-muted" style="font-size: 0.85rem;">Full Name</span>
+              <p id="profile-name" style="font-weight: 600; font-size: 1rem; margin-top: 0.2rem;">-</p>
+            </div>
+            <div>
+              <span class="text-muted" style="font-size: 0.85rem;">Email Address</span>
+              <p id="profile-email" style="font-weight: 600; font-size: 1rem; margin-top: 0.2rem;">-</p>
+            </div>
+            <div>
+              <span class="text-muted" style="font-size: 0.85rem;">Phone Number</span>
+              <p id="profile-phone" style="font-weight: 600; font-size: 1rem; margin-top: 0.2rem;">-</p>
+            </div>
+            <div>
+              <span class="text-muted" style="font-size: 0.85rem;">Account Status</span>
+              <p><span class="badge badge-stock">Active Customer</span></p>
+            </div>
+          </div>
+
+          <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-warm); display: flex; gap: 1rem; flex-wrap: wrap;">
+            <a href="shop.html" class="btn btn-primary btn-sm">Explore Bouquets</a>
+            <a href="wishlist.html" class="btn btn-secondary btn-sm">My Wishlist</a>
+          </div>
+        </div>
+
+        <!-- Quick Orders Overview -->
+        <div class="order-summary-card">
+          <h3>Order History</h3>
+          <div id="account-orders-container">
+            <p style="color: var(--text-muted); font-size: 0.9rem;">
+              Retrieving your order records...
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-bottom" style="border: none; padding-top: 0;">
+      <p>&copy; 2026 Loop n Love. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { CONFIG } from './js/config.js';
+    import { API } from './js/api.js';
+    import { showToast } from './js/main.js';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const userJson = localStorage.getItem(CONFIG.STORAGE_KEYS.USER_INFO);
+      const token = localStorage.getItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN);
+
+      if (!token || !userJson) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      try {
+        const user = JSON.parse(userJson);
+        document.getElementById('user-display-name').textContent = user.name || 'Friend';
+        document.getElementById('profile-name').textContent = user.name || 'N/A';
+        document.getElementById('profile-email').textContent = user.email || 'N/A';
+        document.getElementById('profile-phone').textContent = user.phone || 'N/A';
+
+        // Load order history
+        const ordersBox = document.getElementById('account-orders-container');
+        try {
+          const orders = await API.getMyOrders();
+          if (orders && orders.length > 0) {
+            ordersBox.innerHTML = orders.map(ord => `
+              <div style="padding: 1rem; background-color: var(--bg-surface); border-radius: var(--radius-md); margin-bottom: 0.75rem; border: 1px solid var(--border-warm);">
+                <div style="display: flex; justify-content: space-between; font-weight: 600; font-size: 0.9rem;">
+                  <span>${ord.orderReference || '#LNL-000'}</span>
+                  <span>₹${ord.totalAmount}</span>
+                </div>
+                <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;">
+                  Status: <span class="badge badge-stock">${ord.orderStatus || 'Processing'}</span>
+                </div>
+              </div>
+            `).join('');
+          } else {
+            ordersBox.innerHTML = `
+              <p style="font-size: 0.88rem; color: var(--text-muted);">
+                You haven't placed any online orders yet. When you do, they will appear here.
+              </p>
+            `;
+          }
+        } catch (e) {
+          ordersBox.innerHTML = `
+            <p style="font-size: 0.88rem; color: var(--text-muted);">
+              Backend orders database will connect in Phase 2/3.
+            </p>
+          `;
+        }
+
+        // Logout
+        document.getElementById('logout-btn')?.addEventListener('click', () => {
+          localStorage.removeItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN);
+          localStorage.removeItem(CONFIG.STORAGE_KEYS.USER_INFO);
+          showToast('You have been logged out.');
+          setTimeout(() => {
+            window.location.href = 'index.html';
+          }, 600);
+        });
+
+      } catch (err) {
+        window.location.href = 'login.html';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Portal Login — Loop n Love</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23C46D75'><circle cx='12' cy='12' r='9'/></svg>">
+</head>
+<body>
+  <header class="header-wrapper" role="banner">
+    <div class="container navbar">
+      <a href="index.html" class="brand-logo">
+        <svg class="logo-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 26s-9-5.5-11.5-10.5A6.5 6.5 0 0 1 16 9.5a6.5 6.5 0 0 1 11.5 6C25 20.5 16 26 16 26z" fill="#FCEEE9" stroke="#C46D75"/>
+        </svg>
+        <div class="logo-text">
+          <span class="brand-name">Loop n Love</span>
+          <span class="brand-tagline-sub">Admin Portal</span>
+        </div>
+      </a>
+      <a href="index.html" style="font-size: 0.9rem; color: var(--primary-rose); font-weight: 500;">← Back to Storefront</a>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <div class="auth-wrapper" style="max-width: 440px;">
+        <div class="auth-header">
+          <span class="section-eyebrow">Owner Access</span>
+          <h2>Store Administrator</h2>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">
+            Sign in with authorized administrator credentials to manage products, orders, and boutique settings.
+          </p>
+        </div>
+
+        <form id="admin-login-form" novalidate>
+          <div class="form-group" id="grp-adm-email">
+            <label class="form-label" for="adm-email">Admin Email</label>
+            <input type="email" id="adm-email" class="form-control" placeholder="admin@loopnlove.com" required>
+            <span class="form-error">Please enter a valid administrator email</span>
+          </div>
+
+          <div class="form-group" id="grp-adm-password">
+            <label class="form-label" for="adm-password">Password</label>
+            <input type="password" id="adm-password" class="form-control" placeholder="••••••••" required>
+            <span class="form-error">Password is required</span>
+          </div>
+
+          <div id="adm-alert" style="display: none; padding: 0.75rem; border-radius: var(--radius-md); font-size: 0.85rem; margin-bottom: 1rem;"></div>
+
+          <button type="submit" id="adm-login-btn" class="btn btn-primary btn-block btn-lg">
+            Enter Admin Dashboard
+          </button>
+        </form>
+
+        <div class="notice-box" style="margin-top: 2rem;">
+          <strong>Secure Role-Based Access:</strong><br>
+          Only users with the <code>admin</code> role verified by the backend JWT service are granted administrative permissions.
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { API } from './js/api.js';
+    import { CONFIG } from './js/config.js';
+    import { showToast } from './js/main.js';
+
+    const form = document.getElementById('admin-login-form');
+    const alertBox = document.getElementById('adm-alert');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('adm-email').value.trim();
+      const password = document.getElementById('adm-password').value;
+
+      if (!email || !password) {
+        alertBox.style.display = 'block';
+        alertBox.style.backgroundColor = 'var(--accent-danger-bg)';
+        alertBox.style.color = 'var(--accent-danger)';
+        alertBox.textContent = 'Please fill in both email and password.';
+        return;
+      }
+
+      const btn = document.getElementById('adm-login-btn');
+      btn.disabled = true;
+      btn.textContent = 'Authenticating...';
+
+      try {
+        const res = await API.login({ email, password });
+        if (res.user && res.user.role === 'admin') {
+          localStorage.setItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN, res.token);
+          localStorage.setItem(CONFIG.STORAGE_KEYS.USER_INFO, JSON.stringify(res.user));
+          showToast('Welcome to Loop n Love Admin Dashboard!');
+          setTimeout(() => {
+            window.location.href = 'admin.html';
+          }, 800);
+        } else {
+          alertBox.style.display = 'block';
+          alertBox.style.backgroundColor = 'var(--accent-danger-bg)';
+          alertBox.style.color = 'var(--accent-danger)';
+          alertBox.textContent = 'Access denied: Your account does not have administrator privileges.';
+        }
+      } catch (err) {
+        alertBox.style.display = 'block';
+        alertBox.style.backgroundColor = 'var(--accent-danger-bg)';
+        alertBox.style.color = 'var(--accent-danger)';
+        alertBox.textContent = err.message || 'Login failed or backend unreachable.';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Enter Admin Dashboard';
+      }
+    });
+  </script>
+</body>
+</html>

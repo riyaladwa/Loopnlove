@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Account — Loop n Love</title>
+  <meta name="description" content="Register an account with Loop n Love to enjoy personalized order tracking and saved crochet bouquets.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23C46D75'><circle cx='12' cy='12' r='9'/></svg>">
+</head>
+<body>
+
+  <header class="header-wrapper" role="banner">
+    <div class="container navbar">
+      <a href="index.html" class="brand-logo" aria-label="Loop n Love Home">
+        <svg class="logo-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M16 26s-9-5.5-11.5-10.5A6.5 6.5 0 0 1 16 9.5a6.5 6.5 0 0 1 11.5 6C25 20.5 16 26 16 26z" fill="#FCEEE9" stroke="#C46D75"/>
+          <path d="M12 14c2-2 6-2 8 0" stroke="#C46D75"/>
+        </svg>
+        <div class="logo-text">
+          <span class="brand-name">Loop n Love</span>
+          <span class="brand-tagline-sub">Handmade Boutique</span>
+        </div>
+      </a>
+      <a href="index.html" style="font-size: 0.9rem; color: var(--primary-rose); font-weight: 500;">← Back to Store</a>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <div class="auth-wrapper">
+        <div class="auth-header">
+          <span class="section-eyebrow">Join Our Community</span>
+          <h2>Create Customer Account</h2>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">
+            Enjoy 10% off your first eligible order, easy order tracking, and faster checkout.
+          </p>
+        </div>
+
+        <form id="register-form" novalidate>
+          <div class="form-group" id="group-reg-name">
+            <label class="form-label" for="reg-name">Full Name *</label>
+            <input type="text" id="reg-name" class="form-control" placeholder="Aanya Sharma" required>
+            <span class="form-error">Please enter your full name</span>
+          </div>
+
+          <div class="form-group" id="group-reg-email">
+            <label class="form-label" for="reg-email">Email Address *</label>
+            <input type="email" id="reg-email" class="form-control" placeholder="you@example.com" required>
+            <span class="form-error">Please enter a valid email address</span>
+          </div>
+
+          <div class="form-group" id="group-reg-phone">
+            <label class="form-label" for="reg-phone">Phone Number (10 digits) *</label>
+            <input type="tel" id="reg-phone" class="form-control" placeholder="9876543210" pattern="[0-9]{10}" required>
+            <span class="form-error">Please enter a valid 10-digit mobile number</span>
+          </div>
+
+          <div class="form-group" id="group-reg-password">
+            <label class="form-label" for="reg-password">Password (Minimum 6 characters) *</label>
+            <input type="password" id="reg-password" class="form-control" placeholder="••••••••" required minlength="6">
+            <span class="form-error">Password must be at least 6 characters</span>
+          </div>
+
+          <div class="form-group" id="group-reg-confirm">
+            <label class="form-label" for="reg-confirm">Confirm Password *</label>
+            <input type="password" id="reg-confirm" class="form-control" placeholder="••••••••" required minlength="6">
+            <span class="form-error">Passwords do not match</span>
+          </div>
+
+          <div id="register-alert" style="display: none; padding: 0.75rem; border-radius: var(--radius-md); font-size: 0.85rem; margin-bottom: 1rem;"></div>
+
+          <button type="submit" id="reg-btn" class="btn btn-primary btn-block btn-lg">
+            Create Account
+          </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-muted);">
+          Already have an account? <a href="login.html" style="color: var(--primary-rose); font-weight: 600;">Sign in here</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-bottom" style="border: none; padding-top: 0;">
+      <p>&copy; 2026 Loop n Love. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { API } from './js/api.js';
+    import { CONFIG } from './js/config.js';
+    import { showToast } from './js/main.js';
+
+    const form = document.getElementById('register-form');
+    const alertBox = document.getElementById('register-alert');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('reg-name').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const phone = document.getElementById('reg-phone').value.trim();
+      const password = document.getElementById('reg-password').value;
+      const confirmPass = document.getElementById('reg-confirm').value;
+
+      let valid = true;
+
+      const validateField = (id, condition) => {
+        const group = document.getElementById(id);
+        if (!condition) {
+          group.classList.add('has-error');
+          valid = false;
+        } else {
+          group.classList.remove('has-error');
+        }
+      };
+
+      validateField('group-reg-name', name.length >= 2);
+      validateField('group-reg-email', /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
+      validateField('group-reg-phone', /^\d{10}$/.test(phone));
+      validateField('group-reg-password', password.length >= 6);
+      validateField('group-reg-confirm', password === confirmPass);
+
+      if (!valid) return;
+
+      const submitBtn = document.getElementById('reg-btn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Creating Account...';
+
+      try {
+        const res = await API.register({ name, email, phone, password });
+        localStorage.setItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN, res.token);
+        localStorage.setItem(CONFIG.STORAGE_KEYS.USER_INFO, JSON.stringify(res.user));
+        showToast('Account created successfully! Welcome to Loop n Love.');
+        setTimeout(() => {
+          window.location.href = 'account.html';
+        }, 900);
+      } catch (err) {
+        alertBox.style.display = 'block';
+        alertBox.style.backgroundColor = 'var(--accent-danger-bg)';
+        alertBox.style.color = 'var(--accent-danger)';
+        alertBox.textContent = err.message || 'Registration failed. Backend service unavailable or email already in use.';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Create Account';
+      }
+    });
+  </script>
+</body>
+</html>

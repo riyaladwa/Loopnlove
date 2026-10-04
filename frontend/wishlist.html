@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Wishlist — Loop n Love</title>
+  <meta name="description" content="View and manage your favorite handcrafted crochet bouquets.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23C46D75'><circle cx='12' cy='12' r='9'/></svg>">
+</head>
+<body>
+
+  <aside class="announcement-bar" aria-label="Store announcement">
+    ✨ Free Delivery on orders over ₹999 &bull; Handcrafted with 100% Milk Cotton Yarn
+  </aside>
+
+  <header class="header-wrapper" role="banner">
+    <div class="container navbar">
+      <a href="index.html" class="brand-logo" aria-label="Loop n Love Home">
+        <svg class="logo-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M16 26s-9-5.5-11.5-10.5A6.5 6.5 0 0 1 16 9.5a6.5 6.5 0 0 1 11.5 6C25 20.5 16 26 16 26z" fill="#FCEEE9" stroke="#C46D75"/>
+          <path d="M12 14c2-2 6-2 8 0" stroke="#C46D75"/>
+        </svg>
+        <div class="logo-text">
+          <span class="brand-name">Loop n Love</span>
+          <span class="brand-tagline-sub">Handmade Boutique</span>
+        </div>
+      </a>
+
+      <nav class="desktop-nav" aria-label="Main Navigation">
+        <ul class="nav-menu">
+          <li><a href="index.html" class="nav-link">Home</a></li>
+          <li><a href="shop.html" class="nav-link">Shop Collection</a></li>
+          <li><a href="shop.html?category=Bouquets" class="nav-link">Bouquets</a></li>
+          <li><a href="contact.html" class="nav-link">Custom Orders</a></li>
+          <li><a href="contact.html" class="nav-link">Contact</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="wishlist.html" class="action-icon-btn active" aria-label="View Wishlist" title="Wishlist">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="#C46D75" stroke="#C46D75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
+          <span id="wishlist-badge" class="action-badge" style="display: none;">0</span>
+        </a>
+
+        <a href="cart.html" class="action-icon-btn" aria-label="View Shopping Cart" title="Cart">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+          </svg>
+          <span id="cart-badge" class="action-badge" style="display: none;">0</span>
+        </a>
+
+        <a href="login.html" id="account-nav-link" class="action-icon-btn" aria-label="My Account" title="Login or Account">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </a>
+
+        <button id="hamburger-toggle" class="hamburger-btn" aria-label="Toggle Navigation Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div id="mobile-overlay" class="mobile-nav-overlay" aria-hidden="true"></div>
+  <aside id="mobile-drawer" class="mobile-nav-drawer" aria-label="Mobile Navigation">
+    <div class="mobile-nav-header">
+      <span class="brand-name">Loop n Love</span>
+      <button id="mobile-drawer-close" class="modal-close-btn" aria-label="Close menu">&times;</button>
+    </div>
+    <ul class="mobile-menu-list">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="shop.html" class="nav-link">Shop Collection</a></li>
+      <li><a href="wishlist.html" class="nav-link active">My Wishlist</a></li>
+      <li><a href="cart.html" class="nav-link">Shopping Cart</a></li>
+      <li><a href="login.html" id="mobile-account-nav-link" class="nav-link">Login / Register</a></li>
+      <li><a href="contact.html" class="nav-link">Custom Crochet Orders</a></li>
+      <li><a href="contact.html" class="nav-link">Contact Us</a></li>
+    </ul>
+  </aside>
+
+  <main>
+    <div class="container catalog-layout">
+      <nav class="page-breadcrumbs" style="justify-content: flex-start; margin-bottom: 2rem;">
+        <a href="index.html">Home</a>
+        <span>/</span>
+        <span>My Wishlist</span>
+      </nav>
+
+      <div class="section-header" style="text-align: left; margin-bottom: 2.5rem;">
+        <span class="section-eyebrow">Saved Keepsakes</span>
+        <h1 class="section-title">My Wishlist</h1>
+        <p class="section-subtitle">
+          Keep track of bouquets you love or wish to order for upcoming celebrations.
+        </p>
+      </div>
+
+      <div id="wishlist-grid" class="products-grid">
+        <!-- Populated dynamically -->
+      </div>
+
+      <div id="empty-wishlist-state" class="empty-state" style="display: none;">
+        <div class="empty-state-icon">♡</div>
+        <h2>Your Wishlist is Empty</h2>
+        <p>You haven't saved any handcrafted bouquets yet. Browse our collection and click the heart icon on any bouquet to save it here.</p>
+        <a href="shop.html" class="btn btn-primary btn-lg">
+          Browse Our Bouquets
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-bottom" style="border: none; padding-top: 0;">
+      <p>&copy; 2026 Loop n Love. All rights reserved. Handcrafted with love.</p>
+      <div class="footer-bottom-links">
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Service</a>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { Wishlist } from './js/wishlist.js';
+    import { Cart } from './js/cart.js';
+    import { showToast } from './js/main.js';
+
+    function renderWishlist() {
+      const items = Wishlist.getItems();
+      const grid = document.getElementById('wishlist-grid');
+      const empty = document.getElementById('empty-wishlist-state');
+
+      if (items.length === 0) {
+        grid.style.display = 'none';
+        empty.style.display = 'block';
+        return;
+      }
+
+      empty.style.display = 'none';
+      grid.style.display = 'grid';
+
+      grid.innerHTML = items.map(item => `
+        <article class="product-card" data-id="${item.id}">
+          <div class="product-image-container">
+            <button class="wishlist-btn-overlay active" data-remove-id="${item.id}" title="Remove from wishlist" aria-label="Remove from wishlist">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+              </svg>
+            </button>
+            <a href="product.html?id=${item.id}">
+              <img src="${item.image}" alt="${item.name}" loading="lazy">
+            </a>
+          </div>
+          <div class="product-content">
+            <span class="product-category-label">${item.category}</span>
+            <h3 class="product-title"><a href="product.html?id=${item.id}">${item.name}</a></h3>
+            <div class="product-price-row">
+              <span class="product-price">₹${item.price}</span>
+            </div>
+            <div class="product-actions" style="grid-template-columns: 1fr;">
+              <button class="btn btn-primary btn-sm move-to-cart-btn" data-move-id="${item.id}">
+                Move to Cart
+              </button>
+            </div>
+          </div>
+        </article>
+      `).join('');
+
+      // Move to cart
+      grid.querySelectorAll('.move-to-cart-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-move-id');
+          const item = items.find(i => i.id === id);
+          if (item) {
+            Cart.addItem(item, 1);
+            Wishlist.removeItem(id);
+            showToast(`Moved ${item.name} to your cart!`);
+            renderWishlist();
+          }
+        });
+      });
+
+      // Remove from wishlist
+      grid.querySelectorAll('.wishlist-btn-overlay').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-remove-id');
+          Wishlist.removeItem(id);
+          showToast('Item removed from wishlist.');
+          renderWishlist();
+        });
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', renderWishlist);
+  </script>
+</body>
+</html>
