@@ -19,7 +19,10 @@ const productSchema = new mongoose.Schema({
       'Hair Accessories',
       'Custom Keychains',
       'Crochet Bags',
-      'Keychains'
+      'Granny-Square Crochet Bags',
+      'Keychains',
+      'Crochet Gifts',
+      'Other Handmade Crochet'
     ],
     default: 'Crochet Flowers & Bouquets'
   },
@@ -56,6 +59,14 @@ const productSchema = new mongoose.Schema({
   isNewArrival: {
     type: Boolean,
     default: false
+  },
+  isConcept: {
+    type: Boolean,
+    default: false
+  },
+  conceptNote: {
+    type: String,
+    default: ''
   },
   pdfPage: {
     type: Number,

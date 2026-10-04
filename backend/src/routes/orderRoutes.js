@@ -3,6 +3,8 @@ import {
   createOrder,
   getMyOrders,
   getAllOrders,
+  getOrderById,
+  getDashboardStats,
   updateOrderStatus,
   recordWhatsAppOrder
 } from '../controllers/orderController.js';
@@ -14,8 +16,11 @@ router.post('/', optionalAuth, createOrder);
 router.get('/my-orders', protect, getMyOrders);
 
 // Admin-only order routes
+router.get('/stats', protect, adminOnly, getDashboardStats);
 router.get('/', protect, adminOnly, getAllOrders);
+router.get('/:id', protect, adminOnly, getOrderById);
 router.put('/:id/status', protect, adminOnly, updateOrderStatus);
+router.patch('/:id/status', protect, adminOnly, updateOrderStatus);
 router.post('/record-whatsapp', protect, adminOnly, recordWhatsAppOrder);
 
 export default router;

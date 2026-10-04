@@ -116,7 +116,7 @@
         <!-- Category Filter Tabs -->
         <div class="category-filter-tabs" role="tablist" aria-label="Product categories">
           <button class="cat-tab-btn active" data-category="all" role="tab" aria-selected="true">
-            All Products (20)
+            All Products (23)
           </button>
           <button class="cat-tab-btn" data-category="Crochet Flowers & Bouquets" role="tab" aria-selected="false">
             Crochet Flowers &amp; Bouquets (13)
@@ -124,11 +124,11 @@
           <button class="cat-tab-btn" data-category="Hair Accessories" role="tab" aria-selected="false">
             Hair Accessories (7)
           </button>
+          <button class="cat-tab-btn" data-category="Crochet Bags" role="tab" aria-selected="false" title="Design concepts & custom orders">
+            Crochet Bags (3 Concepts)
+          </button>
           <button class="cat-tab-btn" data-category="Custom Keychains" role="tab" aria-selected="false" title="Available via custom orders">
             Custom Keychains (Custom)
-          </button>
-          <button class="cat-tab-btn" data-category="Crochet Bags" role="tab" aria-selected="false" title="Available via custom orders">
-            Crochet Bags (Custom)
           </button>
           <button class="cat-tab-btn" data-category="Keychains" role="tab" aria-selected="false" title="Available via custom orders">
             Keychains (Custom)
@@ -317,6 +317,14 @@
       if (filtered.length === 0) {
         grid.style.display = 'none';
         emptyState.style.display = 'block';
+        if (currentCategory === 'Custom Keychains' || currentCategory === 'Keychains') {
+          emptyState.innerHTML = `
+            <div class="empty-state-icon">✨</div>
+            <h2>Custom ${currentCategory}</h2>
+            <p>Every keychain design is individually handcrafted to order with personalized colors, shapes, and initial tags.</p>
+            <a href="contact.html?category=${encodeURIComponent(currentCategory)}" class="btn btn-primary btn-lg">Request Custom ${currentCategory}</a>
+          `;
+        }
       } else {
         emptyState.style.display = 'none';
         grid.style.display = 'grid';

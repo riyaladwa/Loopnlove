@@ -61,42 +61,44 @@
         </p>
       </div>
 
-      <div class="cart-grid">
-        <!-- Account Details Card -->
-        <div class="cart-items-card">
+      <div style="display: grid; grid-template-columns: 320px 1fr; gap: 2rem; align-items: start;">
+        <!-- Account Details Column -->
+        <div class="cart-items-card" style="position: sticky; top: 90px;">
           <h3>Profile Information</h3>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1rem;">
+          <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1.25rem;">
             <div>
-              <span class="text-muted" style="font-size: 0.85rem;">Full Name</span>
-              <p id="profile-name" style="font-weight: 600; font-size: 1rem; margin-top: 0.2rem;">-</p>
+              <span class="text-muted" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em;">Full Name</span>
+              <p id="profile-name" style="font-weight: 600; font-size: 1rem; margin-top: 0.2rem; color: var(--text-cocoa-heading);">-</p>
             </div>
             <div>
-              <span class="text-muted" style="font-size: 0.85rem;">Email Address</span>
-              <p id="profile-email" style="font-weight: 600; font-size: 1rem; margin-top: 0.2rem;">-</p>
+              <span class="text-muted" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em;">Email Address</span>
+              <p id="profile-email" style="font-weight: 600; font-size: 0.95rem; margin-top: 0.2rem; word-break: break-all;">-</p>
             </div>
             <div>
-              <span class="text-muted" style="font-size: 0.85rem;">Phone Number</span>
-              <p id="profile-phone" style="font-weight: 600; font-size: 1rem; margin-top: 0.2rem;">-</p>
+              <span class="text-muted" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em;">Phone Number</span>
+              <p id="profile-phone" style="font-weight: 600; font-size: 0.95rem; margin-top: 0.2rem;">-</p>
             </div>
             <div>
-              <span class="text-muted" style="font-size: 0.85rem;">Account Status</span>
-              <p><span class="badge badge-stock">Active Customer</span></p>
+              <span class="text-muted" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em;">Account Status</span>
+              <p style="margin-top: 0.25rem;"><span class="badge badge-stock">Active Customer</span></p>
             </div>
           </div>
 
-          <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-warm); display: flex; gap: 1rem; flex-wrap: wrap;">
-            <a href="shop.html" class="btn btn-primary btn-sm">Explore Bouquets</a>
-            <a href="wishlist.html" class="btn btn-secondary btn-sm">My Wishlist</a>
+          <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-warm); display: flex; flex-direction: column; gap: 0.75rem;">
+            <a href="shop.html" class="btn btn-primary btn-sm btn-block" style="text-align: center;">Browse Collections</a>
+            <a href="contact.html" class="btn btn-secondary btn-sm btn-block" style="text-align: center;">Request Custom Order</a>
           </div>
         </div>
 
-        <!-- Quick Orders Overview -->
-        <div class="order-summary-card">
-          <h3>Order History</h3>
+        <!-- Orders History Column -->
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.5rem;">
+            <h2 style="font-size: 1.4rem; font-family: var(--font-serif); margin-bottom: 0;">My Orders &amp; Track Shipments</h2>
+            <button id="refresh-orders-btn" class="btn btn-secondary btn-sm" style="font-size: 0.82rem;">↻ Refresh</button>
+          </div>
+
           <div id="account-orders-container">
-            <p style="color: var(--text-muted); font-size: 0.9rem;">
-              Retrieving your order records...
-            </p>
+            <!-- Dynamically populated states -->
           </div>
         </div>
       </div>
@@ -105,7 +107,7 @@
 
   <footer class="site-footer" role="contentinfo">
     <div class="container footer-bottom" style="border: none; padding-top: 0;">
-      <p>&copy; 2026 Loop n Love. All rights reserved.</p>
+      <p>&copy; 2026 Loop n Love. All rights reserved. Handcrafted with love.</p>
     </div>
   </footer>
 
@@ -117,64 +119,190 @@
     document.addEventListener('DOMContentLoaded', async () => {
       const userJson = localStorage.getItem(CONFIG.STORAGE_KEYS.USER_INFO);
       const token = localStorage.getItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN);
+      const ordersContainer = document.getElementById('account-orders-container');
 
+      // Authentication State Check
       if (!token || !userJson) {
-        window.location.href = 'login.html';
+        ordersContainer.innerHTML = `
+          <div class="cart-items-card" style="text-align: center; padding: 3rem 1.5rem;">
+            <div style="font-size: 2rem; margin-bottom: 1rem;">🔒</div>
+            <h3 style="margin-bottom: 0.5rem;">Authentication Required</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem;">
+              Please sign in to view your orders and track delivery status.
+            </p>
+            <a href="login.html" class="btn btn-primary">Sign In to Your Account</a>
+          </div>
+        `;
+        setTimeout(() => { window.location.href = 'login.html'; }, 1500);
         return;
       }
 
+      let user = {};
       try {
-        const user = JSON.parse(userJson);
+        user = JSON.parse(userJson);
         document.getElementById('user-display-name').textContent = user.name || 'Friend';
         document.getElementById('profile-name').textContent = user.name || 'N/A';
         document.getElementById('profile-email').textContent = user.email || 'N/A';
         document.getElementById('profile-phone').textContent = user.phone || 'N/A';
+      } catch (e) {
+        localStorage.removeItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN);
+        localStorage.removeItem(CONFIG.STORAGE_KEYS.USER_INFO);
+        window.location.href = 'login.html';
+        return;
+      }
 
-        // Load order history
-        const ordersBox = document.getElementById('account-orders-container');
+      // Format Date Helper
+      const formatDate = (dateString) => {
+        if (!dateString) return 'Recent';
+        const d = new Date(dateString);
+        return d.toLocaleDateString('en-IN', {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric'
+        });
+      };
+
+      // Load Orders Function
+      async function fetchAndRenderOrders() {
+        // Render Loading State
+        ordersContainer.innerHTML = `
+          <div class="cart-items-card" style="text-align: center; padding: 3rem 1.5rem;">
+            <div style="display: inline-block; width: 36px; height: 36px; border: 3px solid var(--border-warm); border-top-color: var(--primary-rose); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 1rem;"></div>
+            <h4 style="margin-bottom: 0.25rem;">Retrieving Your Orders</h4>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">
+              Connecting to boutique database...
+            </p>
+          </div>
+        `;
+
         try {
           const orders = await API.getMyOrders();
-          if (orders && orders.length > 0) {
-            ordersBox.innerHTML = orders.map(ord => `
-              <div style="padding: 1rem; background-color: var(--bg-surface); border-radius: var(--radius-md); margin-bottom: 0.75rem; border: 1px solid var(--border-warm);">
-                <div style="display: flex; justify-content: space-between; font-weight: 600; font-size: 0.9rem;">
-                  <span>${ord.orderReference || '#LNL-000'}</span>
-                  <span>₹${ord.totalAmount}</span>
+
+          if (!orders || orders.length === 0) {
+            // Empty State
+            ordersContainer.innerHTML = `
+              <div class="cart-items-card" style="text-align: center; padding: 3.5rem 1.5rem;">
+                <div style="font-size: 2.5rem; margin-bottom: 1rem;">🌸</div>
+                <h3 style="margin-bottom: 0.5rem; font-family: var(--font-serif);">No Orders Yet</h3>
+                <p style="color: var(--text-muted); font-size: 0.95rem; max-width: 440px; margin: 0 auto 1.75rem; line-height: 1.6;">
+                  You haven't placed any online orders yet. Explore our handcrafted bouquets and accessories to treat yourself or a loved one!
+                </p>
+                <a href="shop.html" class="btn btn-primary">Browse Collections</a>
+              </div>
+            `;
+            return;
+          }
+
+          // Successful State with Detailed Cards
+          ordersContainer.innerHTML = orders.map(ord => {
+            const statusClass = (ord.orderStatus === 'Delivered' || ord.orderStatus === 'Shipped') ? 'badge-stock' : (ord.orderStatus === 'Cancelled' ? 'badge-low' : 'badge-featured');
+            const payStatusClass = (ord.paymentStatus === 'Paid') ? 'badge-stock' : 'badge-low';
+            const orderDate = formatDate(ord.createdAt);
+            const address = ord.shippingAddress ? `${ord.shippingAddress.address || ''}, ${ord.shippingAddress.city || ''} ${ord.shippingAddress.pincode || ''}` : 'Delivery address on file';
+
+            return `
+              <div class="cart-items-card" style="margin-bottom: 1.5rem; border: 1px solid var(--border-warm); border-radius: var(--radius-lg); padding: 1.5rem;">
+                <!-- Header: Ref, Date, Badges -->
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; border-bottom: 1px solid var(--border-warm); padding-bottom: 1rem; margin-bottom: 1.25rem;">
+                  <div>
+                    <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Order Reference</span>
+                    <div style="font-size: 1.15rem; font-weight: 700; font-family: monospace; color: var(--primary-rose-hover); margin-top: 0.2rem;">
+                      ${ord.orderReference || '#LNL-000000'}
+                    </div>
+                    <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.2rem;">
+                      Placed on ${orderDate}
+                    </div>
+                  </div>
+
+                  <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                    <span class="badge ${statusClass}">${ord.orderStatus || 'Order Received'}</span>
+                    <span class="badge ${payStatusClass}">${ord.paymentStatus || 'Payment Pending'}</span>
+                  </div>
                 </div>
-                <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;">
-                  Status: <span class="badge badge-stock">${ord.orderStatus || 'Processing'}</span>
+
+                <!-- Items Ordered List -->
+                <div style="margin-bottom: 1.25rem;">
+                  <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.75rem;">Items in Order</span>
+                  ${(ord.items || []).map(item => `
+                    <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px dashed var(--border-warm);">
+                      <img src="${item.image || 'assets/product-images/bouquet_01.jpg'}" alt="${item.name}" width="54" height="54" style="border-radius: var(--radius-sm); object-fit: cover; border: 1px solid var(--border-warm);">
+                      <div style="flex: 1;">
+                        <div style="font-weight: 600; font-size: 0.95rem; color: var(--text-cocoa-heading);">${item.name}</div>
+                        <div style="font-size: 0.82rem; color: var(--text-muted);">
+                          Qty: <strong>${item.quantity}</strong> &times; ₹${item.price}
+                          ${item.customizationNotes ? `<span style="display: block; font-style: italic; color: var(--primary-rose);">Note: ${item.customizationNotes}</span>` : ''}
+                        </div>
+                      </div>
+                      <div style="font-weight: 600; font-size: 0.95rem;">
+                        ₹${item.price * item.quantity}
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+
+                <!-- Footer: Delivery details & Total -->
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; background-color: var(--bg-surface); padding: 1rem 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-warm);">
+                  <div>
+                    <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Delivery Address &amp; Timeline</span>
+                    <div style="font-size: 0.88rem; color: var(--text-cocoa-heading); margin-top: 0.2rem; font-weight: 500;">
+                      📍 ${address}
+                    </div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">
+                      🚚 Handcrafted in India &bull; Dispatches in 3–5 days
+                    </div>
+                  </div>
+
+                  <div style="text-align: right;">
+                    <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Total Paid / Due</span>
+                    <div style="font-size: 1.35rem; font-weight: 700; color: var(--text-cocoa-heading); font-family: var(--font-serif);">
+                      ₹${ord.totalAmount}
+                    </div>
+                    <div style="font-size: 0.78rem; color: var(--text-muted);">
+                      Subtotal: ₹${ord.subtotal || ord.totalAmount} ${ord.shippingFee ? `+ ₹${ord.shippingFee} Shipping` : '(Free Delivery)'}
+                    </div>
+                  </div>
                 </div>
               </div>
-            `).join('');
-          } else {
-            ordersBox.innerHTML = `
-              <p style="font-size: 0.88rem; color: var(--text-muted);">
-                You haven't placed any online orders yet. When you do, they will appear here.
-              </p>
             `;
-          }
-        } catch (e) {
-          ordersBox.innerHTML = `
-            <p style="font-size: 0.88rem; color: var(--text-muted);">
-              Backend orders database will connect in Phase 2/3.
-            </p>
+          }).join('');
+
+        } catch (err) {
+          // Error State
+          ordersContainer.innerHTML = `
+            <div class="cart-items-card" style="text-align: center; padding: 2.5rem 1.5rem; border: 1px solid var(--accent-danger-bg);">
+              <div style="font-size: 2rem; margin-bottom: 0.75rem;">⚠️</div>
+              <h3 style="color: var(--accent-danger); margin-bottom: 0.5rem;">Unable to Load Orders</h3>
+              <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.25rem; max-width: 440px; margin-left: auto; margin-right: auto;">
+                ${err.message || 'We could not reach the backend order service. Please check your connection and try again.'}
+              </p>
+              <button id="retry-orders-btn" class="btn btn-secondary btn-sm">Try Again</button>
+            </div>
           `;
+          document.getElementById('retry-orders-btn')?.addEventListener('click', fetchAndRenderOrders);
         }
-
-        // Logout
-        document.getElementById('logout-btn')?.addEventListener('click', () => {
-          localStorage.removeItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN);
-          localStorage.removeItem(CONFIG.STORAGE_KEYS.USER_INFO);
-          showToast('You have been logged out.');
-          setTimeout(() => {
-            window.location.href = 'index.html';
-          }, 600);
-        });
-
-      } catch (err) {
-        window.location.href = 'login.html';
       }
+
+      // Initial fetch
+      fetchAndRenderOrders();
+
+      // Refresh button
+      document.getElementById('refresh-orders-btn')?.addEventListener('click', fetchAndRenderOrders);
+
+      // Logout handler
+      document.getElementById('logout-btn')?.addEventListener('click', () => {
+        localStorage.removeItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN);
+        localStorage.removeItem(CONFIG.STORAGE_KEYS.USER_INFO);
+        showToast('You have been logged out.');
+        setTimeout(() => {
+          window.location.href = 'index.html';
+        }, 600);
+      });
     });
   </script>
+  <style>
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
 </body>
 </html>

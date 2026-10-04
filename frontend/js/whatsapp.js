@@ -1,83 +1,154 @@
 /**
- * Loop n Love - WhatsApp Ordering Module
- * Strictly follows business rules:
- * - Configurable number, never guessed or invented
- * - Formats order enquiry cleanly with items, quantities, and subtotal
- * - Friendly feedback if number is not yet set
+ * Loop n Love - WhatsApp Direct Chat Module
+ * Strictly adheres to business specifications:
+ * - Single configurable setting: WHATSAPP_BUSINESS_NUMBER
+ * - Sanitized international E.164 digits without spaces or punctuation
+ * - Desktop & mobile compatible click-to-chat links (https://wa.me/)
+ * - Product-specific and custom-order prefilled messages
+ * - Graceful notification if number is not yet configured (no broken links)
+ * - Never auto-sends without customer action
  */
 
 import { CONFIG } from './config.js';
 
+// Clean international format: numbers only
+export function getCleanWhatsAppNumber() {
+  const num = (CONFIG.BUSINESS_WHATSAPP_NUMBER || '').trim();
+  return num.replace(/\D/g, '');
+}
+
 export function isWhatsAppConfigured() {
-  return Boolean(CONFIG.BUSINESS_WHATSAPP_NUMBER && CONFIG.BUSINESS_WHATSAPP_NUMBER.trim().length >= 10);
+  const clean = getCleanWhatsAppNumber();
+  return clean.length >= 10;
 }
 
-export function buildWhatsAppMessage(items, subtotal, notes = '') {
-  let message = `Hello Loop n Love! 🌸\nI would like to order the following handmade crochet bouquets:\n\n`;
-
-  items.forEach((item, idx) => {
-    message += `${idx + 1}. *${item.name}* (Qty: ${item.quantity}) - ₹${item.price * item.quantity}\n`;
-    if (item.customizationNotes) {
-      message += `   _Note: ${item.customizationNotes}_\n`;
+// Fetch public settings from backend to keep WhatsApp number synchronized
+export async function syncWhatsAppNumber() {
+  try {
+    const res = await fetch(`${CONFIG.API_BASE_URL}/settings/public`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data.settings && data.settings.whatsappNumber) {
+        CONFIG.BUSINESS_WHATSAPP_NUMBER = data.settings.whatsappNumber;
+      }
     }
-  });
-
-  message += `\n*Estimated Subtotal:* ₹${subtotal}\n`;
-  if (notes) {
-    message += `*Customization / Delivery Note:* ${notes}\n`;
+  } catch (e) {
+    // Graceful fallback to static CONFIG.BUSINESS_WHATSAPP_NUMBER
   }
-  message += `\nPlease confirm product availability, shipping details, and how I can proceed with payment. Thank you! ✨`;
-
-  return encodeURIComponent(message);
 }
 
-export function openWhatsAppOrder(items, subtotal, notes = '') {
+// Ensure settings sync on initial script evaluation
+syncWhatsAppNumber();
+
+/**
+ * Product-specific WhatsApp Click-to-Chat
+ * Example prefill: "Hello Loop n Love! I am interested in [product name]. I would like to know more about customization and ordering."
+ */
+export function openWhatsAppProductChat(productName, customizationDetails = '') {
   if (!isWhatsAppConfigured()) {
-    showWhatsAppUnconfiguredModal();
+    showWhatsAppUnconfiguredNotice();
     return;
   }
 
-  const encodedMsg = buildWhatsAppMessage(items, subtotal, notes);
-  const cleanNumber = CONFIG.BUSINESS_WHATSAPP_NUMBER.replace(/\D/g, '');
-  const url = `https://wa.me/${cleanNumber}?text=${encodedMsg}`;
-  window.open(url, '_blank', 'noopener,noreferrer');
+  let text = `Hello Loop n Love! I am interested in *${productName}*.`;
+  if (customizationDetails && customizationDetails.trim()) {
+    text += ` Customization request: ${customizationDetails.trim()}.`;
+  }
+  text += ` I would like to know more about customization and ordering.`;
+
+  openWhatsAppWindow(text);
 }
 
-function showWhatsAppUnconfiguredModal() {
+/**
+ * Customization Inquiry WhatsApp Click-to-Chat
+ * Includes category and requested customization
+ */
+export function openWhatsAppCustomInquiry(category, customization = '', colours = '') {
+  if (!isWhatsAppConfigured()) {
+    showWhatsAppUnconfiguredNotice();
+    return;
+  }
+
+  let text = `Hello Loop n Love! 🌸\nI would like to enquire about a custom order for *${category || 'Crochet Creations'}*.\n`;
+  if (customization && customization.trim()) {
+    text += `*Requested Customization:* ${customization.trim()}\n`;
+  }
+  if (colours && colours.trim()) {
+    text += `*Preferred Colours:* ${colours.trim()}\n`;
+  }
+  text += `\nPlease let me know about feasibility, yarn options, and pricing estimates. Thank you! ✨`;
+
+  openWhatsAppWindow(text);
+}
+
+/**
+ * Order Confirmation WhatsApp sharing
+ */
+export function openWhatsAppOrder(items = [], subtotal = 0, notes = '') {
+  if (!isWhatsAppConfigured()) {
+    showWhatsAppUnconfiguredNotice();
+    return;
+  }
+
+  let text = `Hello Loop n Love! 🌸\nI would like to discuss my crochet order:\n\n`;
+  if (items && items.length > 0) {
+    items.forEach((item, idx) => {
+      text += `${idx + 1}. *${item.name}* (Qty: ${item.quantity}) - ₹${item.price * item.quantity}\n`;
+      if (item.customizationNotes) {
+        text += `   _Note: ${item.customizationNotes}_\n`;
+      }
+    });
+    text += `\n*Subtotal:* ₹${subtotal}\n`;
+  }
+  if (notes) {
+    text += `*Details:* ${notes}\n`;
+  }
+  text += `\nPlease confirm order status. Thank you!`;
+
+  openWhatsAppWindow(text);
+}
+
+function openWhatsAppWindow(text) {
+  const cleanNumber = getCleanWhatsAppNumber();
+  const encodedText = encodeURIComponent(text);
+  const waUrl = `https://wa.me/${cleanNumber}?text=${encodedText}`;
+  window.open(waUrl, '_blank', 'noopener,noreferrer');
+}
+
+/**
+ * User-friendly unconfigured notice modal (replaces broken links)
+ */
+export function showWhatsAppUnconfiguredNotice() {
   let modal = document.getElementById('whatsapp-info-modal');
   if (!modal) {
     const modalHtml = `
       <div id="whatsapp-info-modal" class="modal-overlay open" role="dialog" aria-modal="true" aria-labelledby="wa-modal-title">
-        <div class="modal-box">
+        <div class="modal-box" style="max-width: 480px; text-align: center;">
           <button class="modal-close-btn" id="wa-modal-close" aria-label="Close dialog">&times;</button>
-          <div style="text-align: center; margin-bottom: 1.5rem;">
-            <div style="width: 60px; height: 60px; border-radius: 50%; background-color: #E7F9EE; color: #25D366; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-size: 1.8rem;">
-              💬
-            </div>
-            <h3 id="wa-modal-title" style="margin-bottom: 0.5rem;">WhatsApp Ordering Setup</h3>
-            <p style="color: var(--text-muted); font-size: 0.95rem;">
-              The business owner has not yet configured the official business WhatsApp number for direct chat ordering.
-            </p>
+          <div style="width: 58px; height: 58px; border-radius: 50%; background-color: #E7F9EE; color: #25D366; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; font-size: 1.8rem;">
+            💬
           </div>
-          <div style="background-color: var(--bg-surface); border-radius: var(--radius-md); padding: 1.25rem; font-size: 0.88rem; color: var(--text-cocoa); margin-bottom: 1.5rem; line-height: 1.6;">
-            <strong>For the Store Owner:</strong><br>
-            You can configure your business WhatsApp number in <code>frontend/js/config.js</code> or via the admin dashboard once deployed.
+          <h3 id="wa-modal-title" style="margin-bottom: 0.5rem; font-family: var(--font-serif);">Direct WhatsApp Contact</h3>
+          <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.25rem;">
+            Our official WhatsApp direct line will be active shortly once boutique phone verification is finalized.
+          </p>
+          <div style="background-color: var(--bg-surface); padding: 1rem; border-radius: var(--radius-md); font-size: 0.88rem; color: var(--text-cocoa-heading); text-align: left; margin-bottom: 1.5rem; border: 1px solid var(--border-warm);">
+            <strong>Alternative Ways to Connect:</strong><br>
+            &bull; Email us directly at: <a href="mailto:riyaladwa9@gmail.com" style="color: var(--primary-rose); font-weight: 600;">riyaladwa9@gmail.com</a><br>
+            &bull; Or submit your custom requirements via our <a href="contact.html" style="color: var(--primary-rose); font-weight: 600;">Custom Inquiry Form</a>.
           </div>
-          <div style="display: flex; gap: 0.8rem; justify-content: center;">
-            <button class="btn btn-secondary btn-sm" id="wa-modal-dismiss">Understood</button>
-            <a href="checkout.html" class="btn btn-primary btn-sm">Proceed with Online Checkout</a>
-          </div>
+          <button id="wa-modal-ok-btn" class="btn btn-primary btn-block">Understood</button>
         </div>
       </div>
     `;
     document.body.insertAdjacentHTML('beforeend', modalHtml);
     modal = document.getElementById('whatsapp-info-modal');
 
-    const close = () => modal.classList.remove('open');
-    document.getElementById('wa-modal-close').addEventListener('click', close);
-    document.getElementById('wa-modal-dismiss').addEventListener('click', close);
+    const closeModal = () => modal.classList.remove('open');
+    document.getElementById('wa-modal-close')?.addEventListener('click', closeModal);
+    document.getElementById('wa-modal-ok-btn')?.addEventListener('click', closeModal);
     modal.addEventListener('click', (e) => {
-      if (e.target === modal) close();
+      if (e.target === modal) closeModal();
     });
   } else {
     modal.classList.add('open');

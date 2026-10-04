@@ -316,6 +316,58 @@ const VERIFIED_SEED_DATA = [
     isNewArrival: true,
     pdfPage: 4,
     customizable: true
+  },
+  // ==========================================
+  // CROCHET BAGS — DESIGN CONCEPTS (3 ITEMS)
+  // (Proposed made-to-order concepts, ₹500–₹600)
+  // ==========================================
+  {
+    name: 'Daisy Bloom Granny-Square Tote (Concept)',
+    identifier: 'bag-concept-01',
+    category: 'Crochet Bags',
+    price: 550,
+    image: 'assets/product-images/concept_bag_01.svg',
+    images: ['assets/product-images/concept_bag_01.svg'],
+    description: 'Design concept for custom made-to-order requests. Classic granny-square tote featuring cream daisy center motifs, sage green borders, and sturdy double-crochet shoulder straps. Final pricing and custom color palette confirmed upon inquiry.',
+    stockQuantity: 0,
+    inStock: false,
+    featured: false,
+    isNewArrival: true,
+    isConcept: true,
+    conceptNote: 'Proposed design concept. Artisan photos will replace illustrations upon stitch completion.',
+    customizable: true
+  },
+  {
+    name: 'Pastel Meadow Patchwork Bag (Concept)',
+    identifier: 'bag-concept-02',
+    category: 'Crochet Bags',
+    price: 580,
+    image: 'assets/product-images/concept_bag_02.svg',
+    images: ['assets/product-images/concept_bag_02.svg'],
+    description: 'Design concept for custom made-to-order requests. Multi-tone pastel squares in lavender, blush, buttercup yellow, and mint green with scalloped edge trim and reinforced base. Final pricing confirmed upon consultation.',
+    stockQuantity: 0,
+    inStock: false,
+    featured: false,
+    isNewArrival: true,
+    isConcept: true,
+    conceptNote: 'Proposed design concept. Artisan photos will replace illustrations upon stitch completion.',
+    customizable: true
+  },
+  {
+    name: 'Vintage Sunburst Crossbody Bag (Concept)',
+    identifier: 'bag-concept-03',
+    category: 'Crochet Bags',
+    price: 520,
+    image: 'assets/product-images/concept_bag_03.svg',
+    images: ['assets/product-images/concept_bag_03.svg'],
+    description: 'Design concept for custom made-to-order requests. Compact boho crossbody bag constructed from 4 vibrant sunburst granny motifs with wooden button clasp and braided strap. Final pricing confirmed upon consultation.',
+    stockQuantity: 0,
+    inStock: false,
+    featured: false,
+    isNewArrival: true,
+    isConcept: true,
+    conceptNote: 'Proposed design concept. Artisan photos will replace illustrations upon stitch completion.',
+    customizable: true
   }
 ];
 
@@ -339,7 +391,16 @@ async function seedDatabase() {
 
     console.log(`✓ Successfully updated/upserted ${updatedCount} verified products in MongoDB!`);
 
-    // Ensure initial admin user exists
+    // Ensure authorized owner admin account
+    const ownerEmail = 'riyaladwa9@gmail.com';
+    let ownerUser = await User.findOne({ email: ownerEmail });
+    if (ownerUser) {
+      ownerUser.role = 'admin';
+      await ownerUser.save();
+      console.log(`✓ Store owner account (${ownerEmail}) verified with admin role.`);
+    }
+
+    // Ensure secondary admin account if needed
     const adminEmail = 'admin@loopnlove.com';
     const existingAdmin = await User.findOne({ email: adminEmail });
     if (!existingAdmin) {
@@ -351,9 +412,7 @@ async function seedDatabase() {
         password: 'AdminPassword123!',
         role: 'admin'
       });
-      console.log(`✓ Initial Admin created: ${adminEmail} (Password: AdminPassword123!)`);
-    } else {
-      console.log(`Administrator account (${adminEmail}) already exists.`);
+      console.log(`✓ Initial Admin created: ${adminEmail}`);
     }
 
     console.log('✨ Seed and update complete.');

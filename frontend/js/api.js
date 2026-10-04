@@ -137,6 +137,197 @@ class ApiService {
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.message || 'Failed to retrieve orders');
+    return Array.isArray(data) ? data : (data.orders || []);
+  }
+
+  // Customer Customization Inquiries API
+  async submitInquiry(inquiryPayload) {
+    const res = await fetch(`${this.baseUrl}/inquiries`, {
+      method: 'POST',
+      headers: this.getHeaders(false),
+      body: JSON.stringify(inquiryPayload)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Failed to submit customization inquiry');
+    return data;
+  }
+
+  async getInquiries(params = {}) {
+    const query = new URLSearchParams(params).toString();
+    const res = await fetch(`${this.baseUrl}/inquiries${query ? '?' + query : ''}`, {
+      headers: this.getHeaders(true)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Failed to fetch inquiries');
+    return data.inquiries || data;
+  }
+
+  async updateInquiryStatus(id, status) {
+    const res = await fetch(`${this.baseUrl}/inquiries/${id}/status`, {
+      method: 'PATCH',
+      headers: this.getHeaders(true),
+      body: JSON.stringify({ status })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Failed to update inquiry status');
+    return data;
+  }
+
+  async addInquiryNote(id, note) {
+    const res = await fetch(`${this.baseUrl}/inquiries/${id}/notes`, {
+      method: 'POST',
+      headers: this.getHeaders(true),
+      body: JSON.stringify({ note })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Failed to add note');
+    return data;
+  }
+
+  // Customer General Contact Messages API
+  async submitContactMessage(contactPayload) {
+    const res = await fetch(`${this.baseUrl}/contact`, {
+      method: 'POST',
+      headers: this.getHeaders(false),
+      body: JSON.stringify(contactPayload)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Failed to send message');
+    return data;
+  }
+
+  async getContactMessages(status = 'all') {
+    const res = await fetch(`${this.baseUrl}/contact${status !== 'all' ? '?status=' + status : ''}`, {
+      headers: this.getHeaders(true)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Failed to fetch contact messages');
+    return data.messages || data;
+  }
+
+  async updateContactStatus(id, status, adminReply = '') {
+    const res = await fetch(`${this.baseUrl}/contact/${id}/status`, {
+      method: 'PATCH',
+      headers: this.getHeaders(true),
+      body: JSON.stringify({ status, adminReply })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Failed to update message status');
+    return data;
+  }
+
+  // Store Settings & WhatsApp API
+  async getPublicSettings() {
+    try {
+      const res = await fetch(`${this.baseUrl}/settings/public`);
+      if (!res.ok) throw new Error('Settings unavailable');
+      return await res.json();
+    } catch (e) {
+      return { settings: { whatsappNumber: CONFIG.BUSINESS_WHATSAPP_NUMBER || '' } };
+    }
+  }
+
+  async getAllSettings() {
+    const res = await fetch(`${this.baseUrl}/settings`, {
+      headers: this.getHeaders(true)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Failed to fetch settings');
+    return data.settings || {};
+  }
+
+  async updateSetting(key, value) {
+    const res = await fetch(`${this.baseUrl}/settings`, {
+      method: 'PUT',
+      headers: this.getHeaders(true),
+      body: JSON.stringify({ key, value })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Failed to update setting');
+    return data;
+  }
+
+  // Admin Dashboard & Order Management API
+  async getDashboardStats() {
+    const res = await fetch(`${this.baseUrl}/orders/stats`, {
+      headers: this.getHeaders(true)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Failed to fetch dashboard stats');
+    return data;
+  }
+
+  async getAllOrders(params = {}) {
+    const query = new URLSearchParams(params).toString();
+    const res = await fetch(`${this.baseUrl}/orders${query ? '?' + query : ''}`, {
+      headers: this.getHeaders(true)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Failed to fetch orders');
+    return data.orders || data;
+  }
+
+  async getOrderById(id) {
+    const res = await fetch(`${this.baseUrl}/orders/${id}`, {
+      headers: this.getHeaders(true)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Failed to fetch order');
+    return data.order || data;
+  }
+
+  async updateOrderStatus(id, orderStatus, paymentStatus) {
+    const res = await fetch(`${this.baseUrl}/orders/${id}/status`, {
+      method: 'PUT',
+      headers: this.getHeaders(true),
+      body: JSON.stringify({ orderStatus, paymentStatus })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Failed to update order status');
+    return data;
+  }
+
+  async recordWhatsAppOrder(orderPayload) {
+    const res = await fetch(`${this.baseUrl}/orders/record-whatsapp`, {
+      method: 'POST',
+      headers: this.getHeaders(true),
+      body: JSON.stringify(orderPayload)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Failed to record WhatsApp order');
+    return data;
+  }
+
+  // Product Management (Admin)
+  async createProduct(productPayload) {
+    const res = await fetch(`${this.baseUrl}/products`, {
+      method: 'POST',
+      headers: this.getHeaders(true),
+      body: JSON.stringify(productPayload)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Failed to create product');
+    return data;
+  }
+
+  async updateProduct(id, productPayload) {
+    const res = await fetch(`${this.baseUrl}/products/${id}`, {
+      method: 'PUT',
+      headers: this.getHeaders(true),
+      body: JSON.stringify(productPayload)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Failed to update product');
+    return data;
+  }
+
+  async deleteProduct(id) {
+    const res = await fetch(`${this.baseUrl}/products/${id}`, {
+      method: 'DELETE',
+      headers: this.getHeaders(true)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Failed to delete product');
     return data;
   }
 

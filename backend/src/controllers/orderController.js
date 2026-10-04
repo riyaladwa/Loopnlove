@@ -1,5 +1,6 @@
 import { Order } from '../models/Order.js';
 import { Product } from '../models/Product.js';
+import { Inquiry } from '../models/Inquiry.js';
 
 // @desc    Create a new order with server-side price validation
 // @route   POST /api/orders
@@ -118,14 +119,32 @@ export const createOrder = async (req, res, next) => {
 // @access  Private
 export const getMyOrders = async (req, res, next) => {
   try {
-    const orders = await Order.find({
-      $or: [
-        { user: req.user._id },
-        { 'customer.email': req.user.email }
-      ]
-    }).sort({ createdAt: -1 });
+    const userQuery = [{ user: req.user._id }];
+    if (req.user.email) {
+      userQuery.push({ 'customer.email': new RegExp(`^${req.user.email.trim()}$`, 'i') });
+    }
+    const orders = await Order.find({ $or: userQuery }).sort({ createdAt: -1 });
 
-    res.json(orders);
+    res.json({
+      success: true,
+      count: orders.length,
+      orders
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc    Get single order details (Admin only)
+// @route   GET /api/orders/:id
+// @access  Private/Admin
+export const getOrderById = async (req, res, next) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Order not found' });
+    }
+    res.json({ success: true, order });
   } catch (err) {
     next(err);
   }
@@ -136,7 +155,23 @@ export const getMyOrders = async (req, res, next) => {
 // @access  Private/Admin
 export const getAllOrders = async (req, res, next) => {
   try {
-    const orders = await Order.find({}).sort({ createdAt: -1 });
+    const { status, search } = req.query;
+    const query = {};
+
+    if (status && status !== 'all') {
+      query.orderStatus = status;
+    }
+
+    if (search) {
+      query.$or = [
+        { orderReference: { $regex: search, $options: 'i' } },
+        { 'customer.name': { $regex: search, $options: 'i' } },
+        { 'customer.phone': { $regex: search, $options: 'i' } },
+        { 'customer.email': { $regex: search, $options: 'i' } }
+      ];
+    }
+
+    const orders = await Order.find(query).sort({ createdAt: -1 });
     res.json({
       success: true,
       count: orders.length,
@@ -146,6 +181,52 @@ export const getAllOrders = async (req, res, next) => {
     next(err);
   }
 };
+
+// @desc    Get aggregate dashboard metrics (Admin only)
+// @route   GET /api/orders/stats
+// @access  Private/Admin
+export const getDashboardStats = async (req, res, next) => {
+  try {
+    const totalOrders = await Order.countDocuments();
+    const pendingOrders = await Order.countDocuments({
+      orderStatus: { $in: ['Pending', 'Processing', 'Order Received'] }
+    });
+    const completedOrders = await Order.countDocuments({
+      orderStatus: { $in: ['Shipped', 'Delivered'] }
+    });
+
+    const revenueAgg = await Order.aggregate([
+      { $match: { orderStatus: { $ne: 'Cancelled' } } },
+      { $group: { _id: null, total: { $sum: '$totalAmount' } } }
+    ]);
+    const totalRevenue = revenueAgg.length > 0 ? revenueAgg[0].total : 0;
+
+    const totalInquiries = await Inquiry.countDocuments();
+    const newInquiries = await Inquiry.countDocuments({ status: 'new' });
+    const totalProducts = await Product.countDocuments();
+
+    const recentOrders = await Order.find().sort({ createdAt: -1 }).limit(5);
+    const recentInquiries = await Inquiry.find().sort({ createdAt: -1 }).limit(5);
+
+    res.json({
+      success: true,
+      stats: {
+        totalRevenue,
+        totalOrders,
+        pendingOrders,
+        completedOrders,
+        totalInquiries,
+        newInquiries,
+        totalProducts
+      },
+      recentOrders,
+      recentInquiries
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 
 // @desc    Update order status (Admin only)
 // @route   PUT /api/orders/:id/status

@@ -147,9 +147,13 @@ export const getCategories = async (req, res, next) => {
 // @access  Private/Admin
 export const createProduct = async (req, res, next) => {
   try {
-    const { name, category, price, description, image, images, stockQuantity, featured, isNewArrival, customizable } = req.body;
+    const { name, category, price, description, image, images, stockQuantity, inStock, featured, isNewArrival, customizable, isConcept, conceptNote } = req.body;
 
-    const identifier = `bouquet-${Date.now().toString().slice(-4)}`;
+    const slug = (name || 'product')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+    const identifier = `${slug}-${Date.now().toString().slice(-4)}`;
 
     const product = await Product.create({
       name,
@@ -158,12 +162,14 @@ export const createProduct = async (req, res, next) => {
       price: Number(price),
       description,
       image,
-      images: images || [image],
-      stockQuantity: stockQuantity ? Number(stockQuantity) : 10,
-      inStock: (stockQuantity ? Number(stockQuantity) : 10) > 0,
+      images: images && images.length > 0 ? images : [image],
+      stockQuantity: stockQuantity !== undefined ? Number(stockQuantity) : 10,
+      inStock: inStock !== undefined ? Boolean(inStock) : (Number(stockQuantity) > 0),
       featured: Boolean(featured),
       isNewArrival: Boolean(isNewArrival),
-      customizable: customizable !== undefined ? Boolean(customizable) : true
+      customizable: customizable !== undefined ? Boolean(customizable) : true,
+      isConcept: Boolean(isConcept),
+      conceptNote: conceptNote || ''
     });
 
     res.status(201).json({
@@ -181,13 +187,16 @@ export const createProduct = async (req, res, next) => {
 // @access  Private/Admin
 export const updateProduct = async (req, res, next) => {
   try {
-    const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
+    const isObjectId = /^[0-9a-fA-F]{24}$/.test(req.params.id);
+    const filter = isObjectId ? { _id: req.params.id } : { identifier: req.params.id };
+
+    const product = await Product.findOneAndUpdate(filter, req.body, {
       new: true,
       runValidators: true
     });
 
     if (!product) {
-      return res.status(404).json({ message: 'Product not found' });
+      return res.status(404).json({ success: false, message: 'Product not found' });
     }
 
     res.json({
@@ -205,12 +214,16 @@ export const updateProduct = async (req, res, next) => {
 // @access  Private/Admin
 export const deleteProduct = async (req, res, next) => {
   try {
-    const product = await Product.findByIdAndDelete(req.params.id);
+    const isObjectId = /^[0-9a-fA-F]{24}$/.test(req.params.id);
+    const filter = isObjectId ? { _id: req.params.id } : { identifier: req.params.id };
+
+    const product = await Product.findOneAndDelete(filter);
     if (!product) {
-      return res.status(404).json({ message: 'Product not found' });
+      return res.status(404).json({ success: false, message: 'Product not found' });
     }
     res.json({ success: true, message: 'Product deleted successfully' });
   } catch (err) {
     next(err);
   }
 };
+

@@ -18,8 +18,8 @@ export const CONFIG = {
   DISPATCH_ESTIMATE: 'Dispatches in 3–5 days',
 
   // API URL - connects to local Node/Express backend in dev, or deployed URL in production
-  API_BASE_URL: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? `${window.location.protocol}//${window.location.hostname}:5001/api`
+  API_BASE_URL: (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:'))
+    ? `${(window.location.protocol === 'https:' ? 'https:' : 'http:')}//${window.location.hostname || 'localhost'}:5001/api`
     : '/api',
 
   // Configurable Business WhatsApp Number (E.164 format, e.g. 919876543210)

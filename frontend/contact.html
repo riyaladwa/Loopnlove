@@ -68,58 +68,151 @@
 
       <div class="cart-grid">
         <!-- Form Column -->
-        <div class="cart-items-card">
-          <h3>Send Us a Message</h3>
+        <div class="cart-items-card" id="inquiry-form-card">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <h3 style="margin-bottom: 0;">Bespoke Crochet Customization Inquiry</h3>
+            <span class="badge badge-stock">All Categories Supported</span>
+          </div>
           <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">
-            Fill out the details below and we will get back to you promptly.
+            Whether you want custom flower colors, a personalized granny-square bag, tailored hair bows, or a one-of-a-kind amigurumi keepsake, describe your idea below and our artisan will craft a custom quote for you.
           </p>
 
-          <form id="contact-form" novalidate>
+          <div id="inquiry-alert-box" style="display: none; padding: 0.9rem 1.25rem; border-radius: var(--radius-md); font-size: 0.9rem; margin-bottom: 1.5rem;"></div>
+
+          <form id="inquiry-form" novalidate>
+            <!-- Row 1: Name & Phone -->
             <div class="form-row">
-              <div class="form-group" id="grp-contact-name">
-                <label class="form-label" for="contact-name">Your Name *</label>
-                <input type="text" id="contact-name" class="form-control" placeholder="Aanya" required>
+              <div class="form-group" id="grp-inq-name">
+                <label class="form-label" for="inq-name">Customer Name *</label>
+                <input type="text" id="inq-name" class="form-control" placeholder="Aanya Sharma" required>
                 <span class="form-error">Please provide your name</span>
               </div>
 
-              <div class="form-group" id="grp-contact-phone">
-                <label class="form-label" for="contact-phone">WhatsApp / Phone *</label>
-                <input type="tel" id="contact-phone" class="form-control" placeholder="9876543210" required>
-                <span class="form-error">Please provide a contact number</span>
+              <div class="form-group" id="grp-inq-phone">
+                <label class="form-label" for="inq-phone">Phone / WhatsApp Number *</label>
+                <input type="tel" id="inq-phone" class="form-control" placeholder="9876543210" required>
+                <span class="form-error">Please provide a valid phone or WhatsApp number</span>
               </div>
             </div>
 
-            <div class="form-group" id="grp-contact-email">
-              <label class="form-label" for="contact-email">Email Address *</label>
-              <input type="email" id="contact-email" class="form-control" placeholder="aanya@example.com" required>
-              <span class="form-error">Please provide a valid email</span>
+            <!-- Row 2: Email & Category -->
+            <div class="form-row">
+              <div class="form-group" id="grp-inq-email">
+                <label class="form-label" for="inq-email">Email Address *</label>
+                <input type="email" id="inq-email" class="form-control" placeholder="aanya@example.com" required>
+                <span class="form-error">Please provide a valid email address</span>
+              </div>
+
+              <div class="form-group" id="grp-inq-category">
+                <label class="form-label" for="inq-category">Product Category *</label>
+                <select id="inq-category" class="form-control" required>
+                  <option value="Crochet Flowers & Bouquets">Crochet Flowers &amp; Bouquets</option>
+                  <option value="Hair Accessories">Hair Accessories</option>
+                  <option value="Crochet Bags">Crochet Bags</option>
+                  <option value="Granny-Square Crochet Bags">Granny-Square Crochet Bags</option>
+                  <option value="Keychains">Keychains</option>
+                  <option value="Custom Keychains">Custom Keychains</option>
+                  <option value="Crochet Gifts">Crochet Gifts</option>
+                  <option value="Other Handmade Crochet">Other Handmade Crochet</option>
+                </select>
+              </div>
             </div>
 
+            <!-- Row 3: Product Name (Optional) & Quantity -->
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="inq-product-name">
+                  Product Name / Existing Design Reference
+                  <span style="font-weight: normal; color: var(--text-muted); font-size: 0.82rem;">(optional)</span>
+                </label>
+                <input type="text" id="inq-product-name" class="form-control" placeholder="e.g. Bouquet 06, Daisy Tote Bag, Red Hair Bow...">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="inq-quantity">Requested Quantity *</label>
+                <input type="number" id="inq-quantity" class="form-control" value="1" min="1" max="100" required>
+              </div>
+            </div>
+
+            <!-- Row 4: Customization Description -->
+            <div class="form-group" id="grp-inq-customization">
+              <label class="form-label" for="inq-customization">Requested Customization &amp; Design Idea *</label>
+              <textarea id="inq-customization" class="form-control" style="min-height: 110px;" placeholder="Describe what you want customized: specific flower arrangements, bag dimensions, clasp types, monogram initials, patterns..." required></textarea>
+              <span class="form-error">Please describe your requested customization</span>
+            </div>
+
+            <!-- Row 5: Preferred Colors & Budget -->
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="inq-colours">Preferred Yarn Colours</label>
+                <input type="text" id="inq-colours" class="form-control" placeholder="e.g. Lavender, Sage Green, Milk White">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="inq-budget">
+                  Target Budget
+                  <span style="font-weight: normal; color: var(--text-muted); font-size: 0.82rem;">(optional)</span>
+                </label>
+                <input type="text" id="inq-budget" class="form-control" placeholder="e.g. ₹500 – ₹800">
+              </div>
+            </div>
+
+            <!-- Row 6: Additional Instructions -->
             <div class="form-group">
-              <label class="form-label" for="contact-topic">Inquiry Type</label>
-              <select id="contact-topic" class="form-control">
-                <option value="custom">Custom Bouquet Order (Specific colors &amp; flowers)</option>
-                <option value="order-status">Existing Order Status</option>
-                <option value="corporate-gifting">Bulk / Event / Wedding Gifting</option>
-                <option value="general">General Question</option>
-              </select>
+              <label class="form-label" for="inq-instructions">Additional Instructions / Occasion / Target Delivery Date</label>
+              <textarea id="inq-instructions" class="form-control" style="min-height: 75px;" placeholder="Any special packaging requests, anniversary/birthday deadlines, recipient notes..."></textarea>
             </div>
 
-            <div class="form-group" id="grp-contact-msg">
-              <label class="form-label" for="contact-message">Your Requirements / Details *</label>
-              <textarea id="contact-message" class="form-control" style="min-height: 120px;" placeholder="Tell us about the colors, flowers (roses, tulips, sunflowers), quantity, or date needed..." required></textarea>
-              <span class="form-error">Please describe your inquiry</span>
+            <!-- Row 7: Reference Image Upload (Optional) -->
+            <div class="form-group">
+              <label class="form-label" for="inq-image-file">
+                Reference Image / Sketch / Photo
+                <span style="font-weight: normal; color: var(--text-muted); font-size: 0.82rem;">(optional, max 5MB)</span>
+              </label>
+              <input type="file" id="inq-image-file" class="form-control" accept="image/*" style="padding: 0.5rem 0.75rem;">
+              <input type="hidden" id="inq-image-base64">
+              <div id="inq-image-preview-container" style="display: none; margin-top: 0.75rem; align-items: center; gap: 1rem;">
+                <img id="inq-image-preview" src="" alt="Reference Preview" style="width: 70px; height: 70px; object-fit: cover; border-radius: var(--radius-md); border: 1px solid var(--border-warm);">
+                <div>
+                  <div style="font-size: 0.85rem; font-weight: 600;" id="inq-image-name">image.jpg</div>
+                  <button type="button" id="inq-image-remove" class="btn btn-secondary btn-sm" style="margin-top: 0.25rem; font-size: 0.78rem; padding: 0.25rem 0.6rem;">Remove Image</button>
+                </div>
+              </div>
             </div>
 
-            <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1.5rem;">
-              <button type="submit" class="btn btn-primary btn-lg">
-                Submit Inquiry
+            <!-- Form Actions -->
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1.75rem;">
+              <button type="submit" id="inq-submit-btn" class="btn btn-primary btn-lg">
+                Submit Customization Inquiry
               </button>
-              <button type="button" id="contact-wa-btn" class="btn btn-whatsapp btn-lg">
-                Chat Directly on WhatsApp
+              <button type="button" id="inq-wa-btn" class="btn btn-whatsapp btn-lg">
+                Discuss on WhatsApp 💬
               </button>
             </div>
           </form>
+
+          <!-- Success Confirmation View (Hidden by default, shown after MongoDB save) -->
+          <div id="inquiry-success-view" style="display: none; text-align: center; padding: 2rem 1rem;">
+            <div style="width: 64px; height: 64px; border-radius: 50%; background-color: #E7F9EE; color: #25D366; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; font-size: 2rem;">
+              ✓
+            </div>
+            <h2 style="font-family: var(--font-serif); margin-bottom: 0.5rem; color: var(--text-cocoa-heading);">Inquiry Received!</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem; max-width: 480px; margin: 0 auto 1.5rem; line-height: 1.6;">
+              Thank you, <strong id="success-inq-name">Friend</strong>. Your custom crochet inquiry has been recorded directly in our boutique artisan workshop queue.
+            </p>
+            <div style="background-color: var(--bg-surface); border: 1px solid var(--border-warm); border-radius: var(--radius-md); padding: 1.25rem; max-width: 440px; margin: 0 auto 1.75rem; text-align: left; font-size: 0.9rem; line-height: 1.6;">
+              <div><strong>Reference ID:</strong> <span id="success-inq-ref" style="font-family: monospace; font-weight: 700; color: var(--primary-rose);">#INQ-000000</span></div>
+              <div><strong>Category:</strong> <span id="success-inq-cat"></span></div>
+              <div><strong>Status:</strong> <span class="badge badge-stock">New / Under Review</span></div>
+              <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.5rem;">
+                Our artisan will review your design requirements and get in touch within 24 hours.
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+              <button type="button" id="new-inquiry-btn" class="btn btn-secondary btn-sm">Submit Another Inquiry</button>
+              <a href="shop.html" class="btn btn-primary btn-sm">Browse Collections</a>
+            </div>
+          </div>
         </div>
 
         <!-- Info Column -->
@@ -162,7 +255,7 @@
               <div>
                 <strong>Custom Orders Lead Time:</strong>
                 <p style="font-size: 0.88rem; color: var(--text-muted); margin: 0.2rem 0 0 0;">
-                  Standard bouquets dispatch in 24–48 hours. Custom bespoke orders typically require 3–5 days to hand-stitch.
+                  Dispatches in 3–5 days. Bespoke multi-flower bouquets and granny-square bags are lovingly crocheted to order.
                 </p>
               </div>
             </div>
@@ -170,7 +263,7 @@
 
           <div class="notice-box" style="margin-top: 2rem;">
             <strong>Custom Gifting Tip:</strong><br>
-            For birthday or anniversary gifts, please book at least 7 days in advance to ensure timely artisan completion and express delivery.
+            For birthday or anniversary gifts, please submit your inquiry at least 7 days in advance to ensure timely artisan completion and express delivery across India.
           </div>
         </div>
       </div>
@@ -184,31 +277,164 @@
   </footer>
 
   <script type="module">
+    import { API } from './js/api.js';
     import { showToast } from './js/main.js';
-    import { openWhatsAppOrder } from './js/whatsapp.js';
+    import { openWhatsAppCustomInquiry } from './js/whatsapp.js';
 
     document.addEventListener('DOMContentLoaded', () => {
-      const form = document.getElementById('contact-form');
-      form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const name = document.getElementById('contact-name').value.trim();
-        const email = document.getElementById('contact-email').value.trim();
-        const phone = document.getElementById('contact-phone').value.trim();
-        const msg = document.getElementById('contact-message').value.trim();
+      const form = document.getElementById('inquiry-form');
+      const alertBox = document.getElementById('inquiry-alert-box');
+      const submitBtn = document.getElementById('inq-submit-btn');
+      const successView = document.getElementById('inquiry-success-view');
 
-        if (!name || !email || !phone || !msg) {
-          showToast('Please complete all required fields.', 'error');
+      // Check URL parameters for pre-filling category or product
+      const urlParams = new URLSearchParams(window.location.search);
+      const paramCategory = urlParams.get('category');
+      const paramProduct = urlParams.get('product');
+
+      if (paramCategory) {
+        const catSelect = document.getElementById('inq-category');
+        for (let i = 0; i < catSelect.options.length; i++) {
+          if (catSelect.options[i].value.toLowerCase() === paramCategory.toLowerCase()) {
+            catSelect.selectedIndex = i;
+            break;
+          }
+        }
+      }
+
+      if (paramProduct) {
+        document.getElementById('inq-product-name').value = paramProduct;
+      }
+
+      // Handle Reference Image Upload
+      const fileInput = document.getElementById('inq-image-file');
+      const base64Input = document.getElementById('inq-image-base64');
+      const previewContainer = document.getElementById('inq-image-preview-container');
+      const previewImg = document.getElementById('inq-image-preview');
+      const previewName = document.getElementById('inq-image-name');
+      const removeBtn = document.getElementById('inq-image-remove');
+
+      fileInput.addEventListener('change', () => {
+        const file = fileInput.files[0];
+        if (!file) return;
+
+        if (file.size > 5 * 1024 * 1024) {
+          showToast('Image file must be under 5MB', 'error');
+          fileInput.value = '';
           return;
         }
 
-        showToast('Thank you! Your custom inquiry has been received. We will contact you soon.');
-        form.reset();
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          base64Input.value = e.target.result;
+          previewImg.src = e.target.result;
+          previewName.textContent = file.name;
+          previewContainer.style.display = 'flex';
+        };
+        reader.readAsDataURL(file);
       });
 
-      document.getElementById('contact-wa-btn')?.addEventListener('click', () => {
-        const name = document.getElementById('contact-name').value.trim();
-        const msg = document.getElementById('contact-message').value.trim();
-        openWhatsAppOrder([], 0, `Custom Inquiry from ${name || 'Customer'}: ${msg || 'Hello, I would like to inquire about a custom bouquet!'}`);
+      removeBtn.addEventListener('click', () => {
+        fileInput.value = '';
+        base64Input.value = '';
+        previewContainer.style.display = 'none';
+        previewImg.src = '';
+      });
+
+      // Form validation & submission
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        alertBox.style.display = 'none';
+
+        const name = document.getElementById('inq-name').value.trim();
+        const phone = document.getElementById('inq-phone').value.trim();
+        const email = document.getElementById('inq-email').value.trim();
+        const category = document.getElementById('inq-category').value;
+        const productName = document.getElementById('inq-product-name').value.trim();
+        const quantity = parseInt(document.getElementById('inq-quantity').value) || 1;
+        const customization = document.getElementById('inq-customization').value.trim();
+        const colours = document.getElementById('inq-colours').value.trim();
+        const budget = document.getElementById('inq-budget').value.trim();
+        const instructions = document.getElementById('inq-instructions').value.trim();
+        const referenceImage = base64Input.value;
+
+        // Frontend validation
+        let valid = true;
+        const grpName = document.getElementById('grp-inq-name');
+        const grpPhone = document.getElementById('grp-inq-phone');
+        const grpEmail = document.getElementById('grp-inq-email');
+        const grpCustom = document.getElementById('grp-inq-customization');
+
+        if (!name) { grpName.classList.add('has-error'); valid = false; } else grpName.classList.remove('has-error');
+        if (!phone || phone.length < 8) { grpPhone.classList.add('has-error'); valid = false; } else grpPhone.classList.remove('has-error');
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { grpEmail.classList.add('has-error'); valid = false; } else grpEmail.classList.remove('has-error');
+        if (!customization) { grpCustom.classList.add('has-error'); valid = false; } else grpCustom.classList.remove('has-error');
+
+        if (!valid) {
+          alertBox.style.display = 'block';
+          alertBox.style.backgroundColor = 'var(--accent-danger-bg)';
+          alertBox.style.color = 'var(--accent-danger)';
+          alertBox.textContent = 'Please complete all required fields marked with an asterisk (*).';
+          return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Submitting to Boutique...';
+
+        try {
+          const payload = {
+            name,
+            email,
+            phone,
+            category,
+            productName,
+            requestedCustomization: customization,
+            preferredColours: colours,
+            quantity,
+            budget,
+            instructions,
+            referenceImage
+          };
+
+          const response = await API.submitInquiry(payload);
+
+          // Clear form and display success view
+          form.style.display = 'none';
+          successView.style.display = 'block';
+          document.getElementById('success-inq-name').textContent = name;
+          document.getElementById('success-inq-ref').textContent = response.inquiryReference || '#INQ-RECEIVED';
+          document.getElementById('success-inq-cat').textContent = category;
+
+          showToast('Custom inquiry successfully received! Reference: ' + (response.inquiryReference || ''));
+          window.scrollTo({ top: document.getElementById('inquiry-form-card').offsetTop - 60, behavior: 'smooth' });
+
+        } catch (err) {
+          alertBox.style.display = 'block';
+          alertBox.style.backgroundColor = 'var(--accent-danger-bg)';
+          alertBox.style.color = 'var(--accent-danger)';
+          alertBox.textContent = err.message || 'Unable to submit inquiry. Please verify your connection or try again.';
+          showToast(err.message || 'Submission failed. Please check form details.', 'error');
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit Customization Inquiry';
+        }
+      });
+
+      // Submit another inquiry button
+      document.getElementById('new-inquiry-btn')?.addEventListener('click', () => {
+        form.reset();
+        base64Input.value = '';
+        previewContainer.style.display = 'none';
+        successView.style.display = 'none';
+        form.style.display = 'block';
+      });
+
+      // Direct WhatsApp Click-to-Chat
+      document.getElementById('inq-wa-btn')?.addEventListener('click', () => {
+        const category = document.getElementById('inq-category').value;
+        const customization = document.getElementById('inq-customization').value.trim();
+        const colours = document.getElementById('inq-colours').value.trim();
+        openWhatsAppCustomInquiry(category, customization, colours);
       });
     });
   </script>

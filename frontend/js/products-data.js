@@ -315,13 +315,62 @@ export const INITIAL_PRODUCTS = [
     isNewArrival: true,
     pdfPage: 4,
     customizable: true
+  },
+  {
+    id: 'bag-concept-01',
+    name: 'Daisy Bloom Granny-Square Tote (Concept)',
+    category: 'Crochet Bags',
+    price: 550,
+    image: 'assets/product-images/concept_bag_01.svg',
+    images: ['assets/product-images/concept_bag_01.svg'],
+    description: 'Design concept for custom made-to-order requests. Classic granny-square tote featuring cream daisy center motifs, sage green borders, and sturdy double-crochet shoulder straps. Final pricing and custom color palette confirmed upon inquiry.',
+    inStock: false,
+    stockQuantity: 0,
+    featured: false,
+    isNewArrival: true,
+    isConcept: true,
+    conceptNote: 'Proposed design concept. Artisan photos will replace illustrations upon stitch completion.',
+    customizable: true
+  },
+  {
+    id: 'bag-concept-02',
+    name: 'Pastel Meadow Patchwork Bag (Concept)',
+    category: 'Crochet Bags',
+    price: 580,
+    image: 'assets/product-images/concept_bag_02.svg',
+    images: ['assets/product-images/concept_bag_02.svg'],
+    description: 'Design concept for custom made-to-order requests. Multi-tone pastel squares in lavender, blush, buttercup yellow, and mint green with scalloped edge trim and reinforced base. Final pricing confirmed upon consultation.',
+    inStock: false,
+    stockQuantity: 0,
+    featured: false,
+    isNewArrival: true,
+    isConcept: true,
+    conceptNote: 'Proposed design concept. Artisan photos will replace illustrations upon stitch completion.',
+    customizable: true
+  },
+  {
+    id: 'bag-concept-03',
+    name: 'Vintage Sunburst Crossbody Bag (Concept)',
+    category: 'Crochet Bags',
+    price: 520,
+    image: 'assets/product-images/concept_bag_03.svg',
+    images: ['assets/product-images/concept_bag_03.svg'],
+    description: 'Design concept for custom made-to-order requests. Compact boho crossbody bag constructed from 4 vibrant sunburst granny motifs with wooden button clasp and braided strap. Final pricing confirmed upon consultation.',
+    inStock: false,
+    stockQuantity: 0,
+    featured: false,
+    isNewArrival: true,
+    isConcept: true,
+    conceptNote: 'Proposed design concept. Artisan photos will replace illustrations upon stitch completion.',
+    customizable: true
   }
 ];
 
 export const CATEGORIES = [
   { name: 'Crochet Flowers & Bouquets', count: 13, available: true },
   { name: 'Hair Accessories', count: 7, available: true },
+  { name: 'Crochet Bags', count: 3, available: true, isConcept: true },
   { name: 'Custom Keychains', count: 0, available: false },
-  { name: 'Crochet Bags', count: 0, available: false },
   { name: 'Keychains', count: 0, available: false }
 ];
+

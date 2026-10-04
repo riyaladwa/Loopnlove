@@ -274,7 +274,7 @@
     import { Cart } from './js/cart.js';
     import { Wishlist } from './js/wishlist.js';
     import { showToast, renderProductCard, attachProductCardListeners } from './js/main.js';
-    import { openWhatsAppOrder } from './js/whatsapp.js';
+    import { openWhatsAppProductChat } from './js/whatsapp.js';
 
     let currentProduct = null;
 
@@ -359,17 +359,30 @@
 
         // WhatsApp order action
         document.getElementById('whatsapp-order-action').addEventListener('click', () => {
-          const qty = parseInt(qtyInput.value) || 1;
           const notes = document.getElementById('detail-notes').value.trim();
-          openWhatsAppOrder([
-            {
-              name: currentProduct.name,
-              price: currentProduct.price,
-              quantity: qty,
-              customizationNotes: notes
-            }
-          ], currentProduct.price * qty, notes);
+          openWhatsAppProductChat(currentProduct.name, notes);
         });
+
+        // Concept handling: if concept, update badges and CTA
+        if (currentProduct.isConcept) {
+          const stockBadge = document.getElementById('detail-stock-badge');
+          if (stockBadge) {
+            stockBadge.className = 'badge badge-featured';
+            stockBadge.textContent = 'Design Concept (Made to Order)';
+          }
+          const sourceBadge = document.getElementById('detail-source-badge');
+          if (sourceBadge) {
+            sourceBadge.textContent = 'Proposed Custom Design (₹500–₹600)';
+          }
+          const addCartBtn = document.getElementById('add-to-cart-action');
+          if (addCartBtn) {
+            addCartBtn.textContent = 'Enquire to Custom Order This Bag';
+            addCartBtn.onclick = (e) => {
+              e.preventDefault();
+              window.location.href = `contact.html?category=Crochet Bags&product=${encodeURIComponent(currentProduct.name)}`;
+            };
+          }
+        }
 
         // Related bouquets
         const relatedGrid = document.getElementById('related-products-grid');

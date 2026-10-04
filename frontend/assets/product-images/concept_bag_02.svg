@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FDFBF7"/>
+      <stop offset="100%" stop-color="#EFE7EB"/>
+    </linearGradient>
+    <filter id="shadow2" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#7B5B6D" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <rect width="600" height="600" fill="url(#bgGrad2)"/>
+  
+  <g filter="url(#shadow2)" transform="translate(150, 110)">
+    <!-- Straps -->
+    <path d="M 70 70 C 70 -15, 230 -15, 230 70" fill="none" stroke="#9A7B8C" stroke-width="12" stroke-linecap="round"/>
+    
+    <!-- Bag Body -->
+    <rect x="30" y="60" width="240" height="260" rx="16" fill="#FFFFFF" stroke="#CBB4C1" stroke-width="3"/>
+    
+    <!-- 4 Granny Squares Pastel Meadow -->
+    <g transform="translate(45, 75)">
+      <!-- Square 1: Lavender -->
+      <rect x="5" y="5" width="95" height="105" rx="8" fill="#F0E8F2" stroke="#C5B1C9" stroke-width="2"/>
+      <circle cx="52" cy="57" r="22" fill="#B392B9"/>
+      <circle cx="52" cy="57" r="10" fill="#FFF275"/>
+
+      <!-- Square 2: Mint -->
+      <rect x="110" y="5" width="95" height="105" rx="8" fill="#E8F4F0" stroke="#AFD0C4" stroke-width="2"/>
+      <circle cx="157" cy="57" r="22" fill="#7EBAA5"/>
+      <circle cx="157" cy="57" r="10" fill="#FFFFFF"/>
+
+      <!-- Square 3: Buttercup -->
+      <rect x="5" y="120" width="95" height="105" rx="8" fill="#FCF8E8" stroke="#E6D799" stroke-width="2"/>
+      <circle cx="52" cy="172" r="22" fill="#F4DC78"/>
+      <circle cx="52" cy="172" r="10" fill="#FFFFFF"/>
+
+      <!-- Square 4: Rose -->
+      <rect x="110" y="120" width="95" height="105" rx="8" fill="#FCEEEF" stroke="#E5ADB2" stroke-width="2"/>
+      <circle cx="157" cy="172" r="22" fill="#D98A91"/>
+      <circle cx="157" cy="172" r="10" fill="#FFF8E7"/>
+    </g>
+  </g>
+
+  <!-- Clear Concept Badge -->
+  <rect x="110" y="460" width="380" height="42" rx="21" fill="#4A3428" opacity="0.92"/>
+  <text x="300" y="486" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF" letter-spacing="1.2">
+    PROPOSED DESIGN CONCEPT
+  </text>
+
+  <text x="300" y="530" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="600" fill="#8C4A50">
+    Pastel Meadow Patchwork Bag &bull; Custom Made-to-Order
+  </text>
+  <text x="300" y="552" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#7A6860">
+    Estimated: ₹500–₹600 (Subject to consultation)
+  </text>
+</svg>

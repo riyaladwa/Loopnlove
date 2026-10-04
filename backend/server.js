@@ -11,6 +11,9 @@ import authRoutes from './src/routes/authRoutes.js';
 import productRoutes from './src/routes/productRoutes.js';
 import orderRoutes from './src/routes/orderRoutes.js';
 import paymentRoutes from './src/routes/paymentRoutes.js';
+import inquiryRoutes from './src/routes/inquiryRoutes.js';
+import contactRoutes from './src/routes/contactRoutes.js';
+import settingRoutes from './src/routes/settingRoutes.js';
 import { notFoundHandler, errorHandler } from './src/middleware/errorMiddleware.js';
 import { apiLimiter } from './src/middleware/rateLimiter.js';
 
@@ -37,8 +40,8 @@ app.use(cors({
   credentials: true
 }));
 app.use(morgan('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Apply API rate limiting
 app.use('/api', apiLimiter);
@@ -58,6 +61,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/inquiries', inquiryRoutes);
+app.use('/api/contact', contactRoutes);
+app.use('/api/settings', settingRoutes);
 
 // Category shortcut endpoint
 import { getCategories } from './src/controllers/productController.js';

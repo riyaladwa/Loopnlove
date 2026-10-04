@@ -37,15 +37,33 @@ export function showToast(message, type = 'success') {
 // Generate reusable product card markup
 export function renderProductCard(product) {
   const inWishlist = Wishlist.isInWishlist(product.id);
-  const badgeHtml = product.featured
-    ? `<span class="badge badge-featured">Bestseller</span>`
-    : (product.isNewArrival ? `<span class="badge badge-featured">New</span>` : '');
+  const badgeHtml = product.isConcept
+    ? `<span class="badge badge-featured">Design Concept</span>`
+    : (product.featured
+        ? `<span class="badge badge-featured">Bestseller</span>`
+        : (product.isNewArrival ? `<span class="badge badge-featured">New</span>` : ''));
+
+  const stockBadge = product.isConcept
+    ? `<span class="badge badge-low" style="background:#FFF3E0; color:#E65100; border-color:#FFE0B2;">Made to Order</span>`
+    : `<span class="badge badge-stock">In Stock</span>`;
+
+  const actionButton = product.isConcept
+    ? `<a href="contact.html?category=${encodeURIComponent(product.category)}&product=${encodeURIComponent(product.name)}" class="btn btn-primary btn-sm">
+         Inquire Custom
+       </a>`
+    : `<button class="btn btn-primary btn-sm add-to-cart-btn" data-add-id="${product.id}">
+         Add to Cart
+       </button>`;
+
+  const priceLabel = product.isConcept
+    ? `<span class="text-muted" style="font-size: 0.8rem;">(Est. range ₹500–₹600)</span>`
+    : `<span class="text-muted" style="font-size: 0.8rem;">(incl. taxes)</span>`;
 
   return `
     <article class="product-card" data-product-id="${product.id}">
       <div class="product-image-container">
         <div class="product-badges">
-          <span class="badge badge-stock">In Stock</span>
+          ${stockBadge}
           ${badgeHtml}
         </div>
         <button class="wishlist-btn-overlay ${inWishlist ? 'active' : ''}" 
@@ -56,7 +74,7 @@ export function renderProductCard(product) {
           </svg>
         </button>
         <a href="product.html?id=${product.id}">
-          <img src="${product.image}" alt="${product.name} - Handmade crochet bouquet" loading="lazy" width="400" height="460">
+          <img src="${product.image}" alt="${product.name} - Handmade crochet creation" loading="lazy" width="400" height="460">
         </a>
       </div>
       <div class="product-content">
@@ -66,12 +84,10 @@ export function renderProductCard(product) {
         </h3>
         <div class="product-price-row">
           <span class="product-price">₹${product.price}</span>
-          <span class="text-muted" style="font-size: 0.8rem;">(incl. taxes)</span>
+          ${priceLabel}
         </div>
         <div class="product-actions">
-          <button class="btn btn-primary btn-sm add-to-cart-btn" data-add-id="${product.id}">
-            Add to Cart
-          </button>
+          ${actionButton}
           <a href="product.html?id=${product.id}" class="btn btn-secondary btn-sm" aria-label="View details for ${product.name}">
             Details
           </a>
