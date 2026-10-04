@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Shop All Handmade Crochet Bouquets — Loop n Love</title>
-  <meta name="description" content="Browse our authentic collection of 13 handmade crochet bouquets. Crafted with soft milk cotton yarn.">
+  <title>Shop All Handmade Crochet Products — Loop n Love</title>
+  <meta name="description" content="Browse our authentic handmade crochet flowers, bouquets, and hair accessories. Crafted with soft milk cotton yarn.">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23C46D75'><circle cx='12' cy='12' r='9'/></svg>">
 </head>
@@ -12,7 +12,7 @@
 
   <!-- Announcement Bar -->
   <aside class="announcement-bar" aria-label="Store announcement">
-    🌸 13 Authentic Handcrafted Bouquet Designs &bull; <strong>Free Delivery on orders over ₹999</strong>
+    🌸 20 Authentic Handcrafted Designs &bull; <strong>Free Delivery on orders over ₹999</strong> &bull; Dispatches in 3–5 days
   </aside>
 
   <!-- Navigation Header -->
@@ -33,7 +33,8 @@
         <ul class="nav-menu">
           <li><a href="index.html" class="nav-link">Home</a></li>
           <li><a href="shop.html" class="nav-link active">Shop Collection</a></li>
-          <li><a href="shop.html?category=Bouquets" class="nav-link">Bouquets</a></li>
+          <li><a href="shop.html?category=Crochet%20Flowers%20%26%20Bouquets" class="nav-link">Bouquets</a></li>
+          <li><a href="shop.html?category=Hair%20Accessories" class="nav-link">Hair Accessories</a></li>
           <li><a href="contact.html" class="nav-link">Custom Orders</a></li>
           <li><a href="contact.html" class="nav-link">Contact</a></li>
         </ul>
@@ -82,6 +83,8 @@
     <ul class="mobile-menu-list">
       <li><a href="index.html" class="nav-link">Home</a></li>
       <li><a href="shop.html" class="nav-link active">Shop Collection</a></li>
+      <li><a href="shop.html?category=Crochet%20Flowers%20%26%20Bouquets" class="nav-link">Flowers &amp; Bouquets</a></li>
+      <li><a href="shop.html?category=Hair%20Accessories" class="nav-link">Hair Accessories</a></li>
       <li><a href="wishlist.html" class="nav-link">My Wishlist</a></li>
       <li><a href="cart.html" class="nav-link">Shopping Cart</a></li>
       <li><a href="login.html" id="mobile-account-nav-link" class="nav-link">Login / Register</a></li>
@@ -99,9 +102,9 @@
           <span>/</span>
           <span>Shop</span>
         </nav>
-        <h1>Our Bouquet Collection</h1>
+        <h1>Our Handcrafted Catalogue</h1>
         <p class="text-muted" style="max-width: 580px; margin: 0 auto;">
-          Each bouquet is genuinely handcrafted using soft milk cotton yarn. Discover everlasting floral keepsakes designed to brighten any space.
+          Authentic crochet creations handcrafted stitch-by-stitch with soft milk cotton yarn. Discover everlasting floral bouquets and dainty hair accessories.
         </p>
       </div>
     </section>
@@ -113,25 +116,22 @@
         <!-- Category Filter Tabs -->
         <div class="category-filter-tabs" role="tablist" aria-label="Product categories">
           <button class="cat-tab-btn active" data-category="all" role="tab" aria-selected="true">
-            All Products (13)
+            All Products (20)
           </button>
-          <button class="cat-tab-btn" data-category="Bouquets" role="tab" aria-selected="false">
-            Bouquets (13)
+          <button class="cat-tab-btn" data-category="Crochet Flowers & Bouquets" role="tab" aria-selected="false">
+            Crochet Flowers &amp; Bouquets (13)
           </button>
-          <button class="cat-tab-btn" data-category="Crochet Flowers" role="tab" aria-selected="false" title="Available via custom orders">
-            Crochet Flowers (Custom)
+          <button class="cat-tab-btn" data-category="Hair Accessories" role="tab" aria-selected="false">
+            Hair Accessories (7)
           </button>
-          <button class="cat-tab-btn" data-category="Bows and Accessories" role="tab" aria-selected="false" title="Available via custom orders">
-            Bows &amp; Accessories (Custom)
-          </button>
-          <button class="cat-tab-btn" data-category="Keychains" role="tab" aria-selected="false" title="Available via custom orders">
-            Keychains (Custom)
+          <button class="cat-tab-btn" data-category="Custom Keychains" role="tab" aria-selected="false" title="Available via custom orders">
+            Custom Keychains (Custom)
           </button>
           <button class="cat-tab-btn" data-category="Crochet Bags" role="tab" aria-selected="false" title="Available via custom orders">
             Crochet Bags (Custom)
           </button>
-          <button class="cat-tab-btn" data-category="Custom Gifts" role="tab" aria-selected="false" title="Available via custom orders">
-            Custom Gifts (Custom)
+          <button class="cat-tab-btn" data-category="Keychains" role="tab" aria-selected="false" title="Available via custom orders">
+            Keychains (Custom)
           </button>
         </div>
 
@@ -142,12 +142,12 @@
               <circle cx="11" cy="11" r="8"></circle>
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
-            <input type="text" id="catalog-search" class="search-input" placeholder="Search by bouquet name or style..." aria-label="Search bouquets">
+            <input type="text" id="catalog-search" class="search-input" placeholder="Search by name, flower type, or style..." aria-label="Search products">
           </div>
 
           <div class="filter-actions">
             <span id="results-count-text" style="font-size: 0.88rem; color: var(--text-muted); font-weight: 500;">
-              Showing 13 bouquets
+              Showing 20 products
             </span>
 
             <select id="catalog-sort" class="filter-select" aria-label="Sort products">
@@ -171,16 +171,16 @@
         <!-- Loading State -->
         <div id="catalog-loading" style="display: none; text-align: center; padding: 4rem 0;">
           <div style="font-size: 2rem; margin-bottom: 0.5rem;">🌸</div>
-          <p style="color: var(--text-muted);">Loading authentic bouquet collection...</p>
+          <p style="color: var(--text-muted);">Loading authentic catalogue...</p>
         </div>
 
         <!-- Empty State -->
         <div id="catalog-empty" class="empty-state" style="display: none;">
           <div class="empty-state-icon">🔍</div>
-          <h3>No matching bouquets found</h3>
+          <h3>No matching creations found</h3>
           <p>We couldn't find any items matching your current search or filter. Try a different search term or view our full catalogue.</p>
           <button id="empty-reset-btn" class="btn btn-primary">
-            View All 13 Bouquets
+            View All 20 Products
           </button>
         </div>
 
@@ -188,7 +188,7 @@
     </section>
   </main>
 
-  <!-- Footer -->
+  <!-- Footer with Verified Contact Information -->
   <footer class="site-footer" role="contentinfo">
     <div class="container footer-grid">
       <div class="footer-brand">
@@ -200,8 +200,9 @@
       <div class="footer-col">
         <h4>Shop</h4>
         <ul class="footer-links">
-          <li><a href="shop.html">All Bouquets</a></li>
-          <li><a href="shop.html?category=Bouquets">Flower Bouquets</a></li>
+          <li><a href="shop.html">All Products</a></li>
+          <li><a href="shop.html?category=Crochet%20Flowers%20%26%20Bouquets">Flowers &amp; Bouquets</a></li>
+          <li><a href="shop.html?category=Hair%20Accessories">Hair Accessories</a></li>
           <li><a href="wishlist.html">My Wishlist</a></li>
           <li><a href="cart.html">Shopping Cart</a></li>
         </ul>
@@ -222,11 +223,19 @@
         <h4>Contact &amp; Studio</h4>
         <div class="footer-contact-item">
           <span>📍</span>
-          <span>India &bull; Handcrafted with care</span>
+          <span>Handcrafted with devotion in India.<br>Pan-India shipping available.</span>
         </div>
         <div class="footer-contact-item">
           <span>✉️</span>
-          <span>hello@loopnlove.com</span>
+          <span><a href="mailto:riyaladwa9@gmail.com" style="color: inherit; text-decoration: underline;">riyaladwa9@gmail.com</a></span>
+        </div>
+        <div class="footer-contact-item">
+          <span>⏰</span>
+          <span>Monday – Saturday: 7:00 AM onwards</span>
+        </div>
+        <div class="footer-contact-item">
+          <span>📦</span>
+          <span>Dispatches in 3–5 days</span>
         </div>
       </div>
     </div>
@@ -298,7 +307,7 @@
       }
 
       // Update UI count
-      countText.textContent = `Showing ${filtered.length} bouquet${filtered.length === 1 ? '' : 's'}`;
+      countText.textContent = `Showing ${filtered.length} product${filtered.length === 1 ? '' : 's'}`;
 
       // Toggle clear button
       const hasActiveFilters = currentCategory !== 'all' || currentSearch.trim().length > 0 || currentSort !== 'featured';

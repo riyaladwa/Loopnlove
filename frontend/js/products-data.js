@@ -1,24 +1,25 @@
 /**
- * Loop n Love - Initial Bouquet Catalogue Data
- * Extracted directly from Bouquet(3).pdf
- * Verified photographs and prices mapped exactly as provided.
+ * Loop n Love - Authoritative Verified Product Catalogue Data
+ * Extracted from Bouquet(3).pdf and hair.pdf
  *
- * NOTE: As per strict brand requirements:
- * - Temporary catalogue identifiers: Bouquet 01 to Bouquet 13
- * - Authentic prices in INR (₹) matching the PDF order
- * - Real product photographs extracted from the PDF
- * - No AI generated images, no invented prices, no fake reviews
+ * MAPPING VERIFICATION:
+ * - 13 Bouquets (Bouquet 01 to Bouquet 13) sorted top-to-bottom per PDF page
+ * - 7 Hair Accessories (Hair Accessory 01 to Hair Accessory 07) sorted top-to-bottom per PDF page
+ * - Strictly matches provided price lists & photos
  */
 
 export const INITIAL_PRODUCTS = [
+  // ==========================================
+  // CROCHET FLOWERS & BOUQUETS (13 ITEMS)
+  // ==========================================
   {
     id: 'bouquet-01',
     name: 'Bouquet 01',
-    category: 'Bouquets',
+    category: 'Crochet Flowers & Bouquets',
     price: 199,
     image: 'assets/product-images/bouquet_01.jpg',
     images: ['assets/product-images/bouquet_01.jpg'],
-    description: 'Handcrafted single crochet flower bouquet in a rich royal blue shade, wrapped in crisp white paper with a matching satin ribbon. Perfect as a delicate keepsake gift.',
+    description: 'Handcrafted single crochet flower bouquet in a rich royal blue shade, wrapped in crisp white paper with a matching blue satin ribbon.',
     inStock: true,
     stockQuantity: 10,
     featured: true,
@@ -29,11 +30,11 @@ export const INITIAL_PRODUCTS = [
   {
     id: 'bouquet-02',
     name: 'Bouquet 02',
-    category: 'Bouquets',
+    category: 'Crochet Flowers & Bouquets',
     price: 399,
     image: 'assets/product-images/bouquet_02.jpg',
     images: ['assets/product-images/bouquet_02.jpg'],
-    description: 'Charming pastel pink crochet roses with bud accents, wrapped in rustic mesh burlap and finished with a soft blush ribbon and heart tag.',
+    description: 'Charming pastel pink crochet roses with delicate bud accents, wrapped in rustic mesh burlap and finished with a soft blush ribbon and heart tag.',
     inStock: true,
     stockQuantity: 8,
     featured: true,
@@ -44,7 +45,7 @@ export const INITIAL_PRODUCTS = [
   {
     id: 'bouquet-03',
     name: 'Bouquet 03',
-    category: 'Bouquets',
+    category: 'Crochet Flowers & Bouquets',
     price: 399,
     image: 'assets/product-images/bouquet_03.jpg',
     images: ['assets/product-images/bouquet_03.jpg'],
@@ -59,11 +60,11 @@ export const INITIAL_PRODUCTS = [
   {
     id: 'bouquet-04',
     name: 'Bouquet 04',
-    category: 'Bouquets',
+    category: 'Crochet Flowers & Bouquets',
     price: 299,
     image: 'assets/product-images/bouquet_04.jpg',
     images: ['assets/product-images/bouquet_04.jpg'],
-    description: 'Handmade cream rose paired with a vibrant red crochet heart topper, wrapped in two-tone white and red paper with a bold satin ribbon.',
+    description: 'Handmade cream rose paired with a vibrant red crochet heart topper, wrapped in two-tone white and red paper with a bold red satin ribbon.',
     inStock: true,
     stockQuantity: 12,
     featured: false,
@@ -74,7 +75,7 @@ export const INITIAL_PRODUCTS = [
   {
     id: 'bouquet-05',
     name: 'Bouquet 05',
-    category: 'Bouquets',
+    category: 'Crochet Flowers & Bouquets',
     price: 699,
     image: 'assets/product-images/bouquet_05.jpg',
     images: ['assets/product-images/bouquet_05.jpg'],
@@ -89,11 +90,11 @@ export const INITIAL_PRODUCTS = [
   {
     id: 'bouquet-06',
     name: 'Bouquet 06',
-    category: 'Bouquets',
+    category: 'Crochet Flowers & Bouquets',
     price: 999,
     image: 'assets/product-images/bouquet_06.jpg',
     images: ['assets/product-images/bouquet_06.jpg'],
-    description: 'Generous bouquet of deep red crochet roses nestled closely in matte black packaging and tied with a clean white bow. A grand romantic statement.',
+    description: 'Generous cluster of deep red crochet roses nestled closely in matte black packaging and tied with a clean white bow. A grand romantic keepsake.',
     inStock: true,
     stockQuantity: 5,
     featured: true,
@@ -104,11 +105,11 @@ export const INITIAL_PRODUCTS = [
   {
     id: 'bouquet-07',
     name: 'Bouquet 07',
-    category: 'Bouquets',
+    category: 'Crochet Flowers & Bouquets',
     price: 899,
     image: 'assets/product-images/bouquet_07.jpg',
     images: ['assets/product-images/bouquet_07.jpg'],
-    description: 'Deluxe red crochet roses accented with delicate floral filler, wrapped in translucent black layered paper with satin ribbon. An exquisite handcrafted centerpiece.',
+    description: 'Deluxe red crochet roses accented with delicate floral filler, wrapped in translucent black layered paper with ribbon. An exquisite handcrafted centerpiece.',
     inStock: true,
     stockQuantity: 5,
     featured: true,
@@ -119,7 +120,7 @@ export const INITIAL_PRODUCTS = [
   {
     id: 'bouquet-08',
     name: 'Bouquet 08',
-    category: 'Bouquets',
+    category: 'Crochet Flowers & Bouquets',
     price: 399,
     image: 'assets/product-images/bouquet_08.jpg',
     images: ['assets/product-images/bouquet_08.jpg'],
@@ -134,7 +135,7 @@ export const INITIAL_PRODUCTS = [
   {
     id: 'bouquet-09',
     name: 'Bouquet 09',
-    category: 'Bouquets',
+    category: 'Crochet Flowers & Bouquets',
     price: 499,
     image: 'assets/product-images/bouquet_09.jpg',
     images: ['assets/product-images/bouquet_09.jpg'],
@@ -149,7 +150,7 @@ export const INITIAL_PRODUCTS = [
   {
     id: 'bouquet-10',
     name: 'Bouquet 10',
-    category: 'Bouquets',
+    category: 'Crochet Flowers & Bouquets',
     price: 599,
     image: 'assets/product-images/bouquet_10.jpg',
     images: ['assets/product-images/bouquet_10.jpg'],
@@ -164,7 +165,7 @@ export const INITIAL_PRODUCTS = [
   {
     id: 'bouquet-11',
     name: 'Bouquet 11',
-    category: 'Bouquets',
+    category: 'Crochet Flowers & Bouquets',
     price: 449,
     image: 'assets/product-images/bouquet_11.jpg',
     images: ['assets/product-images/bouquet_11.jpg'],
@@ -179,7 +180,7 @@ export const INITIAL_PRODUCTS = [
   {
     id: 'bouquet-12',
     name: 'Bouquet 12',
-    category: 'Bouquets',
+    category: 'Crochet Flowers & Bouquets',
     price: 449,
     image: 'assets/product-images/bouquet_12.jpg',
     images: ['assets/product-images/bouquet_12.jpg'],
@@ -194,7 +195,7 @@ export const INITIAL_PRODUCTS = [
   {
     id: 'bouquet-13',
     name: 'Bouquet 13',
-    category: 'Bouquets',
+    category: 'Crochet Flowers & Bouquets',
     price: 149,
     image: 'assets/product-images/bouquet_13.jpg',
     images: ['assets/product-images/bouquet_13.jpg'],
@@ -205,14 +206,122 @@ export const INITIAL_PRODUCTS = [
     isNewArrival: true,
     pdfPage: 7,
     customizable: true
+  },
+
+  // ==========================================
+  // HAIR ACCESSORIES (7 ITEMS)
+  // ==========================================
+  {
+    id: 'hair-01',
+    name: 'Hair Accessory 01',
+    category: 'Hair Accessories',
+    price: 249,
+    image: 'assets/product-images/hair_01.jpg',
+    images: ['assets/product-images/hair_01.jpg'],
+    description: 'Delicate handmade crochet flower hair piece featuring layered petals and flowing white crochet garland tassels with pink tips.',
+    inStock: true,
+    stockQuantity: 12,
+    featured: true,
+    isNewArrival: true,
+    pdfPage: 1,
+    customizable: true
+  },
+  {
+    id: 'hair-02',
+    name: 'Hair Accessory 02',
+    category: 'Hair Accessories',
+    price: 149,
+    image: 'assets/product-images/hair_02.jpg',
+    images: ['assets/product-images/hair_02.jpg'],
+    description: 'Handcrafted rose crochet hair clip with twin white crochet tassel drops, offering an elegant traditional touch.',
+    inStock: true,
+    stockQuantity: 15,
+    featured: false,
+    isNewArrival: false,
+    pdfPage: 1,
+    customizable: true
+  },
+  {
+    id: 'hair-03',
+    name: 'Hair Accessory 03',
+    category: 'Hair Accessories',
+    price: 199,
+    image: 'assets/product-images/hair_03.jpg',
+    images: ['assets/product-images/hair_03.jpg'],
+    description: 'Vintage-inspired crochet floral head bandana / kerchief in soft cream with dainty pastel pink flowers and green leaf accents.',
+    inStock: true,
+    stockQuantity: 10,
+    featured: true,
+    isNewArrival: true,
+    pdfPage: 2,
+    customizable: true
+  },
+  {
+    id: 'hair-04',
+    name: 'Hair Accessory 04',
+    category: 'Hair Accessories',
+    price: 99,
+    image: 'assets/product-images/hair_04.jpg',
+    images: ['assets/product-images/hair_04.jpg'],
+    description: 'Classic handcrafted red crochet bow hair clip made with soft milk cotton yarn. Perfect for half-up hairstyles.',
+    inStock: true,
+    stockQuantity: 20,
+    featured: false,
+    isNewArrival: false,
+    pdfPage: 2,
+    customizable: true
+  },
+  {
+    id: 'hair-05',
+    name: 'Hair Accessory 05',
+    category: 'Hair Accessories',
+    price: 149,
+    image: 'assets/product-images/hair_05.jpg',
+    images: ['assets/product-images/hair_05.jpg'],
+    description: 'Adorable handcrafted twin strawberry crochet hair tie with white bow detail. Charming and lightweight.',
+    inStock: true,
+    stockQuantity: 15,
+    featured: true,
+    isNewArrival: false,
+    pdfPage: 3,
+    customizable: true
+  },
+  {
+    id: 'hair-06',
+    name: 'Hair Accessory 06',
+    category: 'Hair Accessories',
+    price: 99,
+    image: 'assets/product-images/hair_06.jpg',
+    images: ['assets/product-images/hair_06.jpg'],
+    description: 'Cheerful miniature crochet sunflower hair scrunchie / clip with golden yellow petals and warm cocoa center.',
+    inStock: true,
+    stockQuantity: 20,
+    featured: false,
+    isNewArrival: true,
+    pdfPage: 3,
+    customizable: true
+  },
+  {
+    id: 'hair-07',
+    name: 'Hair Accessory 07',
+    category: 'Hair Accessories',
+    price: 149,
+    image: 'assets/product-images/hair_07.jpg',
+    images: ['assets/product-images/hair_07.jpg'],
+    description: 'Graceful lily of the valley crochet hair bow tie with delicate bell blossoms and green leaves. Signature boutique piece.',
+    inStock: true,
+    stockQuantity: 15,
+    featured: true,
+    isNewArrival: true,
+    pdfPage: 4,
+    customizable: true
   }
 ];
 
 export const CATEGORIES = [
-  { name: 'Bouquets', count: 13, available: true },
-  { name: 'Crochet Flowers', count: 0, available: false },
-  { name: 'Bows and Accessories', count: 0, available: false },
-  { name: 'Keychains', count: 0, available: false },
+  { name: 'Crochet Flowers & Bouquets', count: 13, available: true },
+  { name: 'Hair Accessories', count: 7, available: true },
+  { name: 'Custom Keychains', count: 0, available: false },
   { name: 'Crochet Bags', count: 0, available: false },
-  { name: 'Custom Gifts', count: 0, available: false }
+  { name: 'Keychains', count: 0, available: false }
 ];

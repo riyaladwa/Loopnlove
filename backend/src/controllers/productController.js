@@ -114,12 +114,11 @@ export const getProductById = async (req, res, next) => {
 export const getCategories = async (req, res, next) => {
   try {
     const allCategories = [
-      'Bouquets',
-      'Crochet Flowers',
-      'Bows and Accessories',
-      'Keychains',
+      'Crochet Flowers & Bouquets',
+      'Hair Accessories',
+      'Custom Keychains',
       'Crochet Bags',
-      'Custom Gifts'
+      'Keychains'
     ];
 
     const counts = await Product.aggregate([

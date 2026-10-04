@@ -15,14 +15,13 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Category is required'],
     enum: [
-      'Bouquets',
-      'Crochet Flowers',
-      'Bows and Accessories',
-      'Keychains',
+      'Crochet Flowers & Bouquets',
+      'Hair Accessories',
+      'Custom Keychains',
       'Crochet Bags',
-      'Custom Gifts'
+      'Keychains'
     ],
-    default: 'Bouquets'
+    default: 'Crochet Flowers & Bouquets'
   },
   price: {
     type: Number,
