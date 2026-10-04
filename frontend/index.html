@@ -181,27 +181,26 @@
             <span class="category-tag">Explore Hair Pieces →</span>
           </a>
 
-          <!-- Custom Order Collections -->
-          <div class="category-card coming-soon">
-            <div class="category-icon-box">🔑</div>
-            <h4>Custom Keychains</h4>
-            <p>Personalized charms</p>
-            <span class="category-tag">Available for Custom Orders</span>
-          </div>
-
-          <div class="category-card coming-soon">
+          <a href="shop.html?category=Crochet%20Bags" class="category-card">
             <div class="category-icon-box">👜</div>
             <h4>Crochet Bags</h4>
-            <p>Artisan shoulder totes</p>
-            <span class="category-tag">Available for Custom Orders</span>
-          </div>
+            <p>3 Authentic Bags (from ₹499)</p>
+            <span class="category-tag">Explore Bags →</span>
+          </a>
 
-          <div class="category-card coming-soon">
-            <div class="category-icon-box">🐝</div>
-            <h4>Keychains</h4>
-            <p>Pocket companions</p>
-            <span class="category-tag">Available for Custom Orders</span>
-          </div>
+          <a href="shop.html?category=Keychains" class="category-card">
+            <div class="category-icon-box">🔑</div>
+            <h4>Crochet Keychains</h4>
+            <p>10 Pocket Charms (₹99 each)</p>
+            <span class="category-tag">Explore Keychains →</span>
+          </a>
+
+          <a href="contact.html?category=Custom%20Keychains" class="category-card">
+            <div class="category-icon-box">✨</div>
+            <h4>Custom Creations</h4>
+            <p>Bespoke Gifts &amp; Designs</p>
+            <span class="category-tag">Inquire Custom →</span>
+          </a>
         </div>
       </div>
     </section>
@@ -247,6 +246,32 @@
         <div style="text-align: center; margin-top: 3rem;">
           <a href="shop.html?category=Hair%20Accessories" class="btn btn-secondary btn-lg">
             View All Hair Accessories
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bags & Keychains Collection Section -->
+    <section class="products-section" style="background-color: var(--bg-cream);" aria-label="Bags and Keychains">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">Artisan Creations</span>
+          <h2 class="section-title">Crochet Bags &amp; Keychains</h2>
+          <p class="section-subtitle">
+            Handcrafted granny-square shoulder totes and adorable pocket charms from ₹99.
+          </p>
+        </div>
+
+        <div id="bags-keychains-grid" class="products-grid">
+          <!-- Populated dynamically -->
+        </div>
+
+        <div style="text-align: center; margin-top: 3rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+          <a href="shop.html?category=Crochet%20Bags" class="btn btn-secondary btn-lg">
+            View All Crochet Bags
+          </a>
+          <a href="shop.html?category=Keychains" class="btn btn-primary btn-lg">
+            Shop Keychains (₹99 Each)
           </a>
         </div>
       </div>
@@ -460,6 +485,16 @@
         if (hairContainer) {
           hairContainer.innerHTML = hairPieces.map(renderProductCard).join('');
           attachProductCardListeners(hairContainer, products);
+        }
+
+        // 3. Bags & Keychains Showcase Section
+        const bagsKeychainsContainer = document.getElementById('bags-keychains-grid');
+        if (bagsKeychainsContainer) {
+          const bags = products.filter(p => p.category === 'Crochet Bags').slice(0, 2);
+          const keychains = products.filter(p => p.category === 'Keychains').slice(0, 2);
+          const showcase = [...bags, ...keychains];
+          bagsKeychainsContainer.innerHTML = showcase.map(renderProductCard).join('');
+          attachProductCardListeners(bagsKeychainsContainer, products);
         }
 
         // WhatsApp direct chat button

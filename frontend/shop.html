@@ -114,9 +114,8 @@
       <div class="container">
         
         <!-- Category Filter Tabs -->
-        <div class="category-filter-tabs" role="tablist" aria-label="Product categories">
           <button class="cat-tab-btn active" data-category="all" role="tab" aria-selected="true">
-            All Products (23)
+            All Products (33)
           </button>
           <button class="cat-tab-btn" data-category="Crochet Flowers & Bouquets" role="tab" aria-selected="false">
             Crochet Flowers &amp; Bouquets (13)
@@ -124,14 +123,11 @@
           <button class="cat-tab-btn" data-category="Hair Accessories" role="tab" aria-selected="false">
             Hair Accessories (7)
           </button>
-          <button class="cat-tab-btn" data-category="Crochet Bags" role="tab" aria-selected="false" title="Design concepts & custom orders">
-            Crochet Bags (3 Concepts)
+          <button class="cat-tab-btn" data-category="Crochet Bags" role="tab" aria-selected="false">
+            Crochet Bags (3)
           </button>
-          <button class="cat-tab-btn" data-category="Custom Keychains" role="tab" aria-selected="false" title="Available via custom orders">
-            Custom Keychains (Custom)
-          </button>
-          <button class="cat-tab-btn" data-category="Keychains" role="tab" aria-selected="false" title="Available via custom orders">
-            Keychains (Custom)
+          <button class="cat-tab-btn" data-category="Keychains" role="tab" aria-selected="false">
+            Keychains (10)
           </button>
         </div>
 
@@ -285,7 +281,15 @@
 
       // Filter by category
       if (currentCategory !== 'all') {
-        filtered = filtered.filter(p => p.category.toLowerCase() === currentCategory.toLowerCase());
+        const catLower = currentCategory.toLowerCase();
+        filtered = filtered.filter(p => {
+          const pCat = (p.category || '').toLowerCase();
+          if (pCat === catLower) return true;
+          if (catLower.includes('bag') && pCat.includes('bag')) return true;
+          if (catLower.includes('keychain') && pCat.includes('keychain')) return true;
+          if (catLower.includes('flower') && pCat.includes('flower')) return true;
+          return false;
+        });
       }
 
       // Filter by search query

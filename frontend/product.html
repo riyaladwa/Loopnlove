@@ -304,7 +304,7 @@
         // Image Gallery
         const mainImg = document.getElementById('detail-main-img');
         mainImg.src = currentProduct.image;
-        mainImg.alt = `${currentProduct.name} - Authentic handmade crochet bouquet`;
+        mainImg.alt = `${currentProduct.name} - Authentic handmade crochet creation`;
 
         const thumbsContainer = document.getElementById('detail-thumbnails');
         const images = currentProduct.images && currentProduct.images.length > 0 ? currentProduct.images : [currentProduct.image];
@@ -384,9 +384,10 @@
           }
         }
 
-        // Related bouquets
+        // Related products
         const relatedGrid = document.getElementById('related-products-grid');
-        const related = allProducts.filter(p => p.id !== currentProduct.id).slice(0, 3);
+        const sameCategory = allProducts.filter(p => p.id !== currentProduct.id && p.category === currentProduct.category);
+        const related = sameCategory.length >= 3 ? sameCategory.slice(0, 3) : allProducts.filter(p => p.id !== currentProduct.id).slice(0, 3);
         if (relatedGrid) {
           relatedGrid.innerHTML = related.map(renderProductCard).join('');
           attachProductCardListeners(relatedGrid, allProducts);

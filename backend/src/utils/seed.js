@@ -318,55 +318,192 @@ const VERIFIED_SEED_DATA = [
     customizable: true
   },
   // ==========================================
-  // CROCHET BAGS — DESIGN CONCEPTS (3 ITEMS)
-  // (Proposed made-to-order concepts, ₹500–₹600)
+  // CROCHET BAGS (3 REAL ARTISAN BAGS)
   // ==========================================
   {
-    name: 'Daisy Bloom Granny-Square Tote (Concept)',
-    identifier: 'bag-concept-01',
+    name: 'Sunflower Granny-Square Tote Bag',
+    identifier: 'bag-01',
     category: 'Crochet Bags',
-    price: 550,
-    image: 'assets/product-images/concept_bag_01.svg',
-    images: ['assets/product-images/concept_bag_01.svg'],
-    description: 'Design concept for custom made-to-order requests. Classic granny-square tote featuring cream daisy center motifs, sage green borders, and sturdy double-crochet shoulder straps. Final pricing and custom color palette confirmed upon inquiry.',
-    stockQuantity: 0,
-    inStock: false,
-    featured: false,
+    price: 599,
+    image: 'assets/product-images/bag_sunflower.jpg',
+    images: ['assets/product-images/bag_sunflower.jpg'],
+    description: 'Artisan handcrafted crochet tote bag made of vibrant sunflower granny squares on a natural cream base. Features sturdy comfortable shoulder straps, spacious interior, and authentic boho charm.',
+    stockQuantity: 5,
+    inStock: true,
+    featured: true,
     isNewArrival: true,
-    isConcept: true,
-    conceptNote: 'Proposed design concept. Artisan photos will replace illustrations upon stitch completion.',
     customizable: true
   },
   {
-    name: 'Pastel Meadow Patchwork Bag (Concept)',
-    identifier: 'bag-concept-02',
+    name: 'Grey Hearts Granny-Square Tote Bag',
+    identifier: 'bag-02',
     category: 'Crochet Bags',
-    price: 580,
-    image: 'assets/product-images/concept_bag_02.svg',
-    images: ['assets/product-images/concept_bag_02.svg'],
-    description: 'Design concept for custom made-to-order requests. Multi-tone pastel squares in lavender, blush, buttercup yellow, and mint green with scalloped edge trim and reinforced base. Final pricing confirmed upon consultation.',
-    stockQuantity: 0,
-    inStock: false,
-    featured: false,
+    price: 599,
+    image: 'assets/product-images/bag_grey_hearts.jpg',
+    images: ['assets/product-images/bag_grey_hearts.jpg'],
+    description: 'Elegant handmade crochet tote bag featuring 9 sweet grey heart granny squares set in a crisp white border. Lightweight, durable, and perfect for carrying daily essentials with love.',
+    stockQuantity: 6,
+    inStock: true,
+    featured: true,
     isNewArrival: true,
-    isConcept: true,
-    conceptNote: 'Proposed design concept. Artisan photos will replace illustrations upon stitch completion.',
     customizable: true
   },
   {
-    name: 'Vintage Sunburst Crossbody Bag (Concept)',
-    identifier: 'bag-concept-03',
+    name: 'Pastel Geometric Granny-Square Handbag',
+    identifier: 'bag-03',
     category: 'Crochet Bags',
-    price: 520,
-    image: 'assets/product-images/concept_bag_03.svg',
-    images: ['assets/product-images/concept_bag_03.svg'],
-    description: 'Design concept for custom made-to-order requests. Compact boho crossbody bag constructed from 4 vibrant sunburst granny motifs with wooden button clasp and braided strap. Final pricing confirmed upon consultation.',
-    stockQuantity: 0,
-    inStock: false,
+    price: 499,
+    image: 'assets/product-images/bag_pastel_fold.jpg',
+    images: ['assets/product-images/bag_pastel_fold.jpg'],
+    description: 'Unique origami-fold crochet handbag in delicate pastel green, blush pink, and cream granny squares, complemented by authentic wooden handles and a secure closure.',
+    stockQuantity: 4,
+    inStock: true,
     featured: false,
     isNewArrival: true,
-    isConcept: true,
-    conceptNote: 'Proposed design concept. Artisan photos will replace illustrations upon stitch completion.',
+    customizable: true
+  },
+
+  // ==========================================
+  // CROCHET KEYCHAINS (10 ITEMS - ₹99 EACH)
+  // ==========================================
+  {
+    name: 'Daisy Flower Crochet Keychain',
+    identifier: 'keychain-01',
+    category: 'Keychains',
+    price: 99,
+    image: 'assets/product-images/keychain_daisy.jpg',
+    images: ['assets/product-images/keychain_daisy.jpg'],
+    description: 'Delicate white daisy crochet flower with sunny yellow center, matching green leaf charm, and durable keyring.',
+    stockQuantity: 15,
+    inStock: true,
+    featured: true,
+    isNewArrival: true,
+    customizable: true
+  },
+  {
+    name: 'Twin Cherry Charm Keychain',
+    identifier: 'keychain-02',
+    category: 'Keychains',
+    price: 99,
+    image: 'assets/product-images/keychain_cherry.jpg',
+    images: ['assets/product-images/keychain_cherry.jpg'],
+    description: 'Charming handmade plump twin red cherries with green stem and leaf, attached to a premium gold keyring.',
+    stockQuantity: 12,
+    inStock: true,
+    featured: true,
+    isNewArrival: true,
+    customizable: true
+  },
+  {
+    name: 'White Blossom Crochet Keychain',
+    identifier: 'keychain-03',
+    category: 'Keychains',
+    price: 99,
+    image: 'assets/product-images/keychain_blossom.jpg',
+    images: ['assets/product-images/keychain_blossom.jpg'],
+    description: 'Handcrafted white 5-petal blossom with warm citrus orange center and tender green leaf tag on a silver keyring.',
+    stockQuantity: 15,
+    inStock: true,
+    featured: false,
+    isNewArrival: true,
+    customizable: true
+  },
+  {
+    name: 'Evil Eye Protection Mandala Keychain',
+    identifier: 'keychain-04',
+    category: 'Keychains',
+    price: 99,
+    image: 'assets/product-images/keychain_evil_eye.jpg',
+    images: ['assets/product-images/keychain_evil_eye.jpg'],
+    description: 'Handmade protective evil eye talisman crochet motif with turquoise, sunny yellow, and deep green scalloped borders.',
+    stockQuantity: 10,
+    inStock: true,
+    featured: false,
+    isNewArrival: true,
+    customizable: true
+  },
+  {
+    name: 'Burgundy Velvet Bow Keychain',
+    identifier: 'keychain-05',
+    category: 'Keychains',
+    price: 99,
+    image: 'assets/product-images/keychain_burgundy_bow.jpg',
+    images: ['assets/product-images/keychain_burgundy_bow.jpg'],
+    description: 'Sophisticated deep burgundy wine textured crochet bow with gold key ring. Adds vintage cottagecore warmth to bags or keys.',
+    stockQuantity: 14,
+    inStock: true,
+    featured: true,
+    isNewArrival: true,
+    customizable: true
+  },
+  {
+    name: 'Mini Rose Bouquet Bag Charm',
+    identifier: 'keychain-06',
+    category: 'Keychains',
+    price: 99,
+    image: 'assets/product-images/keychain_mini_rose_bouquet.jpg',
+    images: ['assets/product-images/keychain_mini_rose_bouquet.jpg'],
+    description: 'Detailed miniature bouquet in black textured wrapping with red mini roses and white scalloped border, perfect for backpacks and tote bags.',
+    stockQuantity: 10,
+    inStock: true,
+    featured: true,
+    isNewArrival: true,
+    customizable: true
+  },
+  {
+    name: 'Sunshine Sunflower Keychain',
+    identifier: 'keychain-07',
+    category: 'Keychains',
+    price: 99,
+    image: 'assets/product-images/keychain_sunflower.jpg',
+    images: ['assets/product-images/keychain_sunflower.jpg'],
+    description: 'Joyful handcrafted crochet sunflower with chocolate center and bright golden petals. A little ray of daily happiness.',
+    stockQuantity: 15,
+    inStock: true,
+    featured: true,
+    isNewArrival: true,
+    customizable: true
+  },
+  {
+    name: 'Blue Penguin Amigurumi Keychain',
+    identifier: 'keychain-08',
+    category: 'Keychains',
+    price: 99,
+    image: 'assets/product-images/keychain_blue_penguin.jpg',
+    images: ['assets/product-images/keychain_blue_penguin.jpg'],
+    description: 'Cute pastel blue baby penguin amigurumi with soft white tummy, yellow beak, and sturdy metal keyring.',
+    stockQuantity: 10,
+    inStock: true,
+    featured: false,
+    isNewArrival: true,
+    customizable: true
+  },
+  {
+    name: 'Classic Black Penguin Keychain',
+    identifier: 'keychain-09',
+    category: 'Keychains',
+    price: 99,
+    image: 'assets/product-images/keychain_black_penguin.jpg',
+    images: ['assets/product-images/keychain_black_penguin.jpg'],
+    description: 'Classic black and white baby penguin crochet amigurumi with sunny yellow feet and beak on a durable keyring.',
+    stockQuantity: 10,
+    inStock: true,
+    featured: false,
+    isNewArrival: true,
+    customizable: true
+  },
+  {
+    name: 'Mini Bouquet Charm Gift Set',
+    identifier: 'keychain-10',
+    category: 'Keychains',
+    price: 99,
+    image: 'assets/product-images/keychain_bouquet_gift_set.jpg',
+    images: ['assets/product-images/keychain_bouquet_gift_set.jpg'],
+    description: 'Handcrafted mini bouquet charm duo (red rose & pink tulip) lovingly presented with an artisan kraft gift bag and Loop n Love seal.',
+    stockQuantity: 8,
+    inStock: true,
+    featured: false,
+    isNewArrival: true,
     customizable: true
   }
 ];
@@ -376,6 +513,17 @@ async function seedDatabase() {
     const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/loop_n_love';
     console.log(`Connecting to MongoDB at: ${mongoUri}`);
     await mongoose.connect(mongoUri);
+
+    // Remove legacy concept bags per user request
+    const removedConcepts = await Product.deleteMany({
+      $or: [
+        { identifier: { $in: ['bag-concept-01', 'bag-concept-02', 'bag-concept-03'] } },
+        { isConcept: true }
+      ]
+    });
+    if (removedConcepts.deletedCount > 0) {
+      console.log(`✓ Removed ${removedConcepts.deletedCount} legacy concept bags from website database.`);
+    }
 
     console.log('Updating product records safely without dropping orders...');
     
