@@ -73,25 +73,51 @@ class ApiService {
 
   // Authentication API
   async register(userData) {
-    const res = await fetch(`${this.baseUrl}/auth/register`, {
-      method: 'POST',
-      headers: this.getHeaders(false),
-      body: JSON.stringify(userData)
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || 'Registration failed');
-    return data;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+    try {
+      const res = await fetch(`${this.baseUrl}/auth/register`, {
+        method: 'POST',
+        headers: this.getHeaders(false),
+        body: JSON.stringify(userData),
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.message || 'Registration failed.');
+      return data;
+    } catch (err) {
+      clearTimeout(timeoutId);
+      if (err.name === 'AbortError') {
+        throw new Error('Connection timed out. The database or server took too long to respond.');
+      }
+      throw err;
+    }
   }
 
   async login(credentials) {
-    const res = await fetch(`${this.baseUrl}/auth/login`, {
-      method: 'POST',
-      headers: this.getHeaders(false),
-      body: JSON.stringify(credentials)
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || 'Login failed');
-    return data;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+    try {
+      const res = await fetch(`${this.baseUrl}/auth/login`, {
+        method: 'POST',
+        headers: this.getHeaders(false),
+        body: JSON.stringify(credentials),
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.message || 'Invalid email or password.');
+      return data;
+    } catch (err) {
+      clearTimeout(timeoutId);
+      if (err.name === 'AbortError') {
+        throw new Error('Connection timed out. The database or server took too long to respond.');
+      }
+      throw err;
+    }
   }
 
   async getCurrentUser() {

@@ -28,8 +28,13 @@ dotenv.config({ path: path.resolve(__dirname, '.env') });
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Enable trust proxy for correct client IP detection behind Vercel edge reverse proxy
+app.set('trust proxy', 1);
+
 // Connect to MongoDB
-connectDB();
+connectDB().catch(err => {
+  console.warn('Initial MongoDB connection attempt deferred:', err.message);
+});
 
 // Security & Utility Middlewares
 app.use(helmet({
@@ -42,6 +47,20 @@ app.use(cors({
 app.use(morgan('dev'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Ensure MongoDB is connected before processing any API request (prevents serverless buffering hangs)
+app.use('/api', async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    console.error('❌ Database connection failed on API route:', err.message);
+    return res.status(503).json({
+      message: 'Database connection failed. Please ensure MongoDB Atlas Network Access has 0.0.0.0/0 allowed.',
+      error: err.message
+    });
+  }
+});
 
 // Apply API rate limiting
 app.use('/api', apiLimiter);
