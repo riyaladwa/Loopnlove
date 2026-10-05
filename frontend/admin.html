@@ -107,11 +107,22 @@
       gap: 0.4rem;
       flex-wrap: wrap;
     }
+    @keyframes adminSpin {
+      to { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
 
-  <header class="header-wrapper" role="banner">
+  <!-- Loading State before Admin Auth is verified -->
+  <div id="admin-auth-loading" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 85vh; font-family: var(--font-sans); color: var(--text-muted); text-align: center; padding: 2rem;">
+    <div style="width: 48px; height: 48px; border: 3px solid var(--border-warm); border-top-color: var(--primary-rose); border-radius: 50%; animation: adminSpin 0.8s linear infinite; margin-bottom: 1.5rem;"></div>
+    <h2 style="font-family: var(--font-serif); color: var(--text-cocoa-heading); margin-bottom: 0.5rem;">Verifying Administrator Access...</h2>
+    <p style="font-size: 0.92rem; color: var(--text-muted); max-width: 420px;">Securely verifying administrative privileges with Loop n Love backend...</p>
+  </div>
+
+  <div id="admin-root" style="display: none;">
+    <header class="header-wrapper" role="banner">
     <div class="container navbar">
       <div class="brand-logo">
         <svg class="logo-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -866,7 +877,7 @@
         <button type="submit" id="wa-order-submit-btn" class="btn btn-whatsapp btn-block">Save WhatsApp Order to Database</button>
       </form>
     </div>
-  </div>
+  </div><!-- /#admin-root -->
 
   <script type="module">
     import { API } from './js/api.js';
@@ -880,28 +891,52 @@
     let currentEditingOrder = null;
     let currentEditingInquiry = null;
 
-    // Check Auth
-    function checkAdminAuth() {
-      const userJson = localStorage.getItem(CONFIG.STORAGE_KEYS.USER_INFO);
+    // Strict Backend-Verified Auth Check
+    async function checkAdminAuth() {
       const token = localStorage.getItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN);
+      const userJson = localStorage.getItem(CONFIG.STORAGE_KEYS.USER_INFO);
+
       if (!token || !userJson) {
-        window.location.href = 'admin-login.html';
+        window.location.replace('login.html?error=unauthorized');
         return false;
       }
+
       try {
         const user = JSON.parse(userJson);
         if (user.role !== 'admin') {
-          showToast('Access denied. Administrator authorization required.', 'error');
-          setTimeout(() => { window.location.href = 'admin-login.html'; }, 1000);
+          localStorage.removeItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN);
+          localStorage.removeItem(CONFIG.STORAGE_KEYS.USER_INFO);
+          window.location.replace('login.html?error=forbidden');
           return false;
         }
-        document.getElementById('admin-user-badge').textContent = user.email || 'riyaladwa9@gmail.com';
+
+        // Live backend verification of JWT token and admin role via /api/auth/me
+        const meRes = await API.getCurrentUser();
+        if (!meRes || !meRes.user || meRes.user.role !== 'admin') {
+          localStorage.removeItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN);
+          localStorage.removeItem(CONFIG.STORAGE_KEYS.USER_INFO);
+          window.location.replace('login.html?error=forbidden');
+          return false;
+        }
+
+        // Update local session with verified user
+        localStorage.setItem(CONFIG.STORAGE_KEYS.USER_INFO, JSON.stringify(meRes.user));
+        document.getElementById('admin-user-badge').textContent = meRes.user.email || 'riyaladwa9@gmail.com';
+
+        const loader = document.getElementById('admin-auth-loading');
+        if (loader) loader.style.display = 'none';
+        const root = document.getElementById('admin-root');
+        if (root) root.style.display = 'block';
+
         return true;
       } catch (e) {
-        window.location.href = 'admin-login.html';
+        localStorage.removeItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN);
+        localStorage.removeItem(CONFIG.STORAGE_KEYS.USER_INFO);
+        window.location.replace('login.html?error=session_expired');
         return false;
       }
     }
+
 
     // Load Live Database Data
     async function loadAllData() {
@@ -1141,7 +1176,12 @@
 
         return `
           <tr>
-            <td><strong style="color: var(--primary-rose); font-family: monospace;">${ord.orderReference}</strong></td>
+            <td>
+              <strong style="color: var(--primary-rose); font-family: monospace;">${ord.orderReference}</strong>
+              <div style="font-size: 0.72rem; margin-top: 3px;">
+                ${ord.adminWhatsappNotificationSent ? '<span style="color: #1e8e3e; font-weight: 600;" title="Automatic WhatsApp sent to admin">📲 WA Sent</span>' : (ord.adminWhatsappNotificationStatus === 'Failed' ? '<span style="color: #c53030; font-weight: 600;" title="Automatic WhatsApp failed">📲 WA Failed</span>' : '<span style="color: var(--text-muted);" title="WhatsApp status">📲 WA ' + (ord.adminWhatsappNotificationStatus || 'Pending') + '</span>')}
+              </div>
+            </td>
             <td>${dateStr}</td>
             <td>
               <strong>${ord.customer ? ord.customer.name : 'Guest'}</strong>
@@ -1312,6 +1352,20 @@
         methodLabel = 'WhatsApp Manual';
       }
 
+      let waStatusBadgeClass = 'badge-low';
+      let waStatusText = ord.adminWhatsappNotificationStatus || (ord.adminWhatsappNotificationSent ? 'Sent' : 'Pending');
+      if (waStatusText === 'Sent') {
+        waStatusBadgeClass = 'badge-stock';
+      } else if (waStatusText === 'Failed') {
+        waStatusBadgeClass = 'badge-low';
+      } else if (waStatusText === 'Disabled') {
+        waStatusBadgeClass = 'badge-featured';
+      }
+
+      const waSentAtStr = ord.adminWhatsappNotificationSentAt
+        ? `Sent on: ${new Date(ord.adminWhatsappNotificationSentAt).toLocaleString('en-IN')}`
+        : '';
+
       document.getElementById('modal-order-content').innerHTML = `
         <div style="background: var(--bg-surface); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1rem; border: 1px solid var(--border-warm);">
           <div><strong>Customer Name:</strong> ${ord.customer ? ord.customer.name : 'N/A'}</div>
@@ -1340,6 +1394,25 @@
           </div>
         </div>
 
+        <!-- WhatsApp Notification Audit & Retry Card -->
+        <div style="background: var(--bg-surface); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1rem; border: 1px solid var(--border-warm); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+              <span style="font-size: 1.15rem;">📲</span>
+              <strong>Admin WhatsApp Notification:</strong>
+              <span class="badge ${waStatusBadgeClass}" id="modal-wa-status-badge">${waStatusText}</span>
+            </div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.35rem; line-height: 1.4;">
+              ${waSentAtStr ? `<div>${waSentAtStr}</div>` : ''}
+              ${ord.adminWhatsappNotificationError ? `<div style="color: var(--accent-danger); font-size: 0.8rem; margin-top: 2px;">⚠️ ${ord.adminWhatsappNotificationError}</div>` : ''}
+              <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">Internal admin audit only. Automatically sent upon new order or verified payment.</div>
+            </div>
+          </div>
+          <button type="button" id="modal-wa-retry-btn" class="btn btn-secondary btn-sm" style="font-size: 0.82rem; white-space: nowrap;">
+            ↻ Retry WhatsApp
+          </button>
+        </div>
+
         <div>
           <strong>Items Ordered (Snapshot at Purchase Time):</strong>
           <ul style="padding-left: 1.25rem; margin-top: 0.5rem;">
@@ -1360,6 +1433,42 @@
           </div>
         </div>
       `;
+
+      // Setup WhatsApp retry listener
+      const retryWaBtn = document.getElementById('modal-wa-retry-btn');
+      if (retryWaBtn) {
+        retryWaBtn.addEventListener('click', async () => {
+          retryWaBtn.disabled = true;
+          retryWaBtn.textContent = 'Sending...';
+          try {
+            const res = await API.retryWhatsAppNotification(ord._id || ord.id);
+            if (res.success) {
+              showToast('WhatsApp notification sent successfully to admin!');
+              const badge = document.getElementById('modal-wa-status-badge');
+              if (badge) {
+                badge.textContent = 'Sent';
+                badge.className = 'badge badge-stock';
+              }
+            } else {
+              showToast(`WhatsApp attempt logged: ${res.message || 'Updated'}`, 'info');
+              const badge = document.getElementById('modal-wa-status-badge');
+              if (badge) {
+                badge.textContent = res.notificationStatus || 'Pending';
+                badge.className = 'badge badge-low';
+              }
+            }
+            // Refresh live orders in table
+            const ordersData = await API.getAllOrders();
+            allOrders = Array.isArray(ordersData) ? ordersData : (ordersData.orders || []);
+            renderOrdersTable(allOrders);
+          } catch (err) {
+            showToast(`Retry failed: ${err.message}`, 'error');
+          } finally {
+            retryWaBtn.disabled = false;
+            retryWaBtn.textContent = '↻ Retry WhatsApp';
+          }
+        });
+      }
 
       document.getElementById('modal-order-status-select').value = ord.orderStatus || 'Pending';
       document.getElementById('modal-order-payment-select').value = ord.paymentStatus || 'Pending';
@@ -1463,8 +1572,9 @@
     }
 
     // DOM Ready Setup
-    document.addEventListener('DOMContentLoaded', () => {
-      if (!checkAdminAuth()) return;
+    document.addEventListener('DOMContentLoaded', async () => {
+      const isAuthed = await checkAdminAuth();
+      if (!isAuthed) return;
       loadAllData();
 
       // Refresh button
@@ -1741,7 +1851,7 @@
       document.getElementById('admin-logout-btn')?.addEventListener('click', () => {
         localStorage.removeItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN);
         localStorage.removeItem(CONFIG.STORAGE_KEYS.USER_INFO);
-        window.location.href = 'admin-login.html';
+        window.location.href = 'login.html';
       });
     });
   </script>

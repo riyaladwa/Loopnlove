@@ -43,7 +43,11 @@ export async function connectDB() {
   }
 }
 
+let listenersAttached = false;
 function setupListeners() {
+  if (listenersAttached) return;
+  listenersAttached = true;
+
   mongoose.connection.on('error', (err) => {
     console.error('❌ MongoDB runtime error:', err.message);
   });

@@ -114,6 +114,23 @@ const orderSchema = new mongoose.Schema({
   razorpaySignature: {
     type: String,
     default: ''
+  },
+  adminWhatsappNotificationSent: {
+    type: Boolean,
+    default: false
+  },
+  adminWhatsappNotificationStatus: {
+    type: String,
+    enum: ['Pending', 'Sent', 'Failed', 'Disabled'],
+    default: 'Pending'
+  },
+  adminWhatsappNotificationError: {
+    type: String,
+    default: ''
+  },
+  adminWhatsappNotificationSentAt: {
+    type: Date,
+    default: null
   }
 }, {
   timestamps: true

@@ -1806,4 +1806,149 @@ p {
   .form-row {
     grid-template-columns: 1fr;
   }
+
+  /* Prevent auto-zoom on iOS by guaranteeing >= 16px font-size */
+  .form-control, select, input, textarea {
+    font-size: 16px !important;
+    min-height: 44px;
+  }
+
+  /* Accessible touch targets */
+  .btn {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .header-actions {
+    gap: 0.4rem;
+  }
+
+  .header-btn {
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .admin-tabs {
+    gap: 0.25rem;
+  }
+
+  .admin-tab-btn {
+    padding: 0.6rem 0.85rem;
+    font-size: 0.85rem;
+  }
+}
+
+/* Mobile Screens (360px - 480px) */
+@media (max-width: 480px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .products-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 0.85rem;
+  }
+
+  .product-card {
+    border-radius: var(--radius-md);
+  }
+
+  .product-content {
+    padding: 0.75rem;
+  }
+
+  .product-title {
+    font-size: 0.9rem;
+    line-height: 1.3;
+  }
+
+  .product-price {
+    font-size: 1rem;
+  }
+
+  .product-actions {
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .product-actions .btn {
+    width: 100%;
+    font-size: 0.8rem;
+    padding: 0.45rem;
+  }
+
+  .cart-item-row {
+    grid-template-columns: 60px 1fr;
+    gap: 0.75rem;
+    padding: 0.85rem;
+  }
+
+  .cart-item-img {
+    width: 60px;
+    height: 60px;
+  }
+
+  .auth-wrapper {
+    padding: 1.5rem 1.15rem;
+    margin: 1.5rem auto;
+  }
+
+  .modal-box {
+    padding: 1.25rem 1rem;
+    width: 95%;
+    margin: 0.5rem auto;
+  }
+
+  .admin-table th, .admin-table td {
+    padding: 0.65rem 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  .brand-name {
+    font-size: 1.25rem;
+  }
+
+  .hero-title {
+    font-size: 1.85rem;
+    line-height: 1.25;
+  }
+
+  .hero-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .admin-stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .admin-stat-card {
+    padding: 0.85rem;
+  }
+
+  .stat-val {
+    font-size: 1.45rem;
+  }
+}
+
+/* Small Handsets (320px - 359px) */
+@media (max-width: 359px) {
+  .products-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  .admin-stats-grid {
+    grid-template-columns: 1fr;
+  }
 }

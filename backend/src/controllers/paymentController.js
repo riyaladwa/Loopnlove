@@ -3,6 +3,7 @@ import Razorpay from 'razorpay';
 import { Order } from '../models/Order.js';
 import { Product } from '../models/Product.js';
 import { Setting } from '../models/Setting.js';
+import { sendAdminOrderNotification } from '../services/whatsappNotificationService.js';
 
 let razorpayInstance = null;
 
@@ -180,6 +181,12 @@ export const verifyPayment = async (req, res, next) => {
     });
 
     await order.save();
+
+    // Send automatic WhatsApp notification to admin for successfully verified online payment
+    // Non-blocking & idempotent: duplicate callbacks, webhooks, or retries will not duplicate message
+    sendAdminOrderNotification(order).catch(err => {
+      console.error('[WhatsApp Notification] Non-blocking dispatch error on payment verify:', err.message);
+    });
 
     res.json({
       success: true,

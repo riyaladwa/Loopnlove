@@ -299,6 +299,18 @@ class ApiService {
     return data;
   }
 
+  // Admin WhatsApp Notification Retry
+  async retryWhatsAppNotification(orderId) {
+    const res = await fetch(`${this.baseUrl}/orders/${orderId}/retry-whatsapp`, {
+      method: 'POST',
+      headers: this.getHeaders(true)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Failed to retry WhatsApp notification');
+    return data;
+  }
+
+
   // Product Management (Admin)
   async createProduct(productPayload) {
     const res = await fetch(`${this.baseUrl}/products`, {

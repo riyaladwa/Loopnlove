@@ -2,6 +2,7 @@ import { Order } from '../models/Order.js';
 import { Product } from '../models/Product.js';
 import { Inquiry } from '../models/Inquiry.js';
 import { Setting } from '../models/Setting.js';
+import { sendAdminOrderNotification } from '../services/whatsappNotificationService.js';
 
 // @desc    Create a new order with strict server-side price validation
 // @route   POST /api/orders
@@ -224,6 +225,14 @@ export const createOrder = async (req, res, next) => {
             : 'Online payment order initiated via checkout')
       }]
     });
+
+    // Send automatic WhatsApp notification to admin for confirmed orders (COD / Direct UPI QR)
+    // Runs non-blockingly with strict idempotency so order creation is NEVER compromised
+    if (selectedMethod === 'COD' || selectedMethod === 'UPI_QR') {
+      sendAdminOrderNotification(order).catch(err => {
+        console.error('Non-blocking WhatsApp notification error for order', order.orderReference, err.message);
+      });
+    }
 
     res.status(201).json({
       success: true,
@@ -567,3 +576,32 @@ export const recordWhatsAppOrder = async (req, res, next) => {
     next(err);
   }
 };
+
+// @desc    Retry sending automatic WhatsApp notification for an order (Admin only)
+// @route   POST /api/orders/:id/retry-whatsapp
+// @access  Private/Admin
+export const retryWhatsAppNotification = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const order = await Order.findById(id);
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Order not found' });
+    }
+
+    const result = await sendAdminOrderNotification(order, true);
+
+    res.json({
+      success: result.success,
+      message: result.success
+        ? 'WhatsApp notification sent successfully to admin.'
+        : `Notification attempt logged: ${result.error || 'Check server logs / API settings'}`,
+      notificationStatus: order.adminWhatsappNotificationStatus,
+      notificationSent: order.adminWhatsappNotificationSent,
+      notificationError: order.adminWhatsappNotificationError,
+      order
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+

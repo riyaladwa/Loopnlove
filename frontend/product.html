@@ -382,6 +382,23 @@
               window.location.href = `contact.html?category=Crochet Bags&product=${encodeURIComponent(currentProduct.name)}`;
             };
           }
+        } else {
+          // Out of stock handling
+          const isOutOfStock = currentProduct.inStock === false || (currentProduct.stockQuantity !== undefined && currentProduct.stockQuantity <= 0);
+          if (isOutOfStock) {
+            const stockBadge = document.getElementById('detail-stock-badge');
+            if (stockBadge) {
+              stockBadge.className = 'badge badge-low';
+              stockBadge.textContent = 'Out of Stock';
+            }
+            const addCartBtn = document.getElementById('add-to-cart-action');
+            if (addCartBtn) {
+              addCartBtn.textContent = 'Out of Stock';
+              addCartBtn.disabled = true;
+              addCartBtn.style.opacity = '0.6';
+              addCartBtn.style.cursor = 'not-allowed';
+            }
+          }
         }
 
         // Related products

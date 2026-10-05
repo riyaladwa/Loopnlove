@@ -43,17 +43,25 @@ export function renderProductCard(product) {
         ? `<span class="badge badge-featured">Bestseller</span>`
         : (product.isNewArrival ? `<span class="badge badge-featured">New</span>` : ''));
 
+  const isOutOfStock = product.inStock === false || (product.stockQuantity !== undefined && product.stockQuantity <= 0);
+
   const stockBadge = product.isConcept
     ? `<span class="badge badge-low" style="background:#FFF3E0; color:#E65100; border-color:#FFE0B2;">Made to Order</span>`
-    : `<span class="badge badge-stock">In Stock</span>`;
+    : (isOutOfStock
+        ? `<span class="badge badge-low" style="background:#FDE8E8; color:#9B1C1C; border-color:#F8B4B4;">Out of Stock</span>`
+        : `<span class="badge badge-stock">In Stock</span>`);
 
   const actionButton = product.isConcept
     ? `<a href="contact.html?category=${encodeURIComponent(product.category)}&product=${encodeURIComponent(product.name)}" class="btn btn-primary btn-sm">
          Inquire Custom
        </a>`
-    : `<button class="btn btn-primary btn-sm add-to-cart-btn" data-add-id="${product.id}">
-         Add to Cart
-       </button>`;
+    : (isOutOfStock
+        ? `<button class="btn btn-secondary btn-sm" disabled style="opacity: 0.6; cursor: not-allowed;" aria-disabled="true">
+             Out of Stock
+           </button>`
+        : `<button class="btn btn-primary btn-sm add-to-cart-btn" data-add-id="${product.id}">
+             Add to Cart
+           </button>`);
 
   const priceLabel = product.isConcept
     ? `<span class="text-muted" style="font-size: 0.8rem;">(Est. range ₹500–₹600)</span>`
