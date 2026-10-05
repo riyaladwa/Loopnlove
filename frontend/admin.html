@@ -912,7 +912,8 @@
 
         // Live backend verification of JWT token and admin role via /api/auth/me
         const meRes = await API.getCurrentUser();
-        if (!meRes || !meRes.user || meRes.user.role !== 'admin') {
+        const verifiedUser = (meRes && meRes.user) ? meRes.user : meRes;
+        if (!verifiedUser || verifiedUser.role !== 'admin') {
           localStorage.removeItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN);
           localStorage.removeItem(CONFIG.STORAGE_KEYS.USER_INFO);
           window.location.replace('login.html?error=forbidden');
@@ -920,8 +921,8 @@
         }
 
         // Update local session with verified user
-        localStorage.setItem(CONFIG.STORAGE_KEYS.USER_INFO, JSON.stringify(meRes.user));
-        document.getElementById('admin-user-badge').textContent = meRes.user.email || 'riyaladwa9@gmail.com';
+        localStorage.setItem(CONFIG.STORAGE_KEYS.USER_INFO, JSON.stringify(verifiedUser));
+        document.getElementById('admin-user-badge').textContent = verifiedUser.email || 'riyaladwa9@gmail.com';
 
         const loader = document.getElementById('admin-auth-loading');
         if (loader) loader.style.display = 'none';

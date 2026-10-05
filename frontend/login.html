@@ -114,8 +114,9 @@
       if (token && !errorParam) {
         try {
           const userRes = await API.getCurrentUser();
-          if (userRes && userRes.user) {
-            if (userRes.user.role === 'admin') {
+          const verifiedUser = (userRes && userRes.user) ? userRes.user : userRes;
+          if (verifiedUser && verifiedUser.role) {
+            if (verifiedUser.role === 'admin') {
               window.location.href = 'admin.html';
             } else {
               const redirect = urlParams.get('redirect') || 'account.html';

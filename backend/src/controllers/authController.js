@@ -101,13 +101,21 @@ export const login = async (req, res, next) => {
 export const getMe = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id);
-    res.json({
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    const userData = {
       id: user._id,
       name: user.name,
       email: user.email,
       phone: user.phone,
       role: user.role,
       wishlist: user.wishlist
+    };
+    res.json({
+      success: true,
+      user: userData,
+      ...userData
     });
   } catch (err) {
     next(err);
