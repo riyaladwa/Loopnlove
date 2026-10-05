@@ -5,6 +5,8 @@ import {
   getCategories,
   createProduct,
   updateProduct,
+  updateProductStock,
+  updateProductStatus,
   deleteProduct
 } from '../controllers/productController.js';
 import { protect, adminOnly } from '../middleware/authMiddleware.js';
@@ -18,6 +20,9 @@ router.get('/:id', getProductById);
 // Admin-only management routes
 router.post('/', protect, adminOnly, createProduct);
 router.put('/:id', protect, adminOnly, updateProduct);
+router.patch('/:id', protect, adminOnly, updateProduct);
+router.patch('/:id/stock', protect, adminOnly, updateProductStock);
+router.patch('/:id/status', protect, adminOnly, updateProductStatus);
 router.delete('/:id', protect, adminOnly, deleteProduct);
 
 export default router;

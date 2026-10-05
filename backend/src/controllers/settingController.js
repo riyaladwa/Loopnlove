@@ -6,12 +6,21 @@ import { Setting } from '../models/Setting.js';
 export const getPublicSettings = async (req, res, next) => {
   try {
     const waSetting = await Setting.findOne({ key: 'WHATSAPP_BUSINESS_NUMBER' });
+    const codSetting = await Setting.findOne({ key: 'COD_ENABLED' });
+    const onlineSetting = await Setting.findOne({ key: 'ONLINE_PAYMENT_ENABLED' });
+
     const whatsappNumber = waSetting ? waSetting.value : (process.env.BUSINESS_WHATSAPP_NUMBER || '');
+    const codEnabled = codSetting !== null ? Boolean(codSetting.value) : true;
+    const onlinePaymentEnabled = onlineSetting !== null ? Boolean(onlineSetting.value) : true;
 
     res.json({
       success: true,
       settings: {
-        whatsappNumber: String(whatsappNumber).trim()
+        whatsappNumber: String(whatsappNumber).trim(),
+        codEnabled,
+        onlinePaymentEnabled,
+        freeShippingThreshold: 999,
+        standardShippingFee: 79
       }
     });
   } catch (err) {
@@ -32,6 +41,12 @@ export const getAllSettings = async (req, res, next) => {
 
     if (!map.WHATSAPP_BUSINESS_NUMBER) {
       map.WHATSAPP_BUSINESS_NUMBER = process.env.BUSINESS_WHATSAPP_NUMBER || '';
+    }
+    if (map.COD_ENABLED === undefined) {
+      map.COD_ENABLED = true;
+    }
+    if (map.ONLINE_PAYMENT_ENABLED === undefined) {
+      map.ONLINE_PAYMENT_ENABLED = true;
     }
 
     res.json({

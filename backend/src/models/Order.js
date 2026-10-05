@@ -70,20 +70,30 @@ const orderSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+  customizationInstructions: {
+    type: String,
+    default: ''
+  },
   orderStatus: {
     type: String,
-    enum: ['Pending', 'Processing', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled'],
+    enum: ['Pending', 'Confirmed', 'Processing', 'Ready to Dispatch', 'Shipped', 'Delivered', 'Cancelled'],
     default: 'Pending'
   },
+  statusHistory: [{
+    status: { type: String, required: true },
+    changedAt: { type: Date, default: Date.now },
+    changedBy: { type: String, default: 'System' },
+    note: { type: String, default: '' }
+  }],
   paymentStatus: {
     type: String,
-    enum: ['Pending', 'Paid', 'Failed', 'Refunded', 'Manual_Verification'],
+    enum: ['Pending', 'Paid', 'Failed', 'Refunded', 'Partially Refunded', 'Manual_Verification'],
     default: 'Pending'
   },
   paymentMethod: {
     type: String,
-    enum: ['Razorpay', 'WhatsApp_Manual', 'Test_Gateway'],
-    default: 'Test_Gateway'
+    enum: ['COD', 'Razorpay', 'Online_Razorpay', 'WhatsApp_Manual', 'Test_Gateway'],
+    default: 'COD'
   },
   paymentReference: {
     type: String,
@@ -94,6 +104,10 @@ const orderSchema = new mongoose.Schema({
     default: ''
   },
   razorpayPaymentId: {
+    type: String,
+    default: ''
+  },
+  razorpaySignature: {
     type: String,
     default: ''
   }

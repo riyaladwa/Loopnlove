@@ -4,9 +4,98 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Checkout — Loop n Love</title>
-  <meta name="description" content="Secure checkout for Loop n Love handmade crochet bouquets.">
+  <meta name="description" content="Secure checkout for Loop n Love genuine handmade crochet bouquets and gifts.">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23C46D75'><circle cx='12' cy='12' r='9'/></svg>">
+  <!-- Razorpay Standard Checkout SDK -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <style>
+    .payment-option-card {
+      border: 1.5px solid var(--border-warm);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.15rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: var(--bg-card);
+      display: flex;
+      align-items: flex-start;
+      gap: 0.85rem;
+    }
+    .payment-option-card:hover {
+      border-color: var(--primary-rose);
+      background-color: var(--bg-surface);
+    }
+    .payment-option-card.selected {
+      border-color: var(--primary-rose);
+      background-color: var(--bg-surface);
+      box-shadow: 0 0 0 1px var(--primary-rose);
+    }
+    .payment-badge {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+      letter-spacing: 0.02em;
+    }
+    .badge-online {
+      background: #fdf0ed;
+      color: var(--primary-rose-hover);
+    }
+    .badge-cod {
+      background: #eaf5ea;
+      color: #2e7d32;
+    }
+    .checkout-alert {
+      padding: 0.9rem 1.25rem;
+      border-radius: var(--radius-md);
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    .checkout-alert-danger {
+      background-color: #fde8e8;
+      border: 1px solid #f8b4b4;
+      color: #9b1c1c;
+    }
+    .checkout-alert-warning {
+      background-color: #fef08a;
+      border: 1px solid #fde047;
+      color: #713f12;
+    }
+    .checkout-alert-info {
+      background-color: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1e40af;
+    }
+    .confirmation-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border-warm);
+      box-shadow: var(--shadow-md);
+      padding: 2.5rem 2rem;
+      max-width: 780px;
+      margin: 0 auto;
+    }
+    .conf-badge {
+      display: inline-block;
+      padding: 0.35rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+    .conf-badge-pending {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    .conf-badge-paid {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    .conf-badge-confirmed {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+  </style>
 </head>
 <body>
 
@@ -22,7 +111,7 @@
         </div>
       </a>
       <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">
-        🔒 Secure Checkout
+        🔒 Trusted Checkout
       </span>
     </div>
   </header>
@@ -30,15 +119,17 @@
   <main>
     <div class="container cart-checkout-layout">
       
-      <!-- Checkout Grid -->
+      <!-- Checkout Main Grid -->
       <div id="checkout-main-grid" class="cart-grid">
         
-        <!-- Left: Delivery Information Form -->
+        <!-- Left: Delivery Information & Payment Method Form -->
         <div class="cart-items-card">
           <h2>Shipping &amp; Delivery Details</h2>
-          <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 2rem;">
-            Please provide your delivery information. We only collect details necessary to safely craft and dispatch your order.
+          <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+            Please enter your accurate delivery information. We only collect details necessary to handcraft and safely dispatch your order.
           </p>
+
+          <div id="checkout-error-alert" class="checkout-alert checkout-alert-danger" style="display: none;"></div>
 
           <form id="checkout-form" novalidate>
             
@@ -46,13 +137,13 @@
               <div class="form-group" id="group-name">
                 <label class="form-label" for="cust-name">Full Name *</label>
                 <input type="text" id="cust-name" class="form-control" placeholder="e.g. Aanya Sharma" required>
-                <span class="form-error">Please enter your full name</span>
+                <span class="form-error">Please enter your full name (minimum 2 characters)</span>
               </div>
 
               <div class="form-group" id="group-phone">
-                <label class="form-label" for="cust-phone">Phone Number (10 Digits) *</label>
-                <input type="tel" id="cust-phone" class="form-control" placeholder="e.g. 9876543210" pattern="[0-9]{10}" required>
-                <span class="form-error">Please enter a valid 10-digit mobile number</span>
+                <label class="form-label" for="cust-phone">Mobile Number (10 Digits) *</label>
+                <input type="tel" id="cust-phone" class="form-control" placeholder="e.g. 9876543210" pattern="[0-9]{10}" maxlength="10" required>
+                <span class="form-error">Please enter a valid 10-digit Indian mobile number</span>
               </div>
             </div>
 
@@ -64,8 +155,8 @@
 
             <div class="form-group" id="group-address">
               <label class="form-label" for="cust-address">Street Address / House No. / Landmark *</label>
-              <textarea id="cust-address" class="form-control" style="min-height: 70px;" placeholder="Flat / House No., Building Name, Street" required></textarea>
-              <span class="form-error">Please enter your complete delivery address</span>
+              <textarea id="cust-address" class="form-control" style="min-height: 70px;" placeholder="Flat / House No., Building Name, Street / Colony, Landmark" required></textarea>
+              <span class="form-error">Please enter your complete delivery street address (minimum 5 characters)</span>
             </div>
 
             <div class="form-row">
@@ -80,16 +171,28 @@
                 <select id="cust-state" class="form-control" required>
                   <option value="">Select State</option>
                   <option value="Andhra Pradesh">Andhra Pradesh</option>
+                  <option value="Assam">Assam</option>
+                  <option value="Bihar">Bihar</option>
+                  <option value="Chandigarh">Chandigarh</option>
+                  <option value="Chhattisgarh">Chhattisgarh</option>
                   <option value="Delhi">Delhi</option>
+                  <option value="Goa">Goa</option>
                   <option value="Gujarat">Gujarat</option>
+                  <option value="Haryana">Haryana</option>
+                  <option value="Himachal Pradesh">Himachal Pradesh</option>
+                  <option value="Jammu &amp; Kashmir">Jammu &amp; Kashmir</option>
+                  <option value="Jharkhand">Jharkhand</option>
                   <option value="Karnataka">Karnataka</option>
                   <option value="Kerala">Kerala</option>
+                  <option value="Madhya Pradesh">Madhya Pradesh</option>
                   <option value="Maharashtra">Maharashtra</option>
+                  <option value="Odisha">Odisha</option>
                   <option value="Punjab">Punjab</option>
                   <option value="Rajasthan">Rajasthan</option>
                   <option value="Tamil Nadu">Tamil Nadu</option>
                   <option value="Telangana">Telangana</option>
                   <option value="Uttar Pradesh">Uttar Pradesh</option>
+                  <option value="Uttarakhand">Uttarakhand</option>
                   <option value="West Bengal">West Bengal</option>
                   <option value="Other">Other State / UT</option>
                 </select>
@@ -100,8 +203,8 @@
             <div class="form-row">
               <div class="form-group" id="group-pincode">
                 <label class="form-label" for="cust-pincode">PIN Code (6 Digits) *</label>
-                <input type="text" id="cust-pincode" class="form-control" placeholder="e.g. 400001" pattern="[0-9]{6}" required>
-                <span class="form-error">Please enter a valid 6-digit PIN code</span>
+                <input type="text" id="cust-pincode" class="form-control" placeholder="e.g. 400001" pattern="[0-9]{6}" maxlength="6" required>
+                <span class="form-error">Please enter a valid 6-digit Indian postal PIN code</span>
               </div>
 
               <div class="form-group">
@@ -117,24 +220,75 @@
             </div>
 
             <div class="form-group">
-              <label class="form-label" for="cust-instructions">Special Instructions / Gift Card Message (Optional)</label>
-              <textarea id="cust-instructions" class="form-control" style="min-height: 80px;" placeholder="Add a greeting card message or specific ribbon instructions for your bouquet."></textarea>
+              <label class="form-label" for="cust-instructions">Optional Delivery Instructions</label>
+              <textarea id="cust-instructions" class="form-control" style="min-height: 60px;" placeholder="e.g. Leave parcel at reception / call before arrival"></textarea>
             </div>
 
+            <div class="form-group">
+              <label class="form-label" for="cust-customization-instructions">Optional Customization Instructions / Greeting Note</label>
+              <textarea id="cust-customization-instructions" class="form-control" style="min-height: 60px;" placeholder="e.g. Add handwritten birthday card message: 'Happy Birthday Diya!' or specific ribbon color choice"></textarea>
+            </div>
+
+            <!-- Payment Method Selection -->
+            <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-warm);">
+              <label class="form-label" style="font-size: 1.05rem; font-weight: 600; margin-bottom: 0.85rem; color: var(--text-cocoa-heading);">
+                Select Payment Method *
+              </label>
+
+              <div id="payment-methods-wrapper" style="display: flex; flex-direction: column; gap: 0.85rem;">
+                
+                <!-- Online Payment / UPI -->
+                <label id="payment-method-online-card" class="payment-option-card">
+                  <input type="radio" name="payment-method" id="pay-method-online" value="Razorpay" style="margin-top: 0.25rem;">
+                  <div style="flex: 1;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                      <strong style="color: var(--text-cocoa-heading); font-size: 0.95rem;">Online Payment / UPI / Cards</strong>
+                      <span class="payment-badge badge-online">Razorpay Secure</span>
+                    </div>
+                    <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0.25rem 0 0;">
+                      Pay seamlessly with Google Pay, PhonePe, Paytm, BHIM UPI, Debit/Credit Card, or NetBanking.
+                    </p>
+                  </div>
+                </label>
+
+                <!-- Cash on Delivery -->
+                <label id="payment-method-cod-card" class="payment-option-card selected">
+                  <input type="radio" name="payment-method" id="pay-method-cod" value="COD" checked style="margin-top: 0.25rem;">
+                  <div style="flex: 1;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                      <strong style="color: var(--text-cocoa-heading); font-size: 0.95rem;">Cash on Delivery (COD)</strong>
+                      <span class="payment-badge badge-cod">Pay on Arrival</span>
+                    </div>
+                    <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0.25rem 0 0;">
+                      Pay with cash directly to the courier agent when your handcrafted parcel arrives at your doorstep.
+                    </p>
+                  </div>
+                </label>
+
+              </div>
+              <div id="payment-method-error" class="form-error" style="display: none; margin-top: 0.5rem;">
+                Please select a payment method.
+              </div>
+            </div>
+
+            <!-- Single-Click Place Order Button -->
             <div style="margin-top: 2rem;">
               <button type="submit" id="submit-order-btn" class="btn btn-primary btn-block btn-lg">
-                Complete Order
+                Place Order (Cash on Delivery)
               </button>
+              <p style="font-size: 0.78rem; color: var(--text-muted); text-align: center; margin-top: 0.6rem;">
+                🔒 Prices and stock are strictly verified by our backend server before confirmation.
+              </p>
             </div>
 
           </form>
         </div>
 
-        <!-- Right: Order Summary -->
+        <!-- Right: Order Summary Preview -->
         <div class="order-summary-card">
-          <h3>Order Items</h3>
+          <h3>Order Review</h3>
 
-          <div id="checkout-items-preview" style="max-height: 260px; overflow-y: auto; margin-bottom: 1.5rem; padding-right: 0.5rem;">
+          <div id="checkout-items-preview" style="max-height: 280px; overflow-y: auto; margin-bottom: 1.5rem; padding-right: 0.5rem;">
             <!-- Rendered dynamically -->
           </div>
 
@@ -154,62 +308,104 @@
           </div>
 
           <div class="summary-row total">
-            <span>Final Total:</span>
+            <span>Final Payable Amount:</span>
             <strong id="chk-total">₹0</strong>
           </div>
 
-          <div style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
-            <button type="button" id="chk-whatsapp-btn" class="btn btn-whatsapp btn-block">
-              Send Order Directly via WhatsApp
-            </button>
-          </div>
-
-          <div class="notice-box">
-            <strong>Order Security:</strong><br>
-            All prices and stock availability are validated securely by the server before final confirmation.
+          <div class="notice-box" style="margin-top: 1.5rem;">
+            <strong>Genuine Handcrafted Policy:</strong><br>
+            Every order is handcrafted with premium milk cotton yarn. Orders over ₹999 qualify for Free Express Shipping.
           </div>
         </div>
 
       </div>
 
-      <!-- Empty Cart Redirection State -->
+      <!-- Empty Cart State -->
       <div id="checkout-empty-state" class="empty-state" style="display: none;">
         <div class="empty-state-icon">🛒</div>
         <h2>Your Cart is Empty</h2>
-        <p>You cannot proceed to checkout without any bouquets in your cart.</p>
+        <p>You cannot proceed to checkout without any handmade crochet items in your cart.</p>
         <a href="shop.html" class="btn btn-primary btn-lg">Return to Shop</a>
+      </div>
+
+      <!-- Order Confirmation View (Replaces grid after order creation) -->
+      <div id="order-confirmation-view" style="display: none; margin-top: 1.5rem;">
+        <div class="confirmation-card">
+          <div style="text-align: center; margin-bottom: 2rem;">
+            <div style="width: 72px; height: 72px; border-radius: 50%; background-color: #fdf0ed; color: var(--primary-rose); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; font-size: 2.2rem;">
+              🌸
+            </div>
+            <h1 style="font-size: 1.85rem; margin-bottom: 0.35rem; color: var(--text-cocoa-heading);">Order placed successfully!</h1>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">
+              Thank you for supporting Loop n Love handmade boutique. Your order is logged in our boutique system.
+            </p>
+          </div>
+
+          <!-- Order Summary Badges -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem; background: var(--bg-surface); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-warm);">
+            <div>
+              <span style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Order Reference</span>
+              <div id="conf-order-ref" style="font-family: monospace; font-size: 1.15rem; font-weight: 700; color: var(--primary-rose-hover); margin-top: 0.2rem;">#LNL-000000</div>
+            </div>
+            <div>
+              <span style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Order Date</span>
+              <div id="conf-order-date" style="font-weight: 600; font-size: 0.95rem; margin-top: 0.2rem;">-</div>
+            </div>
+            <div>
+              <span style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Order Status</span>
+              <div style="margin-top: 0.2rem;"><span id="conf-order-status" class="conf-badge conf-badge-confirmed">Confirmed</span></div>
+            </div>
+            <div>
+              <span style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Payment Status</span>
+              <div style="margin-top: 0.2rem;"><span id="conf-payment-status" class="conf-badge conf-badge-pending">Pending</span></div>
+            </div>
+          </div>
+
+          <!-- Products Snapshot -->
+          <div style="margin-bottom: 2rem;">
+            <h3 style="font-size: 1.15rem; margin-bottom: 1rem;">Items Ordered</h3>
+            <div id="conf-items-list" style="border: 1px solid var(--border-warm); border-radius: var(--radius-md); overflow: hidden;">
+              <!-- Dynamic Items -->
+            </div>
+          </div>
+
+          <!-- Delivery Address & Financial Breakdown -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2.25rem; background: var(--bg-surface); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-warm);">
+            <div>
+              <h4 style="font-size: 0.95rem; margin-bottom: 0.5rem; color: var(--text-cocoa-heading);">Delivery Address</h4>
+              <p id="conf-address-text" style="font-size: 0.88rem; line-height: 1.6; color: var(--text-muted); margin: 0;"></p>
+              <div id="conf-instructions-box" style="margin-top: 0.75rem; font-size: 0.82rem; color: var(--text-muted); display: none;"></div>
+            </div>
+            <div>
+              <h4 style="font-size: 0.95rem; margin-bottom: 0.5rem; color: var(--text-cocoa-heading);">Payment &amp; Totals</h4>
+              <div style="font-size: 0.88rem; line-height: 1.6;">
+                <div style="display: flex; justify-content: space-between;"><span>Payment Method:</span> <strong id="conf-payment-method">-</strong></div>
+                <div style="display: flex; justify-content: space-between;"><span>Subtotal:</span> <span id="conf-subtotal">₹0</span></div>
+                <div style="display: flex; justify-content: space-between;"><span>Shipping Charge:</span> <span id="conf-shipping">₹0</span></div>
+                <div id="conf-discount-row" style="display: none; justify-content: space-between; color: var(--accent-sage);"><span>Discount:</span> <span id="conf-discount">- ₹0</span></div>
+                <div style="display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: 700; color: var(--text-cocoa-heading); border-top: 1px solid var(--border-warm); margin-top: 0.5rem; padding-top: 0.5rem;">
+                  <span>Final Total:</span> <span id="conf-total">₹0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+            <a href="account.html" class="btn btn-primary btn-sm">View Order History</a>
+            <a href="shop.html" class="btn btn-secondary btn-sm">Continue Shopping</a>
+            <button id="conf-whatsapp-btn" class="btn btn-whatsapp btn-sm">Chat with Loop n Love on WhatsApp</button>
+          </div>
+
+        </div>
       </div>
 
     </div>
   </main>
 
-  <!-- Order Confirmation Modal -->
-  <div id="order-success-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="success-title">
-    <div class="modal-box" style="text-align: center;">
-      <div style="width: 64px; height: 64px; border-radius: 50%; background-color: var(--bg-blush); color: var(--primary-rose); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; font-size: 2rem;">
-        🌸
-      </div>
-      <h2 id="success-title" style="margin-bottom: 0.5rem;">Thank You for Your Order!</h2>
-      <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem;">
-        Your order reference is: <strong id="confirmed-order-ref" style="color: var(--primary-rose-hover); font-family: monospace; font-size: 1.1rem;">#LNL-0001</strong>
-      </p>
-
-      <div style="background-color: var(--bg-surface); border-radius: var(--radius-md); padding: 1.25rem; text-align: left; font-size: 0.88rem; margin-bottom: 1.5rem; line-height: 1.6;">
-        <div><strong>Recipient:</strong> <span id="conf-recipient"></span></div>
-        <div><strong>Total Amount:</strong> <span id="conf-total"></span></div>
-        <div><strong>Status:</strong> <span class="badge badge-stock">Order Received</span></div>
-      </div>
-
-      <div style="display: flex; gap: 0.75rem; justify-content: center;">
-        <a href="shop.html" class="btn btn-primary btn-sm">Continue Shopping</a>
-        <button id="conf-wa-share" class="btn btn-whatsapp btn-sm">Share on WhatsApp</button>
-      </div>
-    </div>
-  </div>
-
   <footer class="site-footer" role="contentinfo">
     <div class="container footer-bottom" style="border: none; padding-top: 0;">
-      <p>&copy; 2026 Loop n Love. All rights reserved.</p>
+      <p>&copy; 2026 Loop n Love. All rights reserved. Handcrafted boutique.</p>
     </div>
   </footer>
 
@@ -218,11 +414,84 @@
     import { CONFIG } from './js/config.js';
     import { API } from './js/api.js';
     import { showToast } from './js/main.js';
-    import { openWhatsAppOrder } from './js/whatsapp.js';
 
     let discountApplied = false;
     let discountAmount = 0;
+    let isSubmitting = false;
+    let paymentConfig = {
+      configured: false,
+      keyId: '',
+      onlineEnabled: true,
+      codEnabled: true,
+      currency: 'INR'
+    };
+    let confirmedOrderData = null;
 
+    // Prefill authenticated customer data if available
+    function prefillUserData() {
+      const userJson = localStorage.getItem(CONFIG.STORAGE_KEYS.USER_INFO);
+      if (!userJson) return;
+      try {
+        const user = JSON.parse(userJson);
+        if (user.name && !document.getElementById('cust-name').value) {
+          document.getElementById('cust-name').value = user.name;
+        }
+        if (user.email && !document.getElementById('cust-email').value) {
+          document.getElementById('cust-email').value = user.email;
+        }
+        if (user.phone && !document.getElementById('cust-phone').value) {
+          document.getElementById('cust-phone').value = user.phone;
+        }
+      } catch (e) {}
+    }
+
+    // Load payment configuration from backend
+    async function loadPaymentConfig() {
+      try {
+        paymentConfig = await API.getPaymentConfig();
+      } catch (e) {
+        console.warn('Could not load payment settings, using defaults');
+      }
+
+      const onlineCard = document.getElementById('payment-method-online-card');
+      const codCard = document.getElementById('payment-method-cod-card');
+      const payOnlineRadio = document.getElementById('pay-method-online');
+      const payCodRadio = document.getElementById('pay-method-cod');
+
+      if (!paymentConfig.onlineEnabled) {
+        onlineCard.style.display = 'none';
+        payOnlineRadio.disabled = true;
+      }
+      if (!paymentConfig.codEnabled) {
+        codCard.style.display = 'none';
+        payCodRadio.disabled = true;
+      }
+
+      // Default selection
+      if (paymentConfig.onlineEnabled && !paymentConfig.codEnabled) {
+        payOnlineRadio.checked = true;
+        onlineCard.classList.add('selected');
+        codCard.classList.remove('selected');
+      } else {
+        payCodRadio.checked = true;
+        codCard.classList.add('selected');
+        onlineCard.classList.remove('selected');
+      }
+
+      updateSubmitButtonText();
+    }
+
+    function updateSubmitButtonText() {
+      const selected = document.querySelector('input[name="payment-method"]:checked')?.value || 'COD';
+      const btn = document.getElementById('submit-order-btn');
+      if (selected === 'Razorpay') {
+        btn.textContent = 'Pay & Place Order';
+      } else {
+        btn.textContent = 'Place Order (Cash on Delivery)';
+      }
+    }
+
+    // Render Order Summary
     function renderSummary() {
       const items = Cart.getItems();
       const mainGrid = document.getElementById('checkout-main-grid');
@@ -241,10 +510,11 @@
       // Items preview
       itemsPreview.innerHTML = items.map(item => `
         <div style="display: flex; gap: 0.8rem; align-items: center; margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-warm);">
-          <img src="${item.image}" alt="${item.name}" width="50" height="50" style="border-radius: var(--radius-sm); object-fit: cover;">
+          <img src="${item.image || 'assets/product-images/bouquet_01.jpg'}" alt="${item.name}" width="50" height="50" style="border-radius: var(--radius-sm); object-fit: cover;">
           <div style="flex: 1;">
-            <div style="font-size: 0.9rem; font-weight: 600;">${item.name}</div>
-            <div style="font-size: 0.8rem; color: var(--text-muted);">Qty: ${item.quantity} × ₹${item.price}</div>
+            <div style="font-size: 0.9rem; font-weight: 600; color: var(--text-cocoa-heading);">${item.name}</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Qty: ${item.quantity} &times; ₹${item.price}</div>
+            ${item.customizationNotes ? `<div style="font-size: 0.75rem; color: var(--primary-rose); font-style: italic;">Note: ${item.customizationNotes}</div>` : ''}
           </div>
           <div style="font-weight: 600; font-size: 0.95rem;">₹${item.price * item.quantity}</div>
         </div>
@@ -270,8 +540,106 @@
       document.getElementById('chk-total').textContent = `₹${total}`;
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
+    // Display Rich Confirmation Screen
+    function displayConfirmation(order) {
+      confirmedOrderData = order;
+      document.getElementById('checkout-main-grid').style.display = 'none';
+      const confView = document.getElementById('order-confirmation-view');
+      confView.style.display = 'block';
+
+      // Scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      document.getElementById('conf-order-ref').textContent = order.orderReference;
+      document.getElementById('conf-order-date').textContent = new Date(order.createdAt || Date.now()).toLocaleDateString('en-IN', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric'
+      });
+
+      const orderStatusBadge = document.getElementById('conf-order-status');
+      orderStatusBadge.textContent = order.orderStatus || 'Pending';
+      orderStatusBadge.className = `conf-badge ${order.orderStatus === 'Confirmed' ? 'conf-badge-confirmed' : 'conf-badge-pending'}`;
+
+      const paymentStatusBadge = document.getElementById('conf-payment-status');
+      paymentStatusBadge.textContent = order.paymentStatus || 'Pending';
+      paymentStatusBadge.className = `conf-badge ${order.paymentStatus === 'Paid' ? 'conf-badge-paid' : 'conf-badge-pending'}`;
+
+      // Address
+      const addr = order.shippingAddress;
+      document.getElementById('conf-address-text').innerHTML = `
+        <strong>${order.customer.name}</strong><br>
+        ${addr.address}<br>
+        ${addr.city}, ${addr.state} - ${addr.pincode}<br>
+        📞 ${order.customer.phone} &bull; ✉️ ${order.customer.email}
+      `;
+
+      if (order.instructions || order.customizationInstructions) {
+        const instBox = document.getElementById('conf-instructions-box');
+        instBox.style.display = 'block';
+        instBox.innerHTML = `
+          ${order.instructions ? `<div><strong>Delivery Note:</strong> ${order.instructions}</div>` : ''}
+          ${order.customizationInstructions ? `<div><strong>Customization:</strong> ${order.customizationInstructions}</div>` : ''}
+        `;
+      }
+
+      // Totals
+      document.getElementById('conf-payment-method').textContent = order.paymentMethod === 'Razorpay' ? 'Online Payment (Razorpay)' : 'Cash on Delivery (COD)';
+      document.getElementById('conf-subtotal').textContent = `₹${order.subtotal}`;
+      document.getElementById('conf-shipping').textContent = order.shippingFee === 0 ? 'FREE' : `₹${order.shippingFee}`;
+      if (order.discount > 0) {
+        document.getElementById('conf-discount-row').style.display = 'flex';
+        document.getElementById('conf-discount').textContent = `- ₹${order.discount}`;
+      } else {
+        document.getElementById('conf-discount-row').style.display = 'none';
+      }
+      document.getElementById('conf-total').textContent = `₹${order.totalAmount}`;
+
+      // Items list
+      const itemsContainer = document.getElementById('conf-items-list');
+      itemsContainer.innerHTML = (order.items || []).map(i => `
+        <div style="display: flex; gap: 1rem; align-items: center; padding: 0.85rem 1rem; border-bottom: 1px solid var(--border-warm); background: var(--bg-card);">
+          <img src="${i.image || 'assets/product-images/bouquet_01.jpg'}" alt="${i.name}" width="50" height="50" style="border-radius: var(--radius-sm); object-fit: cover;">
+          <div style="flex: 1;">
+            <div style="font-weight: 600; font-size: 0.95rem; color: var(--text-cocoa-heading);">${i.name}</div>
+            <div style="font-size: 0.82rem; color: var(--text-muted);">
+              Qty: <strong>${i.quantity}</strong> &times; ₹${i.price}
+              ${i.customizationNotes ? `<span style="display: block; font-style: italic; color: var(--primary-rose);">Note: ${i.customizationNotes}</span>` : ''}
+            </div>
+          </div>
+          <div style="font-weight: 700; font-size: 0.95rem;">
+            ₹${i.price * i.quantity}
+          </div>
+        </div>
+      `).join('');
+
+      // WhatsApp Button
+      document.getElementById('conf-whatsapp-btn').onclick = async () => {
+        const publicSettings = await API.getPublicSettings().catch(() => ({ settings: {} }));
+        const waNum = (publicSettings.settings && publicSettings.settings.whatsappNumber) || CONFIG.BUSINESS_WHATSAPP_NUMBER || '';
+        if (!waNum) {
+          showToast('Store WhatsApp number is not configured in settings.', 'warning');
+          return;
+        }
+        const text = encodeURIComponent(`Hello Loop n Love! I just placed order ${order.orderReference} for ₹${order.totalAmount}. Could you please confirm crafting and dispatch timeline?`);
+        window.open(`https://wa.me/${waNum}?text=${text}`, '_blank');
+      };
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      prefillUserData();
       renderSummary();
+      await loadPaymentConfig();
+
+      // Radio selection card styling
+      document.querySelectorAll('input[name="payment-method"]').forEach(radio => {
+        radio.addEventListener('change', (e) => {
+          document.querySelectorAll('.payment-option-card').forEach(c => c.classList.remove('selected'));
+          const card = e.target.closest('.payment-option-card');
+          if (card) card.classList.add('selected');
+          updateSubmitButtonText();
+        });
+      });
 
       // Discount Code Handler
       document.getElementById('apply-discount-btn')?.addEventListener('click', () => {
@@ -284,25 +652,33 @@
           renderSummary();
           showToast('10% First order discount applied!');
         } else {
+          discountApplied = false;
           feedback.style.color = 'var(--accent-danger)';
-          feedback.textContent = 'Invalid code. Try FIRST10.';
+          feedback.textContent = 'Invalid code. Try code FIRST10.';
+          renderSummary();
         }
       });
 
-      // Checkout form submit
+      // Checkout form submit handler
       const form = document.getElementById('checkout-form');
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
+        const alertBox = document.getElementById('checkout-error-alert');
+        alertBox.style.display = 'none';
 
-        // Validate
+        if (isSubmitting) return; // Prevent duplicate submission
+
+        // Field values
         const name = document.getElementById('cust-name').value.trim();
-        const phone = document.getElementById('cust-phone').value.trim();
+        const phone = document.getElementById('cust-phone').value.trim().replace(/\D/g, '');
         const email = document.getElementById('cust-email').value.trim();
         const address = document.getElementById('cust-address').value.trim();
         const city = document.getElementById('cust-city').value.trim();
         const state = document.getElementById('cust-state').value;
-        const pincode = document.getElementById('cust-pincode').value.trim();
+        const pincode = document.getElementById('cust-pincode').value.trim().replace(/\D/g, '');
         const instructions = document.getElementById('cust-instructions').value.trim();
+        const customizationInstructions = document.getElementById('cust-customization-instructions').value.trim();
+        const paymentMethod = document.querySelector('input[name="payment-method"]:checked')?.value || 'COD';
 
         let valid = true;
 
@@ -317,84 +693,180 @@
         };
 
         checkField('group-name', name.length >= 2);
-        checkField('group-phone', /^\d{10}$/.test(phone));
+        checkField('group-phone', phone.length === 10);
         checkField('group-email', /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
         checkField('group-address', address.length >= 5);
         checkField('group-city', city.length >= 2);
         checkField('group-state', state !== '');
-        checkField('group-pincode', /^\d{6}$/.test(pincode));
+        checkField('group-pincode', pincode.length === 6);
 
-        if (!valid) return;
+        if (!valid) {
+          alertBox.textContent = 'Please fill out all required fields marked with * correctly.';
+          alertBox.style.display = 'block';
+          alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return;
+        }
 
-        const orderItems = Cart.getItems();
-        const subtotal = Cart.getSubtotal();
-        const shippingFee = Cart.getShippingFee();
-        const total = Cart.getTotal(discountAmount);
+        const items = Cart.getItems();
+        if (items.length === 0) {
+          alertBox.textContent = 'Your cart is empty. Please add bouquets or accessories before placing an order.';
+          alertBox.style.display = 'block';
+          return;
+        }
 
-        const orderData = {
+        // Lock button and set processing state
+        isSubmitting = true;
+        const submitBtn = document.getElementById('submit-order-btn');
+        submitBtn.disabled = true;
+        const originalBtnText = submitBtn.textContent;
+        submitBtn.textContent = 'Validating Stock & Price...';
+
+        const orderPayload = {
           customer: { name, phone, email },
           shippingAddress: { address, city, state, pincode },
           instructions,
-          items: orderItems,
-          subtotal,
-          shippingFee,
-          discount: discountAmount,
-          totalAmount: total
+          customizationInstructions,
+          items,
+          discountCode: discountApplied ? 'FIRST10' : '',
+          paymentMethod
         };
 
-        const submitBtn = document.getElementById('submit-order-btn');
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Processing Order...';
-
         try {
-          // Attempt backend submission
-          const result = await API.createOrder(orderData);
-          const orderRef = result.orderReference || `#LNL-${Date.now().toString().slice(-6)}`;
+          // 1. Create order on backend (strictly validated in MongoDB)
+          const result = await API.createOrder(orderPayload);
+          const order = result.order;
 
-          // Clear cart on successful order
-          Cart.clearCart();
+          if (paymentMethod === 'COD') {
+            // Cash on Delivery flow: Order confirmed directly
+            Cart.clearCart();
+            isSubmitting = false;
+            displayConfirmation(order);
+            showToast('Order placed successfully via Cash on Delivery!');
+            return;
+          }
 
-          // Show confirmation modal
-          document.getElementById('confirmed-order-ref').textContent = orderRef;
-          document.getElementById('conf-recipient').textContent = `${name}, ${city} (${pincode})`;
-          document.getElementById('conf-total').textContent = `₹${total}`;
-          document.getElementById('order-success-modal').classList.add('open');
+          // 2. Online Payment via Razorpay
+          submitBtn.textContent = 'Opening Secure Gateway...';
 
-          document.getElementById('conf-wa-share').addEventListener('click', () => {
-            openWhatsAppOrder(orderItems, total, `Order Reference: ${orderRef}\nDelivery: ${address}, ${city} - ${pincode}`);
+          let paymentOrderRes;
+          try {
+            paymentOrderRes = await API.createPaymentOrder(order._id);
+          } catch (paymentInitErr) {
+            // Razorpay credentials not configured or gateway error
+            alertBox.innerHTML = `
+              <strong>Online Payment Gateway Notice:</strong><br>
+              ${paymentInitErr.message}<br><br>
+              <em>Your order reference <strong>${order.orderReference}</strong> is saved as Pending. You can complete your order using Cash on Delivery or contact us.</em>
+            `;
+            alertBox.style.display = 'block';
+            alertBox.className = 'checkout-alert checkout-alert-warning';
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalBtnText;
+            isSubmitting = false;
+            return;
+          }
+
+          if (!paymentOrderRes.configured || !window.Razorpay) {
+            alertBox.innerHTML = `
+              <strong>Gateway Configuration:</strong><br>
+              Razorpay SDK or test credentials are pending backend setup. Your order reference <strong>${order.orderReference}</strong> was created.
+              Please switch to Cash on Delivery to complete your purchase immediately.
+            `;
+            alertBox.style.display = 'block';
+            alertBox.className = 'checkout-alert checkout-alert-warning';
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalBtnText;
+            isSubmitting = false;
+            return;
+          }
+
+          // Open Razorpay Standard Checkout modal
+          const razorpayOptions = {
+            key: paymentOrderRes.keyId,
+            amount: paymentOrderRes.amount,
+            currency: paymentOrderRes.currency || 'INR',
+            name: 'Loop n Love',
+            description: `Order ${order.orderReference}`,
+            image: 'assets/brand/logo.png',
+            order_id: paymentOrderRes.razorpayOrderId,
+            prefill: {
+              name: order.customer.name,
+              email: order.customer.email,
+              contact: order.customer.phone
+            },
+            theme: {
+              color: '#C46D75'
+            },
+            handler: async function (response) {
+              submitBtn.textContent = 'Verifying Payment...';
+              try {
+                const verifyRes = await API.verifyPayment({
+                  orderId: order._id,
+                  razorpayOrderId: response.razorpay_order_id,
+                  razorpayPaymentId: response.razorpay_payment_id,
+                  razorpaySignature: response.razorpay_signature
+                });
+
+                Cart.clearCart();
+                isSubmitting = false;
+                displayConfirmation(verifyRes.order || { ...order, paymentStatus: 'Paid', orderStatus: 'Confirmed' });
+                showToast('Payment verified successfully! Order confirmed.');
+              } catch (vErr) {
+                alertBox.textContent = 'Payment signature verification failed: ' + vErr.message;
+                alertBox.style.display = 'block';
+                alertBox.className = 'checkout-alert checkout-alert-danger';
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalBtnText;
+                isSubmitting = false;
+              }
+            },
+            modal: {
+              ondismiss: async function () {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalBtnText;
+                isSubmitting = false;
+                await API.recordPaymentFailure({
+                  orderId: order._id,
+                  reason: 'Customer closed payment window without completing transaction'
+                }).catch(() => {});
+
+                showToast('Payment window closed. Order remains Pending Payment.', 'warning');
+                alertBox.innerHTML = `
+                  Your payment was not completed. Order <strong>${order.orderReference}</strong> is saved as <strong>Pending Payment</strong>.
+                  You can retry payment or place a new order using Cash on Delivery.
+                `;
+                alertBox.style.display = 'block';
+                alertBox.className = 'checkout-alert checkout-alert-warning';
+              }
+            }
+          };
+
+          const rzp = new window.Razorpay(razorpayOptions);
+          rzp.on('payment.failed', async function (response) {
+            await API.recordPaymentFailure({
+              orderId: order._id,
+              reason: response.error?.description || 'Transaction failed'
+            }).catch(() => {});
+            alertBox.textContent = `Payment failed: ${response.error?.description || 'Transaction could not be completed'}. Please try another card or select Cash on Delivery.`;
+            alertBox.style.display = 'block';
+            alertBox.className = 'checkout-alert checkout-alert-danger';
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalBtnText;
+            isSubmitting = false;
           });
+
+          rzp.open();
 
         } catch (err) {
-          // Graceful fallback for Phase 1 (before backend is running)
-          console.warn('Backend order endpoint unavailable, generating local preview order:', err.message);
-          const mockRef = `#LNL-${Date.now().toString().slice(-6)}`;
-          Cart.clearCart();
-
-          document.getElementById('confirmed-order-ref').textContent = mockRef;
-          document.getElementById('conf-recipient').textContent = `${name}, ${city} (${pincode})`;
-          document.getElementById('conf-total').textContent = `₹${total}`;
-          document.getElementById('order-success-modal').classList.add('open');
-
-          document.getElementById('conf-wa-share').addEventListener('click', () => {
-            openWhatsAppOrder(orderItems, total, `Order Reference: ${mockRef}\nDelivery: ${address}, ${city} - ${pincode}`);
-          });
-        } finally {
+          console.error('Order creation error:', err);
+          alertBox.textContent = err.message || 'Failed to place order. Please review your details and try again.';
+          alertBox.style.display = 'block';
+          alertBox.className = 'checkout-alert checkout-alert-danger';
+          alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
           submitBtn.disabled = false;
-          submitBtn.textContent = 'Complete Order';
+          submitBtn.textContent = originalBtnText;
+          isSubmitting = false;
         }
-      });
-
-      // Direct WhatsApp Order button
-      document.getElementById('chk-whatsapp-btn')?.addEventListener('click', () => {
-        const name = document.getElementById('cust-name').value.trim();
-        const city = document.getElementById('cust-city').value.trim();
-        const instructions = document.getElementById('cust-instructions').value.trim();
-        const items = Cart.getItems();
-        const total = Cart.getTotal(discountAmount);
-
-        let note = instructions;
-        if (name) note = `Customer: ${name} (${city || 'India'}). ${note}`;
-        openWhatsAppOrder(items, total, note);
       });
     });
   </script>

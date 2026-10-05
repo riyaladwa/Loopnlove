@@ -75,7 +75,21 @@ const productSchema = new mongoose.Schema({
   customizable: {
     type: Boolean,
     default: true
-  }
+  },
+  madeToOrder: {
+    type: Boolean,
+    default: true
+  },
+  publicationStatus: {
+    type: String,
+    enum: ['draft', 'published', 'unpublished', 'archived'],
+    default: 'published'
+  },
+  variations: [{
+    name: { type: String, trim: true },
+    options: [{ type: String, trim: true }],
+    priceModifier: { type: Number, default: 0 }
+  }]
 }, {
   timestamps: true
 });

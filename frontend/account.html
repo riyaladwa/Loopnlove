@@ -215,9 +215,19 @@
                   </div>
 
                   <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
-                    <span class="badge ${statusClass}">${ord.orderStatus || 'Order Received'}</span>
-                    <span class="badge ${payStatusClass}">${ord.paymentStatus || 'Payment Pending'}</span>
+                    <span class="badge ${statusClass}">${ord.orderStatus || 'Pending'}</span>
+                    <span class="badge ${payStatusClass}">${ord.paymentStatus === 'Paid' ? 'Paid' : (ord.paymentStatus || 'Pending')}</span>
                   </div>
+                </div>
+
+                <!-- Payment Method & Customization Header -->
+                <div style="margin-bottom: 1rem; font-size: 0.85rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; background: var(--bg-surface); padding: 0.6rem 0.85rem; border-radius: var(--radius-sm);">
+                  <div>
+                    <span>Payment Method:</span>
+                    <strong>${ord.paymentMethod === 'COD' ? 'Cash on Delivery (COD)' : (ord.paymentMethod === 'Razorpay' ? 'Online Payment (Razorpay)' : ord.paymentMethod || 'Online')}</strong>
+                    ${ord.paymentReference ? `&bull; <span style="font-family: monospace; font-size: 0.8rem; color: var(--text-muted);">Ref: ${ord.paymentReference}</span>` : ''}
+                  </div>
+                  ${ord.customizationInstructions ? `<div style="color: var(--primary-rose); font-style: italic;">✨ Customization Note: ${ord.customizationInstructions}</div>` : ''}
                 </div>
 
                 <!-- Items Ordered List -->
@@ -230,7 +240,7 @@
                         <div style="font-weight: 600; font-size: 0.95rem; color: var(--text-cocoa-heading);">${item.name}</div>
                         <div style="font-size: 0.82rem; color: var(--text-muted);">
                           Qty: <strong>${item.quantity}</strong> &times; ₹${item.price}
-                          ${item.customizationNotes ? `<span style="display: block; font-style: italic; color: var(--primary-rose);">Note: ${item.customizationNotes}</span>` : ''}
+                          ${item.customizationNotes ? `<span style="display: block; font-style: italic; color: var(--primary-rose);">Item Note: ${item.customizationNotes}</span>` : ''}
                         </div>
                       </div>
                       <div style="font-weight: 600; font-size: 0.95rem;">
@@ -253,7 +263,7 @@
                   </div>
 
                   <div style="text-align: right;">
-                    <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Total Paid / Due</span>
+                    <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Total Amount</span>
                     <div style="font-size: 1.35rem; font-weight: 700; color: var(--text-cocoa-heading); font-family: var(--font-serif);">
                       ₹${ord.totalAmount}
                     </div>

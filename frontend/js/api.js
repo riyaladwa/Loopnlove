@@ -26,36 +26,18 @@ class ApiService {
     return headers;
   }
 
-  // Safe fetch with fallback
+  // Fetch products from MongoDB backend (single source of truth)
   async fetchProducts(params = {}) {
-    try {
-      const query = new URLSearchParams(params).toString();
-      const res = await fetch(`${this.baseUrl}/products${query ? '?' + query : ''}`, {
-        headers: this.getHeaders(false)
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      return data.products || data;
-    } catch (err) {
-      console.warn('Backend API unavailable, using verified local catalogue data:', err.message);
-      // Filter & sort locally from INITIAL_PRODUCTS
-      let list = [...INITIAL_PRODUCTS];
-      if (params.category && params.category !== 'all') {
-        list = list.filter(p => p.category.toLowerCase() === params.category.toLowerCase());
-      }
-      if (params.search) {
-        const q = params.search.toLowerCase();
-        list = list.filter(p => p.name.toLowerCase().includes(q) || p.description.toLowerCase().includes(q));
-      }
-      if (params.sort === 'price-asc') {
-        list.sort((a, b) => a.price - b.price);
-      } else if (params.sort === 'price-desc') {
-        list.sort((a, b) => b.price - a.price);
-      } else if (params.sort === 'newest') {
-        list.sort((a, b) => (b.isNewArrival ? 1 : 0) - (a.isNewArrival ? 1 : 0));
-      }
-      return list;
+    const query = new URLSearchParams(params).toString();
+    const res = await fetch(`${this.baseUrl}/products${query ? '?' + query : ''}`, {
+      headers: this.getHeaders(false)
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || `Failed to fetch catalogue from database (HTTP ${res.status})`);
     }
+    const data = await res.json();
+    return data.products || data;
   }
 
   // Get single product details
@@ -276,15 +258,22 @@ class ApiService {
     return data.order || data;
   }
 
-  async updateOrderStatus(id, orderStatus, paymentStatus) {
+  async updateOrderStatus(id, orderStatus, paymentStatus, note = '', restoreStock = false, paymentReference = '') {
     const res = await fetch(`${this.baseUrl}/orders/${id}/status`, {
       method: 'PUT',
       headers: this.getHeaders(true),
-      body: JSON.stringify({ orderStatus, paymentStatus })
+      body: JSON.stringify({ orderStatus, paymentStatus, note, restoreStock, paymentReference })
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.message || 'Failed to update order status');
     return data;
+  }
+
+  async getOrderByReference(reference) {
+    const res = await fetch(`${this.baseUrl}/orders/track/${encodeURIComponent(reference)}`);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Failed to fetch order details');
+    return data.order || data;
   }
 
   async recordWhatsAppOrder(orderPayload) {
@@ -331,6 +320,25 @@ class ApiService {
     return data;
   }
 
+  // Payment configuration (safe public config)
+  async getPaymentConfig() {
+    try {
+      const res = await fetch(`${this.baseUrl}/payments/config`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Failed to fetch payment config');
+      return data;
+    } catch (err) {
+      console.warn('Payment config endpoint unavailable, using defaults:', err.message);
+      return {
+        configured: false,
+        keyId: '',
+        onlineEnabled: true,
+        codEnabled: true,
+        currency: 'INR'
+      };
+    }
+  }
+
   // Razorpay payment order creation
   async createPaymentOrder(orderId) {
     const res = await fetch(`${this.baseUrl}/payments/create-order`, {
@@ -353,6 +361,16 @@ class ApiService {
     const data = await res.json();
     if (!res.ok) throw new Error(data.message || 'Payment verification failed');
     return data;
+  }
+
+  // Record payment failure or modal dismissal
+  async recordPaymentFailure(failureData) {
+    const res = await fetch(`${this.baseUrl}/payments/failure`, {
+      method: 'POST',
+      headers: this.getHeaders(true),
+      body: JSON.stringify(failureData)
+    });
+    return await res.json();
   }
 }
 

@@ -4,6 +4,7 @@ import {
   getMyOrders,
   getAllOrders,
   getOrderById,
+  getOrderByReference,
   getDashboardStats,
   updateOrderStatus,
   recordWhatsAppOrder
@@ -14,6 +15,7 @@ const router = express.Router();
 
 router.post('/', optionalAuth, createOrder);
 router.get('/my-orders', protect, getMyOrders);
+router.get('/track/:reference', getOrderByReference);
 
 // Admin-only order routes
 router.get('/stats', protect, adminOnly, getDashboardStats);

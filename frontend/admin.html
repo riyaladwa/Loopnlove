@@ -307,16 +307,32 @@
       <!-- ========================================== -->
       <div id="tab-orders" class="tab-content" style="display: none;">
         <div class="filter-bar">
-          <div style="display: flex; gap: 0.75rem; flex: 1; max-width: 500px;">
-            <input type="text" id="order-search-input" class="form-control" placeholder="Search by reference, customer name, phone...">
-            <select id="order-status-filter" class="form-control" style="max-width: 180px;">
-              <option value="all">All Statuses</option>
+          <div style="display: flex; gap: 0.75rem; flex: 1; max-width: 780px; flex-wrap: wrap;">
+            <input type="text" id="order-search-input" class="form-control" style="min-width: 220px; flex: 1;" placeholder="Search by reference, customer name, phone, email...">
+            <select id="order-status-filter" class="form-control" style="max-width: 170px;">
+              <option value="all">All Order Statuses</option>
               <option value="Pending">Pending</option>
-              <option value="Processing">Processing</option>
               <option value="Confirmed">Confirmed</option>
+              <option value="Processing">Processing</option>
+              <option value="Ready to Dispatch">Ready to Dispatch</option>
               <option value="Shipped">Shipped</option>
               <option value="Delivered">Delivered</option>
               <option value="Cancelled">Cancelled</option>
+            </select>
+            <select id="order-payment-filter" class="form-control" style="max-width: 170px;">
+              <option value="all">All Payment Statuses</option>
+              <option value="Pending">Pending</option>
+              <option value="Paid">Paid</option>
+              <option value="Failed">Failed</option>
+              <option value="Refunded">Refunded</option>
+              <option value="Partially Refunded">Partially Refunded</option>
+              <option value="Manual_Verification">Manual Verification</option>
+            </select>
+            <select id="order-method-filter" class="form-control" style="max-width: 170px;">
+              <option value="all">All Payment Methods</option>
+              <option value="COD">Cash on Delivery (COD)</option>
+              <option value="Razorpay">Online / Razorpay</option>
+              <option value="WhatsApp_Manual">WhatsApp Manual</option>
             </select>
           </div>
           <div>
@@ -333,9 +349,9 @@
                 <th>Customer</th>
                 <th>Items Ordered</th>
                 <th>Total</th>
-                <th>Channel</th>
+                <th>Payment Method</th>
                 <th>Order Status</th>
-                <th>Payment</th>
+                <th>Payment Status</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -504,9 +520,32 @@
               </span>
             </div>
 
-            <div class="form-group">
-              <label class="form-label" for="setting-free-shipping">Free Shipping Threshold (INR ₹)</label>
-              <input type="number" id="setting-free-shipping" class="form-control" value="999">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="setting-free-shipping">Free Shipping Threshold (INR ₹)</label>
+                <input type="number" id="setting-free-shipping" class="form-control" value="999">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="setting-standard-shipping">Standard Shipping Fee (INR ₹)</label>
+                <input type="number" id="setting-standard-shipping" class="form-control" value="79">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="setting-cod-enabled">Cash on Delivery (COD)</label>
+                <select id="setting-cod-enabled" class="form-control">
+                  <option value="true">Enabled (Accept COD Orders)</option>
+                  <option value="false">Disabled (Hide COD at Checkout)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="setting-online-enabled">Online Payments / UPI (Razorpay)</label>
+                <select id="setting-online-enabled" class="form-control">
+                  <option value="true">Enabled (Accept Online / UPI)</option>
+                  <option value="false">Disabled (Hide Online at Checkout)</option>
+                </select>
+              </div>
             </div>
 
             <div class="form-group">
@@ -518,8 +557,8 @@
           </form>
 
           <div class="notice-box" style="margin-top: 2rem;">
-            <strong>Security &amp; Persistence:</strong><br>
-            All administrative actions are authenticated with backend JWT tokens. Changes persist in MongoDB collections.
+            <strong>Payment Gateway Security:</strong><br>
+            Razorpay secret credentials and MongoDB connection strings are stored strictly in server-side environment variables (<code>.env</code>) and are never exposed in the browser or admin interface.
           </div>
         </div>
       </div>
@@ -630,7 +669,7 @@
 
   <!-- Order Details Modal -->
   <div id="order-details-modal" class="modal-overlay">
-    <div class="modal-box" style="max-width: 640px;">
+    <div class="modal-box" style="max-width: 680px; max-height: 90vh; overflow-y: auto;">
       <button class="modal-close-btn" id="close-order-modal">&times;</button>
       <h3 style="margin-bottom: 0.25rem;">Order Details &amp; Fulfillment</h3>
       <p id="modal-order-ref" style="font-family: monospace; font-size: 1.1rem; color: var(--primary-rose); font-weight: 700; margin-bottom: 1.25rem;"></p>
@@ -639,32 +678,64 @@
         <!-- Injected dynamically -->
       </div>
 
-      <div style="background: var(--bg-surface); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-warm);">
-        <h4 style="margin-bottom: 0.75rem; font-size: 0.95rem;">Update Order Status</h4>
+      <div style="background: var(--bg-surface); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-warm); margin-bottom: 1.5rem;">
+        <h4 style="margin-bottom: 0.85rem; font-size: 0.98rem; color: var(--text-cocoa-heading);">Update Status &amp; Payment Audit</h4>
+        
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Order Fulfillment Status</label>
+            <label class="form-label" for="modal-order-status-select">Order Fulfillment Status</label>
             <select id="modal-order-status-select" class="form-control">
               <option value="Pending">Pending</option>
-              <option value="Processing">Processing</option>
               <option value="Confirmed">Confirmed</option>
+              <option value="Processing">Processing</option>
+              <option value="Ready to Dispatch">Ready to Dispatch</option>
               <option value="Shipped">Shipped</option>
               <option value="Delivered">Delivered</option>
               <option value="Cancelled">Cancelled</option>
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label">Payment Status</label>
+            <label class="form-label" for="modal-order-payment-select">Payment Status</label>
             <select id="modal-order-payment-select" class="form-control">
               <option value="Pending">Pending</option>
               <option value="Paid">Paid</option>
-              <option value="Manual_Verification">Manual Verification</option>
               <option value="Failed">Failed</option>
               <option value="Refunded">Refunded</option>
+              <option value="Partially Refunded">Partially Refunded</option>
+              <option value="Manual_Verification">Manual Verification</option>
             </select>
           </div>
         </div>
+
+        <div class="form-group">
+          <label class="form-label" for="modal-order-payment-ref">Payment Reference / Transaction ID / Audit Note</label>
+          <input type="text" id="modal-order-payment-ref" class="form-control" placeholder="e.g. Cash collected ₹899 upon delivery / UTR 123456789">
+          <span style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-top: 0.25rem;">
+            For COD, record the collection reference when cash is received. For Online, Razorpay payment ID is linked automatically.
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="modal-order-note">Internal Status Change Note</label>
+          <input type="text" id="modal-order-note" class="form-control" placeholder="e.g. Dispatched via BlueDart AWB# 98765432">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1.25rem;">
+          <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.88rem; cursor: pointer;">
+            <input type="checkbox" id="modal-order-restore-stock" checked>
+            <span>Restore inventory stock in MongoDB if order is Cancelled</span>
+          </label>
+        </div>
+
         <button id="modal-order-save-btn" class="btn btn-primary btn-sm">Update Status in Database</button>
+      </div>
+
+      <!-- Order Status History -->
+      <div>
+        <h4 style="margin-bottom: 0.6rem; font-size: 0.95rem; color: var(--text-cocoa-heading);">Status History &amp; Audit Trail</h4>
+        <div id="modal-order-history-list" style="max-height: 160px; overflow-y: auto;">
+          <!-- Rendered dynamically -->
+        </div>
       </div>
     </div>
   </div>
@@ -834,6 +905,18 @@
           if (settings.WHATSAPP_BUSINESS_NUMBER) {
             document.getElementById('setting-whatsapp').value = settings.WHATSAPP_BUSINESS_NUMBER;
           }
+          if (settings.FREE_SHIPPING_THRESHOLD !== undefined) {
+            document.getElementById('setting-free-shipping').value = settings.FREE_SHIPPING_THRESHOLD;
+          }
+          if (settings.STANDARD_SHIPPING_FEE !== undefined) {
+            document.getElementById('setting-standard-shipping').value = settings.STANDARD_SHIPPING_FEE;
+          }
+          if (settings.COD_ENABLED !== undefined) {
+            document.getElementById('setting-cod-enabled').value = String(settings.COD_ENABLED);
+          }
+          if (settings.ONLINE_PAYMENT_ENABLED !== undefined) {
+            document.getElementById('setting-online-enabled').value = String(settings.ONLINE_PAYMENT_ENABLED);
+          }
         }
 
       } catch (err) {
@@ -979,22 +1062,37 @@
       document.getElementById('order-count-label').textContent = `${orders.length} Orders Found`;
 
       if (!orders || orders.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: var(--text-muted);">No orders match current criteria</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: var(--text-muted); padding: 2.5rem 1rem; font-size: 0.95rem;">No orders received yet.</td></tr>`;
         return;
       }
 
       tbody.innerHTML = orders.map(ord => {
         const dateStr = ord.createdAt ? new Date(ord.createdAt).toLocaleDateString('en-IN') : 'Recent';
+        let methodBadge = `<span class="badge badge-stock">${ord.paymentMethod || 'Online'}</span>`;
+        if (ord.paymentMethod === 'COD') {
+          methodBadge = `<span class="payment-badge badge-cod" style="font-weight: 600;">Cash on Delivery (COD)</span>`;
+        } else if (ord.paymentMethod === 'Razorpay' || ord.paymentMethod === 'Online_Razorpay') {
+          methodBadge = `<span class="payment-badge badge-online" style="font-weight: 600;">Online / Razorpay</span>`;
+        } else if (ord.paymentMethod === 'WhatsApp_Manual') {
+          methodBadge = `<span class="badge badge-featured">WhatsApp Manual</span>`;
+        }
+
+        const payStatusClass = (ord.paymentStatus === 'Paid') ? 'badge-stock' : (ord.paymentStatus === 'Failed' ? 'badge-low' : 'badge-low');
+        const orderStatusClass = (ord.orderStatus === 'Delivered' || ord.orderStatus === 'Shipped') ? 'badge-stock' : (ord.orderStatus === 'Cancelled' ? 'badge-low' : 'badge-featured');
+
         return `
           <tr>
             <td><strong style="color: var(--primary-rose); font-family: monospace;">${ord.orderReference}</strong></td>
             <td>${dateStr}</td>
-            <td>${ord.customer ? ord.customer.name : 'Guest'}<br><span style="font-size: 0.78rem; color: var(--text-muted);">${ord.customer ? ord.customer.phone : ''}</span></td>
+            <td>
+              <strong>${ord.customer ? ord.customer.name : 'Guest'}</strong>
+              <div style="font-size: 0.78rem; color: var(--text-muted);">${ord.customer ? ord.customer.phone : ''} &bull; ${ord.customer ? ord.customer.email : ''}</div>
+            </td>
             <td>${(ord.items || []).map(i => `${i.name} (x${i.quantity})`).join(', ')}</td>
             <td><strong>₹${ord.totalAmount}</strong></td>
-            <td><span class="badge ${ord.paymentMethod === 'WhatsApp_Manual' ? 'badge-featured' : 'badge-stock'}">${ord.paymentMethod || 'Online'}</span></td>
-            <td><span class="badge badge-stock">${ord.orderStatus || 'Pending'}</span></td>
-            <td><span class="badge ${ord.paymentStatus === 'Paid' ? 'badge-stock' : 'badge-low'}">${ord.paymentStatus || 'Pending'}</span></td>
+            <td>${methodBadge}</td>
+            <td><span class="badge ${orderStatusClass}">${ord.orderStatus || 'Pending'}</span></td>
+            <td><span class="badge ${payStatusClass}">${ord.paymentStatus || 'Pending'}</span></td>
             <td>
               <button class="btn btn-secondary btn-sm view-order-btn" data-id="${ord._id || ord.id}">Details</button>
             </td>
@@ -1145,29 +1243,77 @@
       currentEditingOrder = ord;
 
       document.getElementById('modal-order-ref').textContent = ord.orderReference;
+
+      let methodLabel = 'Cash on Delivery (COD)';
+      if (ord.paymentMethod === 'Razorpay' || ord.paymentMethod === 'Online_Razorpay') {
+        methodLabel = 'Online Payment (Razorpay)';
+      } else if (ord.paymentMethod === 'WhatsApp_Manual') {
+        methodLabel = 'WhatsApp Manual';
+      }
+
       document.getElementById('modal-order-content').innerHTML = `
         <div style="background: var(--bg-surface); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1rem; border: 1px solid var(--border-warm);">
-          <div><strong>Customer:</strong> ${ord.customer ? ord.customer.name : 'N/A'}</div>
-          <div><strong>Email:</strong> ${ord.customer ? ord.customer.email : 'N/A'}</div>
-          <div><strong>Phone:</strong> ${ord.customer ? ord.customer.phone : 'N/A'}</div>
-          <div><strong>Delivery Address:</strong> ${ord.shippingAddress ? `${ord.shippingAddress.address}, ${ord.shippingAddress.city} - ${ord.shippingAddress.pincode}` : 'On file'}</div>
-          ${ord.instructions ? `<div><strong>Instructions:</strong> <em>${ord.instructions}</em></div>` : ''}
+          <div><strong>Customer Name:</strong> ${ord.customer ? ord.customer.name : 'N/A'}</div>
+          <div><strong>Email:</strong> <a href="mailto:${ord.customer ? ord.customer.email : ''}" style="color: var(--primary-rose);">${ord.customer ? ord.customer.email : 'N/A'}</a></div>
+          <div><strong>Phone:</strong> <a href="tel:${ord.customer ? ord.customer.phone : ''}">${ord.customer ? ord.customer.phone : 'N/A'}</a></div>
+          <div><strong>Delivery Address:</strong> ${ord.shippingAddress ? `${ord.shippingAddress.address}, ${ord.shippingAddress.city}, ${ord.shippingAddress.state || ''} - ${ord.shippingAddress.pincode}` : 'On file'}</div>
+          ${ord.instructions ? `<div style="margin-top: 0.35rem;"><strong>Delivery Instructions:</strong> <em>${ord.instructions}</em></div>` : ''}
+          ${ord.customizationInstructions ? `<div style="margin-top: 0.35rem;"><strong>Customization Instructions:</strong> <em style="color: var(--primary-rose);">${ord.customizationInstructions}</em></div>` : ''}
         </div>
+
+        <div style="background: var(--bg-surface); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1rem; border: 1px solid var(--border-warm);">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+            <div><strong>Payment Method:</strong> ${methodLabel}</div>
+            <div><strong>Payment Status:</strong> <span class="badge ${ord.paymentStatus === 'Paid' ? 'badge-stock' : 'badge-low'}">${ord.paymentStatus || 'Pending'}</span></div>
+          </div>
+          <div style="margin-top: 0.35rem; font-size: 0.84rem; color: var(--text-muted);">
+            <strong>Payment Reference / Transaction ID:</strong> <code>${ord.paymentReference || ord.razorpayPaymentId || 'N/A'}</code>
+          </div>
+        </div>
+
         <div>
-          <strong>Items Ordered:</strong>
+          <strong>Items Ordered (Snapshot at Purchase Time):</strong>
           <ul style="padding-left: 1.25rem; margin-top: 0.5rem;">
             ${(ord.items || []).map(i => `
-              <li>${i.name} &times; ${i.quantity} @ ₹${i.price} each = <strong>₹${i.price * i.quantity}</strong></li>
+              <li style="margin-bottom: 0.35rem;">
+                <strong>${i.name}</strong> &times; ${i.quantity} @ ₹${i.price} each = <strong>₹${i.price * i.quantity}</strong>
+                ${i.customizationNotes ? `<br><small style="color: var(--primary-rose); font-style: italic;">Item Note: ${i.customizationNotes}</small>` : ''}
+              </li>
             `).join('')}
           </ul>
-          <div style="font-weight: 700; font-size: 1.1rem; margin-top: 0.5rem; text-align: right;">
-            Total: ₹${ord.totalAmount}
+          <div style="text-align: right; border-top: 1px solid var(--border-warm); padding-top: 0.5rem; margin-top: 0.75rem; font-size: 0.9rem;">
+            <div>Subtotal: ₹${ord.subtotal || ord.totalAmount}</div>
+            <div>Shipping: ${ord.shippingFee === 0 ? 'FREE' : `₹${ord.shippingFee || 0}`}</div>
+            ${ord.discount ? `<div style="color: var(--accent-sage);">Discount: - ₹${ord.discount}</div>` : ''}
+            <div style="font-weight: 700; font-size: 1.15rem; color: var(--text-cocoa-heading); margin-top: 0.25rem;">
+              Final Total: ₹${ord.totalAmount}
+            </div>
           </div>
         </div>
       `;
 
       document.getElementById('modal-order-status-select').value = ord.orderStatus || 'Pending';
       document.getElementById('modal-order-payment-select').value = ord.paymentStatus || 'Pending';
+      document.getElementById('modal-order-payment-ref').value = ord.paymentReference || ord.razorpayPaymentId || '';
+      document.getElementById('modal-order-note').value = '';
+      document.getElementById('modal-order-restore-stock').checked = true;
+
+      // Render Status History Timeline
+      const historyList = document.getElementById('modal-order-history-list');
+      if (ord.statusHistory && ord.statusHistory.length > 0) {
+        historyList.innerHTML = ord.statusHistory.slice().reverse().map(h => `
+          <div style="background: var(--bg-card); padding: 0.5rem 0.75rem; border-radius: var(--radius-sm); border: 1px solid var(--border-warm); margin-bottom: 0.4rem; font-size: 0.83rem;">
+            <div style="display: flex; justify-content: space-between;">
+              <strong>Status: ${h.status}</strong>
+              <span style="color: var(--text-muted); font-size: 0.75rem;">${new Date(h.changedAt).toLocaleString('en-IN')}</span>
+            </div>
+            <div style="color: var(--text-muted); margin-top: 0.2rem;">By: ${h.changedBy || 'System'} &bull; Note: ${h.note || 'Status updated'}</div>
+          </div>
+        `).join('');
+      } else {
+        historyList.innerHTML = `<p style="font-size: 0.82rem; color: var(--text-muted); margin: 0.25rem 0;">No status changes recorded yet.</p>`;
+      }
+
       document.getElementById('order-details-modal').classList.add('open');
     }
 
@@ -1336,16 +1482,19 @@
         }
       });
 
-      // Order Status Save
+      // Order Status & Payment Audit Save
       document.getElementById('modal-order-save-btn')?.addEventListener('click', async () => {
         if (!currentEditingOrder) return;
         const orderStatus = document.getElementById('modal-order-status-select').value;
         const paymentStatus = document.getElementById('modal-order-payment-select').value;
+        const paymentReference = document.getElementById('modal-order-payment-ref').value.trim();
+        const note = document.getElementById('modal-order-note').value.trim();
+        const restoreStock = document.getElementById('modal-order-restore-stock').checked;
 
         try {
-          await API.updateOrderStatus(currentEditingOrder._id, orderStatus, paymentStatus);
+          await API.updateOrderStatus(currentEditingOrder._id, orderStatus, paymentStatus, note, restoreStock, paymentReference);
           closeModal(document.getElementById('order-details-modal'));
-          showToast(`Order ${currentEditingOrder.orderReference} updated to ${orderStatus}!`);
+          showToast(`Order ${currentEditingOrder.orderReference} updated successfully in database!`);
           loadAllData();
         } catch (err) {
           showToast('Failed to update order: ' + err.message, 'error');
@@ -1417,60 +1566,67 @@
         }
       });
 
-      // Store Settings Form Save (WhatsApp Number, etc.)
+      // Store Settings Form Save (WhatsApp Number, COD, Online Payment, Shipping)
       document.getElementById('settings-form')?.addEventListener('submit', async (e) => {
         e.preventDefault();
         const waNumber = document.getElementById('setting-whatsapp').value.trim();
-        const freeShipping = document.getElementById('setting-free-shipping').value;
+        const freeShipping = Number(document.getElementById('setting-free-shipping').value) || 999;
+        const standardShipping = Number(document.getElementById('setting-standard-shipping').value) || 79;
+        const codEnabled = document.getElementById('setting-cod-enabled').value === 'true';
+        const onlineEnabled = document.getElementById('setting-online-enabled').value === 'true';
 
         try {
           await API.updateSetting('WHATSAPP_BUSINESS_NUMBER', waNumber);
-          await API.updateSetting('FREE_SHIPPING_THRESHOLD', Number(freeShipping));
+          await API.updateSetting('FREE_SHIPPING_THRESHOLD', freeShipping);
+          await API.updateSetting('STANDARD_SHIPPING_FEE', standardShipping);
+          await API.updateSetting('COD_ENABLED', codEnabled);
+          await API.updateSetting('ONLINE_PAYMENT_ENABLED', onlineEnabled);
+
           CONFIG.BUSINESS_WHATSAPP_NUMBER = waNumber;
-          showToast('Store settings & WhatsApp number updated in MongoDB!');
+          showToast('Store settings, payment methods & shipping updated in MongoDB!');
+          loadAllData();
         } catch (err) {
           showToast('Failed to save settings: ' + err.message, 'error');
         }
       });
 
-      // Filters
-      document.getElementById('prod-search-input')?.addEventListener('input', (e) => {
-        const q = e.target.value.toLowerCase();
-        const cat = document.getElementById('prod-cat-filter').value;
-        let filtered = allProducts.filter(p => p.name.toLowerCase().includes(q) || p.description.toLowerCase().includes(q));
-        if (cat !== 'all') filtered = filtered.filter(p => p.category === cat);
-        renderProductsTable(filtered);
-      });
+      // Multi-criteria Order Filtering
+      function applyOrderFilters() {
+        const q = (document.getElementById('order-search-input')?.value || '').toLowerCase().trim();
+        const status = document.getElementById('order-status-filter')?.value || 'all';
+        const paymentStatus = document.getElementById('order-payment-filter')?.value || 'all';
+        const method = document.getElementById('order-method-filter')?.value || 'all';
 
-      document.getElementById('prod-cat-filter')?.addEventListener('change', (e) => {
-        const cat = e.target.value;
-        const q = document.getElementById('prod-search-input').value.toLowerCase();
-        let filtered = allProducts;
-        if (cat !== 'all') filtered = filtered.filter(p => p.category === cat);
-        if (q) filtered = filtered.filter(p => p.name.toLowerCase().includes(q) || p.description.toLowerCase().includes(q));
-        renderProductsTable(filtered);
-      });
-
-      document.getElementById('order-search-input')?.addEventListener('input', (e) => {
-        const q = e.target.value.toLowerCase();
-        const status = document.getElementById('order-status-filter').value;
-        let filtered = allOrders.filter(o => 
-          (o.orderReference && o.orderReference.toLowerCase().includes(q)) ||
-          (o.customer && o.customer.name && o.customer.name.toLowerCase().includes(q)) ||
-          (o.customer && o.customer.phone && o.customer.phone.includes(q))
-        );
-        if (status !== 'all') filtered = filtered.filter(o => o.orderStatus === status);
-        renderOrdersTable(filtered);
-      });
-
-      document.getElementById('order-status-filter')?.addEventListener('change', (e) => {
-        const status = e.target.value;
-        const q = document.getElementById('order-search-input').value.toLowerCase();
         let filtered = allOrders;
-        if (status !== 'all') filtered = filtered.filter(o => o.orderStatus === status);
-        if (q) filtered = filtered.filter(o => (o.orderReference && o.orderReference.toLowerCase().includes(q)) || (o.customer && o.customer.name && o.customer.name.toLowerCase().includes(q)));
+        if (status !== 'all') {
+          filtered = filtered.filter(o => o.orderStatus === status);
+        }
+        if (paymentStatus !== 'all') {
+          filtered = filtered.filter(o => o.paymentStatus === paymentStatus);
+        }
+        if (method !== 'all') {
+          filtered = filtered.filter(o => {
+            if (method === 'COD') return o.paymentMethod === 'COD';
+            if (method === 'Razorpay') return o.paymentMethod === 'Razorpay' || o.paymentMethod === 'Online_Razorpay';
+            if (method === 'WhatsApp_Manual') return o.paymentMethod === 'WhatsApp_Manual';
+            return true;
+          });
+        }
+        if (q) {
+          filtered = filtered.filter(o =>
+            (o.orderReference && o.orderReference.toLowerCase().includes(q)) ||
+            (o.customer && o.customer.name && o.customer.name.toLowerCase().includes(q)) ||
+            (o.customer && o.customer.phone && o.customer.phone.includes(q)) ||
+            (o.customer && o.customer.email && o.customer.email.toLowerCase().includes(q))
+          );
+        }
         renderOrdersTable(filtered);
-      });
+      }
+
+      document.getElementById('order-search-input')?.addEventListener('input', applyOrderFilters);
+      document.getElementById('order-status-filter')?.addEventListener('change', applyOrderFilters);
+      document.getElementById('order-payment-filter')?.addEventListener('change', applyOrderFilters);
+      document.getElementById('order-method-filter')?.addEventListener('change', applyOrderFilters);
 
       document.getElementById('inq-search-input')?.addEventListener('input', (e) => {
         const q = e.target.value.toLowerCase();
