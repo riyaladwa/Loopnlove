@@ -32,8 +32,8 @@ export const getPaymentConfig = async (req, res, next) => {
     const upiPayeeSetting = await Setting.findOne({ key: 'UPI_PAYEE_NAME' });
     const upiQrSetting = await Setting.findOne({ key: 'UPI_QR_IMAGE' });
 
-    const codEnabled = codSetting !== null ? Boolean(codSetting.value) : true;
-    const onlineEnabled = onlineSetting !== null ? Boolean(onlineSetting.value) : true;
+    const codEnabled = codSetting !== null ? Boolean(codSetting.value) : false;
+    const onlineEnabled = onlineSetting !== null ? Boolean(onlineSetting.value) : false;
     const upiEnabled = upiSetting !== null ? Boolean(upiSetting.value) : true;
     const upiId = upiIdSetting ? String(upiIdSetting.value).trim() : (process.env.UPI_ID || 'riyaladwa9@oksbi');
     const upiPayeeName = upiPayeeSetting ? String(upiPayeeSetting.value).trim() : (process.env.UPI_PAYEE_NAME || 'Riya Ladwa');

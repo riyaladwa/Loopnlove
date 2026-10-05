@@ -23,8 +23,7 @@ export const CONFIG = {
     : '/api',
 
   // Configurable Business WhatsApp Number (E.164 format, e.g. 919876543210)
-  // Per strict business rules: Disabled until owner configures it.
-  BUSINESS_WHATSAPP_NUMBER: '',
+  BUSINESS_WHATSAPP_NUMBER: '919353232225',
   
   STORAGE_KEYS: {
     CART: 'loop_n_love_cart',

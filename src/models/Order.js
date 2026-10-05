@@ -93,7 +93,7 @@ const orderSchema = new mongoose.Schema({
   paymentMethod: {
     type: String,
     enum: ['COD', 'Razorpay', 'Online_Razorpay', 'UPI_QR', 'Direct_UPI', 'GooglePay', 'WhatsApp_Manual', 'Test_Gateway'],
-    default: 'COD'
+    default: 'UPI_QR'
   },
   paymentReference: {
     type: String,
@@ -122,13 +122,30 @@ const orderSchema = new mongoose.Schema({
   adminWhatsappNotificationStatus: {
     type: String,
     enum: ['Pending', 'Sent', 'Failed', 'Disabled'],
-    default: 'Pending'
+    default: 'Disabled'
   },
   adminWhatsappNotificationError: {
     type: String,
     default: ''
   },
   adminWhatsappNotificationSentAt: {
+    type: Date,
+    default: null
+  },
+  emailNotificationSent: {
+    type: Boolean,
+    default: false
+  },
+  emailNotificationStatus: {
+    type: String,
+    enum: ['Pending', 'Sent', 'Failed', 'Disabled'],
+    default: 'Pending'
+  },
+  emailNotificationError: {
+    type: String,
+    default: ''
+  },
+  emailNotificationSentAt: {
     type: Date,
     default: null
   }

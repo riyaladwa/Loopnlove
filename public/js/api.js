@@ -396,6 +396,30 @@ class ApiService {
     });
     return await res.json();
   }
+
+  // Upload product image to Cloudinary / server
+  async uploadImage(file) {
+    const formData = new FormData();
+    formData.append('image', file);
+    const token = this.getToken();
+    const res = await fetch(`${this.baseUrl}/upload`, {
+      method: 'POST',
+      headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+      body: formData
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Image upload failed');
+    return data;
+  }
+
+  // Retry sending order email notification
+  async retryOrderEmail(orderId) {
+    const res = await fetch(`${this.baseUrl}/orders/${orderId}/retry-email`, {
+      method: 'POST',
+      headers: this.getHeaders(true)
+    });
+    return await res.json();
+  }
 }
 
 export const API = new ApiService();

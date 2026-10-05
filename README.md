@@ -77,64 +77,67 @@ loopandlove/
 ├── Bouquet(3).pdf                  # Original authentic bouquet catalogue
 ├── README.md                       # Comprehensive project documentation
 ├── .gitignore                      # Git ignore patterns
+├── server.js                   # Unified Application Entry & Static Server (Express)
+├── package.json                # Project Dependencies & Scripts
+├── .env                        # Environment Secrets (MongoDB, Gmail SMTP, UPI)
+├── .env.example                # Configuration Template
 │
-├── frontend/                       # Static Frontend
-│   ├── index.html                  # Storefront Homepage (13 sections)
-│   ├── shop.html                   # Catalogue, Search, Filter & Sort
-│   ├── product.html                # Product Details, Gallery & WhatsApp CTA
-│   ├── cart.html                   # Shopping Cart & Quantity Controls
-│   ├── wishlist.html               # Wishlist & Move to Cart
-│   ├── checkout.html               # Delivery Address & Order Placement
-│   ├── login.html                  # Customer Login
-│   ├── register.html               # Customer Registration
-│   ├── account.html                # Customer Dashboard & Profile
-│   ├── contact.html                # Custom Order Inquiries & Contact
-│   ├── privacy.html                # Privacy Policy
-│   ├── terms.html                  # Terms & Conditions
-│   ├── shipping.html               # Shipping & Returns Policy
-│   ├── admin-login.html            # Administrator Login Portal
-│   ├── admin.html                  # Admin Dashboard (Products & Orders)
+├── public/                     # Unified Storefront Web Application
+│   ├── index.html              # Storefront Homepage
+│   ├── shop.html               # Catalogue, Search, Filter & Sort
+│   ├── product.html            # Product Details, Gallery & WhatsApp CTA
+│   ├── cart.html               # Shopping Cart & Quantity Controls
+│   ├── wishlist.html           # Wishlist & Move to Cart
+│   ├── checkout.html           # Delivery Address & Google Pay UPI QR Checkout
+│   ├── login.html              # Unified Login (Customer + Admin Portal)
+│   ├── register.html           # Customer Registration
+│   ├── account.html            # Customer Dashboard & Profile
+│   ├── admin.html              # Admin Dashboard (Products, Orders & Email Alerts)
+│   ├── contact.html            # Custom Order Inquiries & Contact
+│   ├── privacy.html            # Privacy Policy
+│   ├── terms.html              # Terms & Conditions
+│   ├── shipping.html           # Shipping & Returns Policy
 │   ├── css/
-│   │   └── styles.css              # Brand Design System & Responsive Styles
+│   │   └── styles.css          # Brand Design System & Responsive Styles
 │   ├── js/
-│   │   ├── config.js               # Centralized API & WhatsApp Settings
-│   │   ├── products-data.js        # Verified Catalogue Data & Fallback
-│   │   ├── api.js                  # Centralized REST Client
-│   │   ├── cart.js                 # Cart State & Quantity Merging
-│   │   ├── wishlist.js             # Wishlist State Management
-│   │   ├── whatsapp.js             # Configurable WhatsApp Ordering
-│   │   └── main.js                 # Global UI & Toast Notifications
+│   │   ├── config.js           # Centralized API & WhatsApp Settings
+│   │   ├── products-data.js    # Verified Catalogue Data
+│   │   ├── api.js              # Centralized REST Client & Image Upload
+│   │   ├── cart.js             # Cart State & Quantity Merging
+│   │   ├── wishlist.js         # Wishlist State Management
+│   │   ├── whatsapp.js         # Customer Direct WhatsApp Chat
+│   │   └── main.js             # Global UI & Toast Notifications
 │   └── assets/
-│       └── product-images/         # Extracted authentic bouquet photos (1-13)
+│       ├── product-images/     # Authentic bouquet and product photos
+│       └── payments/           # Google Pay QR Code
 │
-└── backend/                        # Node.js + Express REST API
-    ├── server.js                   # Application Entry & Static Server
-    ├── package.json                # Dependencies & Scripts
-    ├── .env.example                # Configuration Template
-    ├── .env                        # Local Environment Secrets
-    └── src/
-        ├── config/
-        │   └── db.js               # MongoDB Mongoose Connection
-        ├── models/
-        │   ├── User.js             # User Schema (bcrypt hash & role)
-        │   ├── Product.js          # Product Schema (with indexing)
-        │   └── Order.js            # Order Schema (with item snapshots)
-        ├── middleware/
-        │   ├── authMiddleware.js   # JWT verification & Admin RBAC
-        │   ├── rateLimiter.js      # Brute-force & API rate limits
-        │   └── errorMiddleware.js  # Safe error handling
-        ├── controllers/
-        │   ├── authController.js   # Registration & Login
-        │   ├── productController.js# Catalogue Querying & Admin CRUD
-        │   ├── orderController.js  # Server-side Price Verification & Orders
-        │   └── paymentController.js# Razorpay HMAC verification
-        ├── routes/
-        │   ├── authRoutes.js
-        │   ├── productRoutes.js
-        │   ├── orderRoutes.js
-        │   └── paymentRoutes.js
-        └── utils/
-            └── seed.js             # Database Seeding Script
+└── src/                        # Express API Backend Logic
+    ├── config/
+    │   └── db.js               # MongoDB Mongoose Atlas Connection
+    ├── models/
+    │   ├── User.js             # User Schema (bcrypt hash & role)
+    │   ├── Product.js          # Product Schema (with indexing)
+    │   ├── Order.js            # Order Schema (with item snapshots & email tracking)
+    │   └── Setting.js          # Live Store Settings
+    ├── middleware/
+    │   ├── authMiddleware.js   # JWT verification & Admin RBAC
+    │   ├── rateLimiter.js      # Brute-force & API rate limits
+    │   └── errorMiddleware.js  # Safe error handling
+    ├── controllers/
+    │   ├── authController.js   # Registration & Login
+    │   ├── productController.js# Catalogue Querying & Admin CRUD
+    │   ├── orderController.js  # Server-side Price Verification & Orders
+    │   └── settingController.js# Store Settings Management
+    ├── routes/
+    │   ├── authRoutes.js       # Auth Endpoints
+    │   ├── productRoutes.js    # Products & Catalog
+    │   ├── orderRoutes.js      # Order Placement & Status Updates
+    │   ├── uploadRoutes.js     # Image Upload to Cloudinary / Local
+    │   └── settingRoutes.js    # Settings & Payment Controls
+    ├── services/
+    │   └── emailNotificationService.js # Nodemailer Order Email Service
+    └── utils/
+        └── seed.js             # Database Seeding Script
 ```
 
 ---

@@ -64,13 +64,15 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/inquiries', inquiryRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/settings', settingRoutes);
+import uploadRoutes from './src/routes/uploadRoutes.js';
+app.use('/api/upload', uploadRoutes);
 
 // Category shortcut endpoint
 import { getCategories } from './src/controllers/productController.js';
 app.get('/api/categories', getCategories);
 
 // Serve static frontend files
-const frontendDir = path.resolve(__dirname, '../frontend');
+const frontendDir = path.resolve(__dirname, 'public');
 app.use(express.static(frontendDir));
 
 // Fallback to index.html for root or direct navigation

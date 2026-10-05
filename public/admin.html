@@ -656,8 +656,15 @@
             <input type="number" id="new-prod-stock" class="form-control" value="10" min="0" required>
           </div>
           <div class="form-group">
-            <label class="form-label">Product Image Path / URL *</label>
-            <input type="text" id="new-prod-image" class="form-control" placeholder="assets/product-images/bouquet_01.jpg" required>
+            <label class="form-label">Product Image (Upload or URL) *</label>
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+              <input type="text" id="new-prod-image" class="form-control" placeholder="assets/product-images/bouquet_01.jpg" required style="flex: 1;">
+              <label for="new-prod-image-file" class="btn btn-secondary btn-sm" style="cursor: pointer; white-space: nowrap; margin-bottom: 0; padding: 0.55rem 0.85rem;">
+                📁 Upload
+              </label>
+              <input type="file" id="new-prod-image-file" accept="image/*" style="display: none;">
+            </div>
+            <div id="new-prod-image-status" style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.25rem;"></div>
           </div>
         </div>
         <div class="form-group">
@@ -1180,7 +1187,7 @@
             <td>
               <strong style="color: var(--primary-rose); font-family: monospace;">${ord.orderReference}</strong>
               <div style="font-size: 0.72rem; margin-top: 3px;">
-                ${ord.adminWhatsappNotificationSent ? '<span style="color: #1e8e3e; font-weight: 600;" title="Automatic WhatsApp sent to admin">📲 WA Sent</span>' : (ord.adminWhatsappNotificationStatus === 'Failed' ? '<span style="color: #c53030; font-weight: 600;" title="Automatic WhatsApp failed">📲 WA Failed</span>' : '<span style="color: var(--text-muted);" title="WhatsApp status">📲 WA ' + (ord.adminWhatsappNotificationStatus || 'Pending') + '</span>')}
+                ${ord.emailNotificationSent ? '<span style="color: #1e8e3e; font-weight: 600;" title="Email alert sent to admin">✉️ Email Sent</span>' : (ord.emailNotificationStatus === 'Failed' ? '<span style="color: #c53030; font-weight: 600;" title="Email sending failed">✉️ Email Failed</span>' : '<span style="color: var(--text-muted);" title="Email notification status">✉️ Email ' + (ord.emailNotificationStatus || 'Pending') + '</span>')}
               </div>
             </td>
             <td>${dateStr}</td>
@@ -1353,18 +1360,18 @@
         methodLabel = 'WhatsApp Manual';
       }
 
-      let waStatusBadgeClass = 'badge-low';
-      let waStatusText = ord.adminWhatsappNotificationStatus || (ord.adminWhatsappNotificationSent ? 'Sent' : 'Pending');
-      if (waStatusText === 'Sent') {
-        waStatusBadgeClass = 'badge-stock';
-      } else if (waStatusText === 'Failed') {
-        waStatusBadgeClass = 'badge-low';
-      } else if (waStatusText === 'Disabled') {
-        waStatusBadgeClass = 'badge-featured';
+      let emailStatusBadgeClass = 'badge-low';
+      let emailStatusText = ord.emailNotificationStatus || (ord.emailNotificationSent ? 'Sent' : 'Pending');
+      if (emailStatusText === 'Sent') {
+        emailStatusBadgeClass = 'badge-stock';
+      } else if (emailStatusText === 'Failed') {
+        emailStatusBadgeClass = 'badge-low';
+      } else if (emailStatusText === 'Disabled') {
+        emailStatusBadgeClass = 'badge-featured';
       }
 
-      const waSentAtStr = ord.adminWhatsappNotificationSentAt
-        ? `Sent on: ${new Date(ord.adminWhatsappNotificationSentAt).toLocaleString('en-IN')}`
+      const emailSentAtStr = ord.emailNotificationSentAt
+        ? `Sent on: ${new Date(ord.emailNotificationSentAt).toLocaleString('en-IN')}`
         : '';
 
       document.getElementById('modal-order-content').innerHTML = `
@@ -1395,22 +1402,23 @@
           </div>
         </div>
 
-        <!-- WhatsApp Notification Audit & Retry Card -->
+        <!-- Email Notification Audit & Retry Card -->
         <div style="background: var(--bg-surface); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1rem; border: 1px solid var(--border-warm); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
           <div>
             <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-              <span style="font-size: 1.15rem;">📲</span>
-              <strong>Admin WhatsApp Notification:</strong>
-              <span class="badge ${waStatusBadgeClass}" id="modal-wa-status-badge">${waStatusText}</span>
+              <span style="font-size: 1.15rem;">✉️</span>
+              <strong>Admin Email Notification:</strong>
+              <span class="badge ${emailStatusBadgeClass}" id="modal-email-status-badge">${emailStatusText}</span>
             </div>
             <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.35rem; line-height: 1.4;">
-              ${waSentAtStr ? `<div>${waSentAtStr}</div>` : ''}
-              ${ord.adminWhatsappNotificationError ? `<div style="color: var(--accent-danger); font-size: 0.8rem; margin-top: 2px;">⚠️ ${ord.adminWhatsappNotificationError}</div>` : ''}
-              <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">Internal admin audit only. Automatically sent upon new order or verified payment.</div>
+              <div>Recipient: <strong>riyaladwa9@gmail.com</strong></div>
+              ${emailSentAtStr ? `<div>${emailSentAtStr}</div>` : ''}
+              ${ord.emailNotificationError ? `<div style="color: var(--accent-danger); font-size: 0.8rem; margin-top: 2px;">⚠️ ${ord.emailNotificationError}</div>` : ''}
+              <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">Automatic email notification dispatched to your inbox upon new order.</div>
             </div>
           </div>
-          <button type="button" id="modal-wa-retry-btn" class="btn btn-secondary btn-sm" style="font-size: 0.82rem; white-space: nowrap;">
-            ↻ Retry WhatsApp
+          <button type="button" id="modal-email-retry-btn" class="btn btn-secondary btn-sm" style="font-size: 0.82rem; white-space: nowrap;">
+            ↻ Send / Resend Email
           </button>
         </div>
 
@@ -1435,26 +1443,26 @@
         </div>
       `;
 
-      // Setup WhatsApp retry listener
-      const retryWaBtn = document.getElementById('modal-wa-retry-btn');
-      if (retryWaBtn) {
-        retryWaBtn.addEventListener('click', async () => {
-          retryWaBtn.disabled = true;
-          retryWaBtn.textContent = 'Sending...';
+      // Setup Email retry listener
+      const retryEmailBtn = document.getElementById('modal-email-retry-btn');
+      if (retryEmailBtn) {
+        retryEmailBtn.addEventListener('click', async () => {
+          retryEmailBtn.disabled = true;
+          retryEmailBtn.textContent = 'Sending...';
           try {
-            const res = await API.retryWhatsAppNotification(ord._id || ord.id);
+            const res = await API.retryOrderEmail(ord._id || ord.id);
             if (res.success) {
-              showToast('WhatsApp notification sent successfully to admin!');
-              const badge = document.getElementById('modal-wa-status-badge');
+              showToast('Order email sent successfully!');
+              const badge = document.getElementById('modal-email-status-badge');
               if (badge) {
                 badge.textContent = 'Sent';
                 badge.className = 'badge badge-stock';
               }
             } else {
-              showToast(`WhatsApp attempt logged: ${res.message || 'Updated'}`, 'info');
-              const badge = document.getElementById('modal-wa-status-badge');
+              showToast(`Email status: ${res.message || 'Updated'}`, 'info');
+              const badge = document.getElementById('modal-email-status-badge');
               if (badge) {
-                badge.textContent = res.notificationStatus || 'Pending';
+                badge.textContent = res.emailStatus || 'Pending';
                 badge.className = 'badge badge-low';
               }
             }
@@ -1463,10 +1471,10 @@
             allOrders = Array.isArray(ordersData) ? ordersData : (ordersData.orders || []);
             renderOrdersTable(allOrders);
           } catch (err) {
-            showToast(`Retry failed: ${err.message}`, 'error');
+            showToast(`Email error: ${err.message}`, 'error');
           } finally {
-            retryWaBtn.disabled = false;
-            retryWaBtn.textContent = '↻ Retry WhatsApp';
+            retryEmailBtn.disabled = false;
+            retryEmailBtn.textContent = '↻ Send / Resend Email';
           }
         });
       }
@@ -1607,6 +1615,28 @@
       // Add Product Modal
       const addModal = document.getElementById('add-product-modal');
       document.getElementById('open-add-product-btn')?.addEventListener('click', () => addModal.classList.add('open'));
+
+      // Image upload handler for new product
+      const fileInput = document.getElementById('new-prod-image-file');
+      const statusEl = document.getElementById('new-prod-image-status');
+      fileInput?.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        statusEl.textContent = '⏳ Uploading image...';
+        statusEl.style.color = 'var(--primary-rose)';
+        try {
+          const res = await API.uploadImage(file);
+          document.getElementById('new-prod-image').value = res.url;
+          statusEl.textContent = `✅ Image uploaded successfully (${res.storage === 'cloudinary' ? 'Cloudinary' : 'Local'})!`;
+          statusEl.style.color = '#1e8e3e';
+          showToast('Image uploaded successfully!');
+        } catch (err) {
+          statusEl.textContent = '❌ Upload failed: ' + err.message;
+          statusEl.style.color = 'var(--accent-danger)';
+          showToast('Image upload failed: ' + err.message, 'error');
+        }
+      });
+
       document.getElementById('add-product-form')?.addEventListener('submit', async (e) => {
         e.preventDefault();
         const name = document.getElementById('new-prod-name').value.trim();

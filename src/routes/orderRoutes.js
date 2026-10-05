@@ -9,7 +9,8 @@ import {
   getDashboardStats,
   updateOrderStatus,
   recordWhatsAppOrder,
-  retryWhatsAppNotification
+  retryWhatsAppNotification,
+  retryOrderEmailNotification
 } from '../controllers/orderController.js';
 import { protect, adminOnly, optionalAuth } from '../middleware/authMiddleware.js';
 
@@ -27,6 +28,7 @@ router.get('/:id', protect, adminOnly, getOrderById);
 router.put('/:id/status', protect, adminOnly, updateOrderStatus);
 router.patch('/:id/status', protect, adminOnly, updateOrderStatus);
 router.post('/:id/retry-whatsapp', protect, adminOnly, retryWhatsAppNotification);
+router.post('/:id/retry-email', protect, adminOnly, retryOrderEmailNotification);
 router.post('/record-whatsapp', protect, adminOnly, recordWhatsAppOrder);
 
 export default router;

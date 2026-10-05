@@ -3,6 +3,7 @@ import { Product } from '../models/Product.js';
 import { Inquiry } from '../models/Inquiry.js';
 import { Setting } from '../models/Setting.js';
 import { sendAdminOrderNotification } from '../services/whatsappNotificationService.js';
+import { sendOrderEmailNotifications } from '../services/emailNotificationService.js';
 
 // @desc    Create a new order with strict server-side price validation
 // @route   POST /api/orders
@@ -17,7 +18,7 @@ export const createOrder = async (req, res, next) => {
       items,
       discount,
       discountCode,
-      paymentMethod = 'COD',
+      paymentMethod = 'UPI_QR',
       paymentReference,
       upiTransactionId
     } = req.body;
@@ -59,31 +60,31 @@ export const createOrder = async (req, res, next) => {
     }
 
     // Check payment method availability from store settings
-    let selectedMethod = 'COD';
+    let selectedMethod = 'UPI_QR';
     if (paymentMethod === 'Razorpay' || paymentMethod === 'Online_Razorpay') {
       selectedMethod = 'Razorpay';
-    } else if (paymentMethod === 'UPI_QR' || paymentMethod === 'Direct_UPI' || paymentMethod === 'GooglePay') {
-      selectedMethod = 'UPI_QR';
-    } else {
+    } else if (paymentMethod === 'COD') {
       selectedMethod = 'COD';
+    } else {
+      selectedMethod = 'UPI_QR';
     }
 
     if (selectedMethod === 'COD') {
       const codSetting = await Setting.findOne({ key: 'COD_ENABLED' });
-      const isCodEnabled = codSetting !== null ? Boolean(codSetting.value) : true;
+      const isCodEnabled = codSetting !== null ? Boolean(codSetting.value) : false;
       if (!isCodEnabled) {
         return res.status(400).json({
           success: false,
-          message: 'Cash on Delivery is currently disabled by the store. Please choose Online Payment / UPI.'
+          message: 'Cash on Delivery is discontinued. Please complete your order using Google Pay / Direct UPI QR or Online Payment.'
         });
       }
     } else if (selectedMethod === 'Razorpay') {
       const onlineSetting = await Setting.findOne({ key: 'ONLINE_PAYMENT_ENABLED' });
-      const isOnlineEnabled = onlineSetting !== null ? Boolean(onlineSetting.value) : true;
+      const isOnlineEnabled = onlineSetting !== null ? Boolean(onlineSetting.value) : false;
       if (!isOnlineEnabled) {
         return res.status(400).json({
           success: false,
-          message: 'Online Payment is currently disabled by the store. Please choose Cash on Delivery or Direct UPI.'
+          message: 'Online Payment (Razorpay) is discontinued. Please complete your order securely using Google Pay / Direct UPI QR.'
         });
       }
     } else if (selectedMethod === 'UPI_QR') {
@@ -226,13 +227,11 @@ export const createOrder = async (req, res, next) => {
       }]
     });
 
-    // Send automatic WhatsApp notification to admin for confirmed orders (COD / Direct UPI QR)
-    // Runs non-blockingly with strict idempotency so order creation is NEVER compromised
-    if (selectedMethod === 'COD' || selectedMethod === 'UPI_QR') {
-      sendAdminOrderNotification(order).catch(err => {
-        console.error('Non-blocking WhatsApp notification error for order', order.orderReference, err.message);
-      });
-    }
+    // Send automatic Email notification to admin (and customer)
+    // Runs non-blockingly so order placement is never delayed or interrupted
+    sendOrderEmailNotifications(order).catch(err => {
+      console.error('Non-blocking Email notification error for order', order.orderReference, err.message);
+    });
 
     res.status(201).json({
       success: true,
@@ -604,4 +603,34 @@ export const retryWhatsAppNotification = async (req, res, next) => {
     next(err);
   }
 };
+
+// @desc    Retry sending Email notification for an order (Admin only)
+// @route   POST /api/orders/:id/retry-email
+// @access  Private/Admin
+export const retryOrderEmailNotification = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const order = await Order.findById(id);
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Order not found' });
+    }
+
+    const result = await sendOrderEmailNotifications(order);
+
+    const updatedOrder = await Order.findById(id);
+    res.json({
+      success: result.success,
+      message: result.success
+        ? 'Email notification sent successfully.'
+        : `Email notification: ${result.message || result.error || 'Check email configuration in .env'}`,
+      emailStatus: updatedOrder.emailNotificationStatus,
+      emailSent: updatedOrder.emailNotificationSent,
+      emailError: updatedOrder.emailNotificationError,
+      order: updatedOrder
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 

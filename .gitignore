@@ -23,5 +23,6 @@ Thumbs.db
 *.sublime-workspace
 
 # Backups & Scratch
+backups/
 backend/backups/
 

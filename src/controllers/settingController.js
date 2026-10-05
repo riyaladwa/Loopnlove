@@ -14,8 +14,8 @@ export const getPublicSettings = async (req, res, next) => {
     const upiQrSetting = await Setting.findOne({ key: 'UPI_QR_IMAGE' });
 
     const whatsappNumber = waSetting ? waSetting.value : (process.env.BUSINESS_WHATSAPP_NUMBER || '');
-    const codEnabled = codSetting !== null ? Boolean(codSetting.value) : true;
-    const onlinePaymentEnabled = onlineSetting !== null ? Boolean(onlineSetting.value) : true;
+    const codEnabled = codSetting !== null ? Boolean(codSetting.value) : false;
+    const onlinePaymentEnabled = onlineSetting !== null ? Boolean(onlineSetting.value) : false;
     const upiEnabled = upiSetting !== null ? Boolean(upiSetting.value) : true;
     const upiId = upiIdSetting ? String(upiIdSetting.value).trim() : (process.env.UPI_ID || 'riyaladwa9@oksbi');
     const upiPayeeName = upiPayeeSetting ? String(upiPayeeSetting.value).trim() : (process.env.UPI_PAYEE_NAME || 'Riya Ladwa');
@@ -55,10 +55,10 @@ export const getAllSettings = async (req, res, next) => {
       map.WHATSAPP_BUSINESS_NUMBER = process.env.BUSINESS_WHATSAPP_NUMBER || '';
     }
     if (map.COD_ENABLED === undefined) {
-      map.COD_ENABLED = true;
+      map.COD_ENABLED = false;
     }
     if (map.ONLINE_PAYMENT_ENABLED === undefined) {
-      map.ONLINE_PAYMENT_ENABLED = true;
+      map.ONLINE_PAYMENT_ENABLED = false;
     }
     if (map.UPI_ENABLED === undefined) {
       map.UPI_ENABLED = true;

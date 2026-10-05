@@ -7,8 +7,7 @@
   <meta name="description" content="Secure checkout for Loop n Love genuine handmade crochet bouquets and gifts.">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23C46D75'><circle cx='12' cy='12' r='9'/></svg>">
-  <!-- Razorpay Standard Checkout SDK -->
-  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
   <style>
     .payment-option-card {
       border: 1.5px solid var(--border-warm);
@@ -300,33 +299,7 @@
                   </div>
                 </label>
 
-                <!-- Cash on Delivery -->
-                <label id="payment-method-cod-card" class="payment-option-card">
-                  <input type="radio" name="payment-method" id="pay-method-cod" value="COD" style="margin-top: 0.25rem;">
-                  <div style="flex: 1;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                      <strong style="color: var(--text-cocoa-heading); font-size: 0.95rem;">Cash on Delivery (COD)</strong>
-                      <span class="payment-badge badge-cod">Pay on Arrival</span>
-                    </div>
-                    <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0.25rem 0 0;">
-                      Pay with cash directly to the courier agent when your handcrafted parcel arrives at your doorstep.
-                    </p>
-                  </div>
-                </label>
 
-                <!-- Online Payment / Cards -->
-                <label id="payment-method-online-card" class="payment-option-card">
-                  <input type="radio" name="payment-method" id="pay-method-online" value="Razorpay" style="margin-top: 0.25rem;">
-                  <div style="flex: 1;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                      <strong style="color: var(--text-cocoa-heading); font-size: 0.95rem;">Debit / Credit Card / NetBanking</strong>
-                      <span class="payment-badge badge-online">Razorpay Secure</span>
-                    </div>
-                    <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0.25rem 0 0;">
-                      Pay via Razorpay gateway using Credit/Debit Card or NetBanking.
-                    </p>
-                  </div>
-                </label>
 
               </div>
               <div id="payment-method-error" class="form-error" style="display: none; margin-top: 0.5rem;">
@@ -337,7 +310,7 @@
             <!-- Single-Click Place Order Button -->
             <div style="margin-top: 2rem;">
               <button type="submit" id="submit-order-btn" class="btn btn-primary btn-block btn-lg">
-                Place Order (Cash on Delivery)
+                Confirm Order with UPI
               </button>
               <p style="font-size: 0.78rem; color: var(--text-muted); text-align: center; margin-top: 0.6rem;">
                 🔒 Prices and stock are strictly verified by our backend server before confirmation.
@@ -485,7 +458,7 @@
       configured: false,
       keyId: '',
       onlineEnabled: true,
-      codEnabled: true,
+      codEnabled: false,
       currency: 'INR'
     };
     let confirmedOrderData = null;
@@ -517,10 +490,8 @@
       }
 
       const upiCard = document.getElementById('payment-method-upi-card');
-      const codCard = document.getElementById('payment-method-cod-card');
       const onlineCard = document.getElementById('payment-method-online-card');
       const payUpiRadio = document.getElementById('pay-method-upi');
-      const payCodRadio = document.getElementById('pay-method-cod');
       const payOnlineRadio = document.getElementById('pay-method-online');
       const upiContainer = document.getElementById('upi-details-container');
 
@@ -546,33 +517,21 @@
         upiCard.style.display = 'none';
         payUpiRadio.disabled = true;
       }
-      if (!paymentConfig.codEnabled) {
-        codCard.style.display = 'none';
-        payCodRadio.disabled = true;
-      }
       if (!paymentConfig.onlineEnabled) {
         onlineCard.style.display = 'none';
         payOnlineRadio.disabled = true;
       }
 
-      // Default selection priority: UPI_QR > COD > Razorpay
+      // Default selection: Direct UPI QR is primary
       if (upiInfo.enabled !== false) {
         payUpiRadio.checked = true;
         upiCard.classList.add('selected');
-        codCard.classList.remove('selected');
         onlineCard.classList.remove('selected');
         if (upiContainer) upiContainer.style.display = 'block';
-      } else if (paymentConfig.codEnabled) {
-        payCodRadio.checked = true;
-        codCard.classList.add('selected');
-        upiCard.classList.remove('selected');
-        onlineCard.classList.remove('selected');
-        if (upiContainer) upiContainer.style.display = 'none';
       } else if (paymentConfig.onlineEnabled) {
         payOnlineRadio.checked = true;
         onlineCard.classList.add('selected');
         upiCard.classList.remove('selected');
-        codCard.classList.remove('selected');
         if (upiContainer) upiContainer.style.display = 'none';
       }
 
@@ -595,21 +554,12 @@
     }
 
     function updateSubmitButtonText() {
-      const selected = document.querySelector('input[name="payment-method"]:checked')?.value || 'UPI_QR';
       const btn = document.getElementById('submit-order-btn');
       const upiContainer = document.getElementById('upi-details-container');
       const total = Cart.getTotal(discountAmount);
 
-      if (selected === 'UPI_QR') {
-        btn.textContent = `Confirm Order with UPI (₹${total})`;
-        if (upiContainer) upiContainer.style.display = 'block';
-      } else if (selected === 'Razorpay') {
-        btn.textContent = 'Pay & Place Order';
-        if (upiContainer) upiContainer.style.display = 'none';
-      } else {
-        btn.textContent = 'Place Order (Cash on Delivery)';
-        if (upiContainer) upiContainer.style.display = 'none';
-      }
+      btn.textContent = `Confirm Order with UPI (₹${total})`;
+      if (upiContainer) upiContainer.style.display = 'block';
     }
 
     // Render Order Summary
@@ -708,11 +658,13 @@
       }
 
       // Totals
-      let methodLabel = 'Cash on Delivery (COD)';
+      let methodLabel = 'UPI / Online Payment';
       if (order.paymentMethod === 'UPI_QR' || order.paymentMethod === 'Direct_UPI') {
         methodLabel = 'Google Pay / PhonePe / UPI QR';
       } else if (order.paymentMethod === 'Razorpay') {
         methodLabel = 'Online Payment (Razorpay)';
+      } else if (order.paymentMethod === 'COD') {
+        methodLabel = 'Cash on Delivery (Discontinued)';
       }
       
       const paymentRefHtml = order.paymentReference
@@ -912,134 +864,12 @@
           const result = await API.createOrder(orderPayload);
           const order = result.order;
 
-          if (paymentMethod === 'UPI_QR') {
-            Cart.clearCart();
-            isSubmitting = false;
-            displayConfirmation(order);
-            showToast('Order placed successfully! We will verify your Google Pay payment.');
-            return;
-          }
-
-          if (paymentMethod === 'COD') {
-            // Cash on Delivery flow: Order confirmed directly
-            Cart.clearCart();
-            isSubmitting = false;
-            displayConfirmation(order);
-            showToast('Order placed successfully via Cash on Delivery!');
-            return;
-          }
-
-          // 2. Online Payment via Razorpay
-          submitBtn.textContent = 'Opening Secure Gateway...';
-
-          let paymentOrderRes;
-          try {
-            paymentOrderRes = await API.createPaymentOrder(order._id);
-          } catch (paymentInitErr) {
-            // Razorpay credentials not configured or gateway error
-            alertBox.innerHTML = `
-              <strong>Online Payment Gateway Notice:</strong><br>
-              ${paymentInitErr.message}<br><br>
-              <em>Your order reference <strong>${order.orderReference}</strong> is saved as Pending. You can complete your order using Cash on Delivery or contact us.</em>
-            `;
-            alertBox.style.display = 'block';
-            alertBox.className = 'checkout-alert checkout-alert-warning';
-            submitBtn.disabled = false;
-            submitBtn.textContent = originalBtnText;
-            isSubmitting = false;
-            return;
-          }
-
-          if (!paymentOrderRes.configured || !window.Razorpay) {
-            alertBox.innerHTML = `
-              <strong>Gateway Configuration:</strong><br>
-              Razorpay SDK or test credentials are pending backend setup. Your order reference <strong>${order.orderReference}</strong> was created.
-              Please switch to Cash on Delivery to complete your purchase immediately.
-            `;
-            alertBox.style.display = 'block';
-            alertBox.className = 'checkout-alert checkout-alert-warning';
-            submitBtn.disabled = false;
-            submitBtn.textContent = originalBtnText;
-            isSubmitting = false;
-            return;
-          }
-
-          // Open Razorpay Standard Checkout modal
-          const razorpayOptions = {
-            key: paymentOrderRes.keyId,
-            amount: paymentOrderRes.amount,
-            currency: paymentOrderRes.currency || 'INR',
-            name: 'Loop n Love',
-            description: `Order ${order.orderReference}`,
-            image: 'assets/brand/logo.png',
-            order_id: paymentOrderRes.razorpayOrderId,
-            prefill: {
-              name: order.customer.name,
-              email: order.customer.email,
-              contact: order.customer.phone
-            },
-            theme: {
-              color: '#C46D75'
-            },
-            handler: async function (response) {
-              submitBtn.textContent = 'Verifying Payment...';
-              try {
-                const verifyRes = await API.verifyPayment({
-                  orderId: order._id,
-                  razorpayOrderId: response.razorpay_order_id,
-                  razorpayPaymentId: response.razorpay_payment_id,
-                  razorpaySignature: response.razorpay_signature
-                });
-
-                Cart.clearCart();
-                isSubmitting = false;
-                displayConfirmation(verifyRes.order || { ...order, paymentStatus: 'Paid', orderStatus: 'Confirmed' });
-                showToast('Payment verified successfully! Order confirmed.');
-              } catch (vErr) {
-                alertBox.textContent = 'Payment signature verification failed: ' + vErr.message;
-                alertBox.style.display = 'block';
-                alertBox.className = 'checkout-alert checkout-alert-danger';
-                submitBtn.disabled = false;
-                submitBtn.textContent = originalBtnText;
-                isSubmitting = false;
-              }
-            },
-            modal: {
-              ondismiss: async function () {
-                submitBtn.disabled = false;
-                submitBtn.textContent = originalBtnText;
-                isSubmitting = false;
-                await API.recordPaymentFailure({
-                  orderId: order._id,
-                  reason: 'Customer closed payment window without completing transaction'
-                }).catch(() => {});
-
-                showToast('Payment window closed. Order remains Pending Payment.', 'warning');
-                alertBox.innerHTML = `
-                  Your payment was not completed. Order <strong>${order.orderReference}</strong> is saved as <strong>Pending Payment</strong>.
-                  You can retry payment or place a new order using Cash on Delivery.
-                `;
-                alertBox.style.display = 'block';
-                alertBox.className = 'checkout-alert checkout-alert-warning';
-              }
-            }
-          };
-
-          const rzp = new window.Razorpay(razorpayOptions);
-          rzp.on('payment.failed', async function (response) {
-            await API.recordPaymentFailure({
-              orderId: order._id,
-              reason: response.error?.description || 'Transaction failed'
-            }).catch(() => {});
-            alertBox.textContent = `Payment failed: ${response.error?.description || 'Transaction could not be completed'}. Please try another card or select Cash on Delivery.`;
-            alertBox.style.display = 'block';
-            alertBox.className = 'checkout-alert checkout-alert-danger';
-            submitBtn.disabled = false;
-            submitBtn.textContent = originalBtnText;
-            isSubmitting = false;
-          });
-
-          rzp.open();
+          // Order created successfully on backend
+          Cart.clearCart();
+          isSubmitting = false;
+          displayConfirmation(order);
+          showToast('Order placed successfully! We will verify your Google Pay payment.');
+          return;
 
         } catch (err) {
           console.error('Order creation error:', err);
