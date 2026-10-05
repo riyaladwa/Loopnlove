@@ -84,20 +84,22 @@ app.get('/', (req, res) => {
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-// Start server
-const server = app.listen(PORT, () => {
-  console.log(`🌸 Loop n Love Server running on port ${PORT}`);
-  console.log(`✨ Storefront: http://localhost:${PORT}`);
-  console.log(`✨ API Health: http://localhost:${PORT}/api/health`);
-});
-
-// Graceful shutdown
-process.on('SIGTERM', () => {
-  console.log('SIGTERM received. Shutting down gracefully...');
-  server.close(() => {
-    console.log('Server closed.');
-    process.exit(0);
+// Start server (only listen when run directly, not in Vercel serverless environment)
+if (!process.env.VERCEL) {
+  const server = app.listen(PORT, () => {
+    console.log(`🌸 Loop n Love Server running on port ${PORT}`);
+    console.log(`✨ Storefront: http://localhost:${PORT}`);
+    console.log(`✨ API Health: http://localhost:${PORT}/api/health`);
   });
-});
+
+  // Graceful shutdown
+  process.on('SIGTERM', () => {
+    console.log('SIGTERM received. Shutting down gracefully...');
+    server.close(() => {
+      console.log('Server closed.');
+      process.exit(0);
+    });
+  });
+}
 
 export default app;
