@@ -330,6 +330,7 @@
             </select>
             <select id="order-method-filter" class="form-control" style="max-width: 170px;">
               <option value="all">All Payment Methods</option>
+              <option value="UPI_QR">Google Pay / UPI QR</option>
               <option value="COD">Cash on Delivery (COD)</option>
               <option value="Razorpay">Online / Razorpay</option>
               <option value="WhatsApp_Manual">WhatsApp Manual</option>
@@ -545,6 +546,48 @@
                   <option value="true">Enabled (Accept Online / UPI)</option>
                   <option value="false">Disabled (Hide Online at Checkout)</option>
                 </select>
+              </div>
+            </div>
+
+            <!-- Google Pay / Direct UPI Settings -->
+            <div style="background: var(--bg-surface); border: 1.5px solid var(--accent-rose-soft); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.5rem;">
+              <h4 style="margin-bottom: 0.4rem; color: var(--text-cocoa-heading); font-size: 0.98rem; display: flex; align-items: center; gap: 0.4rem;">
+                <span>📱</span> Direct Google Pay &amp; UPI QR Settings (0% Fee)
+              </h4>
+              <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">
+                Accept instant UPI payments with zero gateway commission directly into your bank account.
+              </p>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="setting-upi-enabled">Direct UPI Payments</label>
+                  <select id="setting-upi-enabled" class="form-control">
+                    <option value="true">Enabled (Show UPI &amp; QR at Checkout)</option>
+                    <option value="false">Disabled (Hide UPI &amp; QR)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="setting-upi-id">Google Pay UPI ID</label>
+                  <input type="text" id="setting-upi-id" class="form-control" placeholder="e.g. riyaladwa9@oksbi" value="riyaladwa9@oksbi">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="setting-upi-name">Payee Display Name</label>
+                  <input type="text" id="setting-upi-name" class="form-control" placeholder="e.g. Riya Ladwa" value="Riya Ladwa">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="setting-upi-qr">QR Code Image Path</label>
+                  <input type="text" id="setting-upi-qr" class="form-control" placeholder="/assets/payments/google-pay-qr.jpg" value="/assets/payments/google-pay-qr.jpg">
+                </div>
+              </div>
+
+              <div style="display: flex; align-items: center; gap: 1rem; margin-top: 0.5rem; background: #ffffff; padding: 0.75rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-warm);">
+                <img id="admin-upi-qr-preview" src="/assets/payments/google-pay-qr.jpg" alt="Google Pay QR" style="width: 60px; height: auto; border-radius: 6px; border: 1px solid var(--border-warm);">
+                <div style="font-size: 0.82rem; color: var(--text-muted);">
+                  <strong>Live QR Code Preview:</strong> Linked to Google Pay (Riya Ladwa &bull; <code>riyaladwa9@oksbi</code>).
+                </div>
               </div>
             </div>
 
@@ -917,6 +960,20 @@
           if (settings.ONLINE_PAYMENT_ENABLED !== undefined) {
             document.getElementById('setting-online-enabled').value = String(settings.ONLINE_PAYMENT_ENABLED);
           }
+          if (settings.UPI_ENABLED !== undefined) {
+            document.getElementById('setting-upi-enabled').value = String(settings.UPI_ENABLED);
+          }
+          if (settings.UPI_ID) {
+            document.getElementById('setting-upi-id').value = settings.UPI_ID;
+          }
+          if (settings.UPI_PAYEE_NAME) {
+            document.getElementById('setting-upi-name').value = settings.UPI_PAYEE_NAME;
+          }
+          if (settings.UPI_QR_IMAGE) {
+            document.getElementById('setting-upi-qr').value = settings.UPI_QR_IMAGE;
+            const preview = document.getElementById('admin-upi-qr-preview');
+            if (preview) preview.src = settings.UPI_QR_IMAGE;
+          }
         }
 
       } catch (err) {
@@ -1069,7 +1126,9 @@
       tbody.innerHTML = orders.map(ord => {
         const dateStr = ord.createdAt ? new Date(ord.createdAt).toLocaleDateString('en-IN') : 'Recent';
         let methodBadge = `<span class="badge badge-stock">${ord.paymentMethod || 'Online'}</span>`;
-        if (ord.paymentMethod === 'COD') {
+        if (ord.paymentMethod === 'UPI_QR' || ord.paymentMethod === 'Direct_UPI' || ord.paymentMethod === 'GooglePay') {
+          methodBadge = `<span class="payment-badge" style="background: rgba(30, 142, 62, 0.12); color: #1e8e3e; border: 1px solid rgba(30, 142, 62, 0.25); font-weight: 600;">Google Pay / UPI</span>`;
+        } else if (ord.paymentMethod === 'COD') {
           methodBadge = `<span class="payment-badge badge-cod" style="font-weight: 600;">Cash on Delivery (COD)</span>`;
         } else if (ord.paymentMethod === 'Razorpay' || ord.paymentMethod === 'Online_Razorpay') {
           methodBadge = `<span class="payment-badge badge-online" style="font-weight: 600;">Online / Razorpay</span>`;
@@ -1245,7 +1304,9 @@
       document.getElementById('modal-order-ref').textContent = ord.orderReference;
 
       let methodLabel = 'Cash on Delivery (COD)';
-      if (ord.paymentMethod === 'Razorpay' || ord.paymentMethod === 'Online_Razorpay') {
+      if (ord.paymentMethod === 'UPI_QR' || ord.paymentMethod === 'Direct_UPI' || ord.paymentMethod === 'GooglePay') {
+        methodLabel = 'Google Pay / PhonePe / UPI QR';
+      } else if (ord.paymentMethod === 'Razorpay' || ord.paymentMethod === 'Online_Razorpay') {
         methodLabel = 'Online Payment (Razorpay)';
       } else if (ord.paymentMethod === 'WhatsApp_Manual') {
         methodLabel = 'WhatsApp Manual';
@@ -1266,8 +1327,16 @@
             <div><strong>Payment Method:</strong> ${methodLabel}</div>
             <div><strong>Payment Status:</strong> <span class="badge ${ord.paymentStatus === 'Paid' ? 'badge-stock' : 'badge-low'}">${ord.paymentStatus || 'Pending'}</span></div>
           </div>
-          <div style="margin-top: 0.35rem; font-size: 0.84rem; color: var(--text-muted);">
-            <strong>Payment Reference / Transaction ID:</strong> <code>${ord.paymentReference || ord.razorpayPaymentId || 'N/A'}</code>
+          <div style="margin-top: 0.6rem; font-size: 0.88rem; color: var(--text-muted); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+            <div>
+              <strong>UPI Reference / UTR Number:</strong>
+              <code style="background: #e8f5e9; color: #1e8e3e; font-weight: 700; padding: 2px 8px; border-radius: 4px; font-size: 0.95rem;">${ord.paymentReference || ord.razorpayPaymentId || 'None submitted'}</code>
+            </div>
+            ${(ord.paymentMethod === 'UPI_QR' || ord.paymentMethod === 'Direct_UPI' || ord.paymentMethod === 'GooglePay') && ord.paymentStatus !== 'Paid' ? `
+              <button type="button" id="quick-verify-upi-btn" class="btn btn-secondary btn-sm" style="font-size: 0.78rem; background: #e8f5e9; color: #1e8e3e; border: 1px solid #c8e6c9;">
+                ✓ Quick Verify &amp; Mark as Paid
+              </button>
+            ` : ''}
           </div>
         </div>
 
@@ -1297,6 +1366,15 @@
       document.getElementById('modal-order-payment-ref').value = ord.paymentReference || ord.razorpayPaymentId || '';
       document.getElementById('modal-order-note').value = '';
       document.getElementById('modal-order-restore-stock').checked = true;
+
+      document.getElementById('quick-verify-upi-btn')?.addEventListener('click', () => {
+        document.getElementById('modal-order-payment-select').value = 'Paid';
+        if (!document.getElementById('modal-order-payment-ref').value && ord.paymentReference) {
+          document.getElementById('modal-order-payment-ref').value = ord.paymentReference;
+        }
+        document.getElementById('modal-order-note').value = `Verified credit in Google Pay / SBI account (UTR: ${ord.paymentReference || 'Direct UPI'})`;
+        showToast('Payment status set to Paid. Click "Update Status in Database" to save.');
+      });
 
       // Render Status History Timeline
       const historyList = document.getElementById('modal-order-history-list');
@@ -1574,6 +1652,10 @@
         const standardShipping = Number(document.getElementById('setting-standard-shipping').value) || 79;
         const codEnabled = document.getElementById('setting-cod-enabled').value === 'true';
         const onlineEnabled = document.getElementById('setting-online-enabled').value === 'true';
+        const upiEnabled = document.getElementById('setting-upi-enabled').value === 'true';
+        const upiId = document.getElementById('setting-upi-id').value.trim();
+        const upiName = document.getElementById('setting-upi-name').value.trim();
+        const upiQr = document.getElementById('setting-upi-qr').value.trim();
 
         try {
           await API.updateSetting('WHATSAPP_BUSINESS_NUMBER', waNumber);
@@ -1581,9 +1663,13 @@
           await API.updateSetting('STANDARD_SHIPPING_FEE', standardShipping);
           await API.updateSetting('COD_ENABLED', codEnabled);
           await API.updateSetting('ONLINE_PAYMENT_ENABLED', onlineEnabled);
+          await API.updateSetting('UPI_ENABLED', upiEnabled);
+          await API.updateSetting('UPI_ID', upiId);
+          await API.updateSetting('UPI_PAYEE_NAME', upiName);
+          await API.updateSetting('UPI_QR_IMAGE', upiQr);
 
           CONFIG.BUSINESS_WHATSAPP_NUMBER = waNumber;
-          showToast('Store settings, payment methods & shipping updated in MongoDB!');
+          showToast('Store settings, payment methods & UPI updated in MongoDB!');
           loadAllData();
         } catch (err) {
           showToast('Failed to save settings: ' + err.message, 'error');
@@ -1606,6 +1692,7 @@
         }
         if (method !== 'all') {
           filtered = filtered.filter(o => {
+            if (method === 'UPI_QR') return o.paymentMethod === 'UPI_QR' || o.paymentMethod === 'Direct_UPI' || o.paymentMethod === 'GooglePay';
             if (method === 'COD') return o.paymentMethod === 'COD';
             if (method === 'Razorpay') return o.paymentMethod === 'Razorpay' || o.paymentMethod === 'Online_Razorpay';
             if (method === 'WhatsApp_Manual') return o.paymentMethod === 'WhatsApp_Manual';

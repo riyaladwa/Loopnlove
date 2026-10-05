@@ -224,8 +224,8 @@
                 <div style="margin-bottom: 1rem; font-size: 0.85rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; background: var(--bg-surface); padding: 0.6rem 0.85rem; border-radius: var(--radius-sm);">
                   <div>
                     <span>Payment Method:</span>
-                    <strong>${ord.paymentMethod === 'COD' ? 'Cash on Delivery (COD)' : (ord.paymentMethod === 'Razorpay' ? 'Online Payment (Razorpay)' : ord.paymentMethod || 'Online')}</strong>
-                    ${ord.paymentReference ? `&bull; <span style="font-family: monospace; font-size: 0.8rem; color: var(--text-muted);">Ref: ${ord.paymentReference}</span>` : ''}
+                    <strong>${(ord.paymentMethod === 'UPI_QR' || ord.paymentMethod === 'Direct_UPI') ? 'Google Pay / UPI QR' : (ord.paymentMethod === 'COD' ? 'Cash on Delivery (COD)' : (ord.paymentMethod === 'Razorpay' ? 'Online Payment (Razorpay)' : ord.paymentMethod || 'Online'))}</strong>
+                    ${ord.paymentReference ? `&bull; <span style="font-family: monospace; font-size: 0.8rem; color: #1e8e3e; font-weight: 600;">UTR: ${ord.paymentReference}</span>` : ''}
                   </div>
                   ${ord.customizationInstructions ? `<div style="color: var(--primary-rose); font-style: italic;">✨ Customization Note: ${ord.customizationInstructions}</div>` : ''}
                 </div>

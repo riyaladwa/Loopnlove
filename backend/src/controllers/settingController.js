@@ -8,10 +8,18 @@ export const getPublicSettings = async (req, res, next) => {
     const waSetting = await Setting.findOne({ key: 'WHATSAPP_BUSINESS_NUMBER' });
     const codSetting = await Setting.findOne({ key: 'COD_ENABLED' });
     const onlineSetting = await Setting.findOne({ key: 'ONLINE_PAYMENT_ENABLED' });
+    const upiSetting = await Setting.findOne({ key: 'UPI_ENABLED' });
+    const upiIdSetting = await Setting.findOne({ key: 'UPI_ID' });
+    const upiPayeeSetting = await Setting.findOne({ key: 'UPI_PAYEE_NAME' });
+    const upiQrSetting = await Setting.findOne({ key: 'UPI_QR_IMAGE' });
 
     const whatsappNumber = waSetting ? waSetting.value : (process.env.BUSINESS_WHATSAPP_NUMBER || '');
     const codEnabled = codSetting !== null ? Boolean(codSetting.value) : true;
     const onlinePaymentEnabled = onlineSetting !== null ? Boolean(onlineSetting.value) : true;
+    const upiEnabled = upiSetting !== null ? Boolean(upiSetting.value) : true;
+    const upiId = upiIdSetting ? String(upiIdSetting.value).trim() : (process.env.UPI_ID || 'riyaladwa9@oksbi');
+    const upiPayeeName = upiPayeeSetting ? String(upiPayeeSetting.value).trim() : (process.env.UPI_PAYEE_NAME || 'Riya Ladwa');
+    const upiQrImage = upiQrSetting ? String(upiQrSetting.value).trim() : (process.env.UPI_QR_IMAGE || '/assets/payments/google-pay-qr.jpg');
 
     res.json({
       success: true,
@@ -19,6 +27,10 @@ export const getPublicSettings = async (req, res, next) => {
         whatsappNumber: String(whatsappNumber).trim(),
         codEnabled,
         onlinePaymentEnabled,
+        upiEnabled,
+        upiId,
+        upiPayeeName,
+        upiQrImage,
         freeShippingThreshold: 999,
         standardShippingFee: 79
       }
@@ -47,6 +59,18 @@ export const getAllSettings = async (req, res, next) => {
     }
     if (map.ONLINE_PAYMENT_ENABLED === undefined) {
       map.ONLINE_PAYMENT_ENABLED = true;
+    }
+    if (map.UPI_ENABLED === undefined) {
+      map.UPI_ENABLED = true;
+    }
+    if (!map.UPI_ID) {
+      map.UPI_ID = process.env.UPI_ID || 'riyaladwa9@oksbi';
+    }
+    if (!map.UPI_PAYEE_NAME) {
+      map.UPI_PAYEE_NAME = process.env.UPI_PAYEE_NAME || 'Riya Ladwa';
+    }
+    if (!map.UPI_QR_IMAGE) {
+      map.UPI_QR_IMAGE = process.env.UPI_QR_IMAGE || '/assets/payments/google-pay-qr.jpg';
     }
 
     res.json({

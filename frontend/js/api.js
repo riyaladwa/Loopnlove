@@ -122,6 +122,18 @@ class ApiService {
     return Array.isArray(data) ? data : (data.orders || []);
   }
 
+  // Submit / Update UPI UTR Reference
+  async submitUpiReference(reference, utr) {
+    const res = await fetch(`${this.baseUrl}/orders/track/${encodeURIComponent(reference)}/upi-reference`, {
+      method: 'POST',
+      headers: this.getHeaders(false),
+      body: JSON.stringify({ utr })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Failed to submit UPI UTR');
+    return data;
+  }
+
   // Customer Customization Inquiries API
   async submitInquiry(inquiryPayload) {
     const res = await fetch(`${this.baseUrl}/inquiries`, {

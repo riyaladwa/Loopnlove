@@ -237,23 +237,72 @@
 
               <div id="payment-methods-wrapper" style="display: flex; flex-direction: column; gap: 0.85rem;">
                 
-                <!-- Online Payment / UPI -->
-                <label id="payment-method-online-card" class="payment-option-card">
-                  <input type="radio" name="payment-method" id="pay-method-online" value="Razorpay" style="margin-top: 0.25rem;">
+                <!-- Google Pay / Direct UPI & QR Code -->
+                <label id="payment-method-upi-card" class="payment-option-card selected">
+                  <input type="radio" name="payment-method" id="pay-method-upi" value="UPI_QR" checked style="margin-top: 0.25rem;">
                   <div style="flex: 1;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                      <strong style="color: var(--text-cocoa-heading); font-size: 0.95rem;">Online Payment / UPI / Cards</strong>
-                      <span class="payment-badge badge-online">Razorpay Secure</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                      <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 1.15rem;">📱</span>
+                        <strong style="color: var(--text-cocoa-heading); font-size: 0.96rem;">Google Pay / PhonePe / UPI QR</strong>
+                      </div>
+                      <span class="payment-badge" style="background: rgba(30, 142, 62, 0.12); color: #1e8e3e; border: 1px solid rgba(30, 142, 62, 0.25); font-weight: 600;">
+                        ⚡ Fast &amp; 0% Fee
+                      </span>
                     </div>
                     <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0.25rem 0 0;">
-                      Pay seamlessly with Google Pay, PhonePe, Paytm, BHIM UPI, Debit/Credit Card, or NetBanking.
+                      Scan QR code or pay via any UPI app (Google Pay, PhonePe, Paytm, BHIM).
                     </p>
+
+                    <!-- Expandable UPI Box -->
+                    <div id="upi-details-container" style="display: block; margin-top: 1rem; padding: 1.25rem; background: var(--bg-cream); border: 1.5px solid var(--accent-rose-soft); border-radius: var(--radius-md);">
+                      
+                      <!-- QR Code Preview -->
+                      <div style="text-align: center; margin-bottom: 1rem;">
+                        <div style="display: inline-block; padding: 10px; background: #ffffff; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); border: 1px solid var(--border-warm);">
+                          <img id="upi-qr-image" src="/assets/payments/google-pay-qr.jpg" alt="Google Pay UPI QR Code" style="width: 210px; max-width: 100%; height: auto; border-radius: 8px; display: block; margin: 0 auto;">
+                        </div>
+                        <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0.45rem 0 0;">
+                          Scan with Google Pay, PhonePe, Paytm, or any UPI app
+                        </p>
+                      </div>
+
+                      <!-- UPI ID Copy Bar -->
+                      <div style="background: #ffffff; border: 1px solid var(--border-warm); border-radius: 8px; padding: 0.75rem 0.95rem; display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem; gap: 0.75rem; flex-wrap: wrap;">
+                        <div>
+                          <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Payee: <strong id="upi-payee-display" style="color: var(--text-cocoa-heading);">Riya Ladwa</strong></div>
+                          <div style="font-size: 1rem; font-weight: 700; color: var(--accent-rose); font-family: monospace;" id="upi-id-text">riyaladwa9@oksbi</div>
+                        </div>
+                        <button type="button" id="copy-upi-btn" class="btn btn-secondary btn-sm" style="padding: 0.4rem 0.85rem; font-size: 0.8rem; white-space: nowrap;">
+                          📋 Copy UPI ID
+                        </button>
+                      </div>
+
+                      <!-- Mobile Instant Pay Link -->
+                      <div style="text-align: center; margin-bottom: 1rem;">
+                        <a id="upi-mobile-pay-btn" href="#" class="btn btn-secondary btn-sm" style="width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; font-size: 0.84rem; background: #e8f5e9; color: #1e8e3e; border: 1px solid #c8e6c9; font-weight: 600; padding: 0.55rem 1rem;">
+                          ⚡ Tap to Open in Google Pay / UPI App
+                        </a>
+                      </div>
+
+                      <!-- 12-digit UTR Input -->
+                      <div class="form-group" style="margin-bottom: 0;" id="group-upi-utr">
+                        <label class="form-label" for="upi-utr-input" style="font-size: 0.84rem; font-weight: 600; color: var(--text-cocoa-heading);">
+                          Enter 12-Digit UPI Reference / UTR Number *
+                        </label>
+                        <input type="text" id="upi-utr-input" class="form-control" placeholder="e.g. 427182910284" maxlength="22" style="font-size: 0.92rem; font-family: monospace; letter-spacing: 1px;">
+                        <span style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-top: 0.35rem;">
+                          ℹ️ Check your Google Pay / PhonePe payment receipt to find the 12-digit UTR or UPI Transaction ID.
+                        </span>
+                      </div>
+
+                    </div>
                   </div>
                 </label>
 
                 <!-- Cash on Delivery -->
-                <label id="payment-method-cod-card" class="payment-option-card selected">
-                  <input type="radio" name="payment-method" id="pay-method-cod" value="COD" checked style="margin-top: 0.25rem;">
+                <label id="payment-method-cod-card" class="payment-option-card">
+                  <input type="radio" name="payment-method" id="pay-method-cod" value="COD" style="margin-top: 0.25rem;">
                   <div style="flex: 1;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                       <strong style="color: var(--text-cocoa-heading); font-size: 0.95rem;">Cash on Delivery (COD)</strong>
@@ -261,6 +310,20 @@
                     </div>
                     <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0.25rem 0 0;">
                       Pay with cash directly to the courier agent when your handcrafted parcel arrives at your doorstep.
+                    </p>
+                  </div>
+                </label>
+
+                <!-- Online Payment / Cards -->
+                <label id="payment-method-online-card" class="payment-option-card">
+                  <input type="radio" name="payment-method" id="pay-method-online" value="Razorpay" style="margin-top: 0.25rem;">
+                  <div style="flex: 1;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                      <strong style="color: var(--text-cocoa-heading); font-size: 0.95rem;">Debit / Credit Card / NetBanking</strong>
+                      <span class="payment-badge badge-online">Razorpay Secure</span>
+                    </div>
+                    <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0.25rem 0 0;">
+                      Pay via Razorpay gateway using Credit/Debit Card or NetBanking.
                     </p>
                   </div>
                 </label>
@@ -453,41 +516,99 @@
         console.warn('Could not load payment settings, using defaults');
       }
 
-      const onlineCard = document.getElementById('payment-method-online-card');
+      const upiCard = document.getElementById('payment-method-upi-card');
       const codCard = document.getElementById('payment-method-cod-card');
-      const payOnlineRadio = document.getElementById('pay-method-online');
+      const onlineCard = document.getElementById('payment-method-online-card');
+      const payUpiRadio = document.getElementById('pay-method-upi');
       const payCodRadio = document.getElementById('pay-method-cod');
+      const payOnlineRadio = document.getElementById('pay-method-online');
+      const upiContainer = document.getElementById('upi-details-container');
 
-      if (!paymentConfig.onlineEnabled) {
-        onlineCard.style.display = 'none';
-        payOnlineRadio.disabled = true;
+      // Populate dynamic UPI details
+      const upiInfo = paymentConfig.upi || {
+        enabled: true,
+        upiId: 'riyaladwa9@oksbi',
+        payeeName: 'Riya Ladwa',
+        qrImage: '/assets/payments/google-pay-qr.jpg'
+      };
+
+      if (upiInfo.upiId) {
+        document.getElementById('upi-id-text').textContent = upiInfo.upiId;
+      }
+      if (upiInfo.payeeName) {
+        document.getElementById('upi-payee-display').textContent = upiInfo.payeeName;
+      }
+      if (upiInfo.qrImage) {
+        document.getElementById('upi-qr-image').src = upiInfo.qrImage;
+      }
+
+      if (upiInfo.enabled === false) {
+        upiCard.style.display = 'none';
+        payUpiRadio.disabled = true;
       }
       if (!paymentConfig.codEnabled) {
         codCard.style.display = 'none';
         payCodRadio.disabled = true;
       }
-
-      // Default selection
-      if (paymentConfig.onlineEnabled && !paymentConfig.codEnabled) {
-        payOnlineRadio.checked = true;
-        onlineCard.classList.add('selected');
-        codCard.classList.remove('selected');
-      } else {
-        payCodRadio.checked = true;
-        codCard.classList.add('selected');
-        onlineCard.classList.remove('selected');
+      if (!paymentConfig.onlineEnabled) {
+        onlineCard.style.display = 'none';
+        payOnlineRadio.disabled = true;
       }
 
+      // Default selection priority: UPI_QR > COD > Razorpay
+      if (upiInfo.enabled !== false) {
+        payUpiRadio.checked = true;
+        upiCard.classList.add('selected');
+        codCard.classList.remove('selected');
+        onlineCard.classList.remove('selected');
+        if (upiContainer) upiContainer.style.display = 'block';
+      } else if (paymentConfig.codEnabled) {
+        payCodRadio.checked = true;
+        codCard.classList.add('selected');
+        upiCard.classList.remove('selected');
+        onlineCard.classList.remove('selected');
+        if (upiContainer) upiContainer.style.display = 'none';
+      } else if (paymentConfig.onlineEnabled) {
+        payOnlineRadio.checked = true;
+        onlineCard.classList.add('selected');
+        upiCard.classList.remove('selected');
+        codCard.classList.remove('selected');
+        if (upiContainer) upiContainer.style.display = 'none';
+      }
+
+      updateMobileUpiLink();
       updateSubmitButtonText();
     }
 
+    function updateMobileUpiLink() {
+      const upiId = document.getElementById('upi-id-text')?.textContent.trim() || 'riyaladwa9@oksbi';
+      const payeeName = document.getElementById('upi-payee-display')?.textContent.trim() || 'Riya Ladwa';
+      const subtotal = Cart.getSubtotal();
+      const shipping = Cart.getShippingFee();
+      const total = Cart.getTotal(discountAmount);
+
+      const intentUrl = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(payeeName)}&am=${total}&cu=INR&tn=${encodeURIComponent('Loop n Love Crochet Order')}`;
+      const mobileBtn = document.getElementById('upi-mobile-pay-btn');
+      if (mobileBtn) {
+        mobileBtn.href = intentUrl;
+      }
+    }
+
     function updateSubmitButtonText() {
-      const selected = document.querySelector('input[name="payment-method"]:checked')?.value || 'COD';
+      const selected = document.querySelector('input[name="payment-method"]:checked')?.value || 'UPI_QR';
       const btn = document.getElementById('submit-order-btn');
-      if (selected === 'Razorpay') {
+      const upiContainer = document.getElementById('upi-details-container');
+      const total = Cart.getTotal(discountAmount);
+
+      if (selected === 'UPI_QR') {
+        btn.textContent = `Confirm Order with UPI (₹${total})`;
+        if (upiContainer) upiContainer.style.display = 'block';
+      } else if (selected === 'Razorpay') {
         btn.textContent = 'Pay & Place Order';
+        if (upiContainer) upiContainer.style.display = 'none';
       } else {
         btn.textContent = 'Place Order (Cash on Delivery)';
+        if (upiContainer) upiContainer.style.display = 'none';
       }
     }
 
@@ -538,6 +659,9 @@
       const shippingElem = document.getElementById('chk-shipping');
       shippingElem.innerHTML = shipping === 0 ? `<span style="color: var(--accent-sage); font-weight: 600;">FREE</span>` : `₹${shipping}`;
       document.getElementById('chk-total').textContent = `₹${total}`;
+
+      updateMobileUpiLink();
+      updateSubmitButtonText();
     }
 
     // Display Rich Confirmation Screen
@@ -584,7 +708,18 @@
       }
 
       // Totals
-      document.getElementById('conf-payment-method').textContent = order.paymentMethod === 'Razorpay' ? 'Online Payment (Razorpay)' : 'Cash on Delivery (COD)';
+      let methodLabel = 'Cash on Delivery (COD)';
+      if (order.paymentMethod === 'UPI_QR' || order.paymentMethod === 'Direct_UPI') {
+        methodLabel = 'Google Pay / PhonePe / UPI QR';
+      } else if (order.paymentMethod === 'Razorpay') {
+        methodLabel = 'Online Payment (Razorpay)';
+      }
+      
+      const paymentRefHtml = order.paymentReference
+        ? `<div style="font-size: 0.78rem; font-family: monospace; color: #1e8e3e; margin-top: 0.2rem; font-weight: 600;">UTR: ${order.paymentReference}</div>`
+        : '';
+
+      document.getElementById('conf-payment-method').innerHTML = `<strong>${methodLabel}</strong>${paymentRefHtml}`;
       document.getElementById('conf-subtotal').textContent = `₹${order.subtotal}`;
       document.getElementById('conf-shipping').textContent = order.shippingFee === 0 ? 'FREE' : `₹${order.shippingFee}`;
       if (order.discount > 0) {
@@ -621,7 +756,11 @@
           showToast('Store WhatsApp number is not configured in settings.', 'warning');
           return;
         }
-        const text = encodeURIComponent(`Hello Loop n Love! I just placed order ${order.orderReference} for ₹${order.totalAmount}. Could you please confirm crafting and dispatch timeline?`);
+        const text = encodeURIComponent(
+          order.paymentMethod === 'UPI_QR' || order.paymentMethod === 'Direct_UPI'
+            ? `Hello Loop n Love! I just placed order ${order.orderReference} for ₹${order.totalAmount} and paid via Google Pay (UTR: ${order.paymentReference || 'pending'}). Could you please verify and confirm dispatch timeline?`
+            : `Hello Loop n Love! I just placed order ${order.orderReference} for ₹${order.totalAmount}. Could you please confirm crafting and dispatch timeline?`
+        );
         window.open(`https://wa.me/${waNum}?text=${text}`, '_blank');
       };
     }
@@ -630,6 +769,26 @@
       prefillUserData();
       renderSummary();
       await loadPaymentConfig();
+
+      // Copy UPI ID button handler
+      document.getElementById('copy-upi-btn')?.addEventListener('click', () => {
+        const upiId = document.getElementById('upi-id-text').textContent.trim();
+        navigator.clipboard.writeText(upiId).then(() => {
+          const btn = document.getElementById('copy-upi-btn');
+          const orig = btn.innerHTML;
+          btn.innerHTML = '✓ Copied!';
+          btn.classList.add('btn-primary');
+          btn.classList.remove('btn-secondary');
+          setTimeout(() => {
+            btn.innerHTML = orig;
+            btn.classList.remove('btn-primary');
+            btn.classList.add('btn-secondary');
+          }, 2000);
+          showToast('UPI ID copied to clipboard: ' + upiId);
+        }).catch(() => {
+          showToast('UPI ID: ' + upiId);
+        });
+      });
 
       // Radio selection card styling
       document.querySelectorAll('input[name="payment-method"]').forEach(radio => {
@@ -678,7 +837,8 @@
         const pincode = document.getElementById('cust-pincode').value.trim().replace(/\D/g, '');
         const instructions = document.getElementById('cust-instructions').value.trim();
         const customizationInstructions = document.getElementById('cust-customization-instructions').value.trim();
-        const paymentMethod = document.querySelector('input[name="payment-method"]:checked')?.value || 'COD';
+        const paymentMethod = document.querySelector('input[name="payment-method"]:checked')?.value || 'UPI_QR';
+        const upiUtr = document.getElementById('upi-utr-input')?.value.trim() || '';
 
         let valid = true;
 
@@ -699,6 +859,21 @@
         checkField('group-city', city.length >= 2);
         checkField('group-state', state !== '');
         checkField('group-pincode', pincode.length === 6);
+
+        if (paymentMethod === 'UPI_QR') {
+          if (!upiUtr || upiUtr.length < 6) {
+            const upiGroup = document.getElementById('group-upi-utr');
+            if (upiGroup) upiGroup.classList.add('has-error');
+            alertBox.innerHTML = '<strong>UPI Reference Required:</strong> Please enter the 12-digit UTR or transaction reference from your Google Pay payment receipt to confirm your order.';
+            alertBox.style.display = 'block';
+            alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            document.getElementById('upi-utr-input')?.focus();
+            return;
+          } else {
+            const upiGroup = document.getElementById('group-upi-utr');
+            if (upiGroup) upiGroup.classList.remove('has-error');
+          }
+        }
 
         if (!valid) {
           alertBox.textContent = 'Please fill out all required fields marked with * correctly.';
@@ -728,13 +903,22 @@
           customizationInstructions,
           items,
           discountCode: discountApplied ? 'FIRST10' : '',
-          paymentMethod
+          paymentMethod,
+          paymentReference: paymentMethod === 'UPI_QR' ? upiUtr : ''
         };
 
         try {
           // 1. Create order on backend (strictly validated in MongoDB)
           const result = await API.createOrder(orderPayload);
           const order = result.order;
+
+          if (paymentMethod === 'UPI_QR') {
+            Cart.clearCart();
+            isSubmitting = false;
+            displayConfirmation(order);
+            showToast('Order placed successfully! We will verify your Google Pay payment.');
+            return;
+          }
 
           if (paymentMethod === 'COD') {
             // Cash on Delivery flow: Order confirmed directly

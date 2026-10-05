@@ -16,7 +16,9 @@ export const createOrder = async (req, res, next) => {
       items,
       discount,
       discountCode,
-      paymentMethod = 'COD'
+      paymentMethod = 'COD',
+      paymentReference,
+      upiTransactionId
     } = req.body;
 
     // Field validation
@@ -56,7 +58,14 @@ export const createOrder = async (req, res, next) => {
     }
 
     // Check payment method availability from store settings
-    const selectedMethod = paymentMethod === 'Razorpay' ? 'Razorpay' : 'COD';
+    let selectedMethod = 'COD';
+    if (paymentMethod === 'Razorpay' || paymentMethod === 'Online_Razorpay') {
+      selectedMethod = 'Razorpay';
+    } else if (paymentMethod === 'UPI_QR' || paymentMethod === 'Direct_UPI' || paymentMethod === 'GooglePay') {
+      selectedMethod = 'UPI_QR';
+    } else {
+      selectedMethod = 'COD';
+    }
 
     if (selectedMethod === 'COD') {
       const codSetting = await Setting.findOne({ key: 'COD_ENABLED' });
@@ -73,7 +82,16 @@ export const createOrder = async (req, res, next) => {
       if (!isOnlineEnabled) {
         return res.status(400).json({
           success: false,
-          message: 'Online Payment is currently disabled by the store. Please choose Cash on Delivery.'
+          message: 'Online Payment is currently disabled by the store. Please choose Cash on Delivery or Direct UPI.'
+        });
+      }
+    } else if (selectedMethod === 'UPI_QR') {
+      const upiSetting = await Setting.findOne({ key: 'UPI_ENABLED' });
+      const isUpiEnabled = upiSetting !== null ? Boolean(upiSetting.value) : true;
+      if (!isUpiEnabled) {
+        return res.status(400).json({
+          success: false,
+          message: 'Direct UPI / Google Pay payment is currently disabled by the store.'
         });
       }
     }
@@ -193,13 +211,17 @@ export const createOrder = async (req, res, next) => {
       orderStatus: initialOrderStatus,
       paymentStatus: initialPaymentStatus,
       paymentMethod: selectedMethod,
+      paymentReference: (paymentReference || upiTransactionId || '').trim(),
+      upiTransactionId: (upiTransactionId || paymentReference || '').trim(),
       statusHistory: [{
         status: initialOrderStatus,
         changedAt: new Date(),
         changedBy: customer.name.trim(),
-        note: selectedMethod === 'COD'
-          ? 'Cash on Delivery order placed by customer'
-          : 'Online payment order initiated via checkout'
+        note: selectedMethod === 'UPI_QR'
+          ? `Direct UPI / Google Pay payment placed by customer (UTR/Ref: ${(paymentReference || upiTransactionId || 'Pending verification').trim()}). Awaiting admin check.`
+          : (selectedMethod === 'COD'
+            ? 'Cash on Delivery order placed by customer'
+            : 'Online payment order initiated via checkout')
       }]
     });
 
@@ -237,6 +259,53 @@ export const getOrderByReference = async (req, res, next) => {
 
     res.json({
       success: true,
+      order
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc    Submit or update UPI reference / UTR for an order
+// @route   POST /api/orders/track/:reference/upi-reference
+// @access  Public
+export const updateUpiReference = async (req, res, next) => {
+  try {
+    const { reference } = req.params;
+    const { utr } = req.body;
+    if (!utr || String(utr).trim().length < 6) {
+      return res.status(400).json({ success: false, message: 'Please provide a valid UPI Reference / UTR number (at least 6 characters).' });
+    }
+
+    const cleanRef = reference.startsWith('#') ? reference : `#${reference}`;
+    const order = await Order.findOne({
+      $or: [
+        { orderReference: cleanRef },
+        { orderReference: reference }
+      ]
+    });
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Order reference not found' });
+    }
+
+    const cleanUtr = String(utr).trim();
+    order.paymentReference = cleanUtr;
+    order.upiTransactionId = cleanUtr;
+    if (!order.statusHistory) order.statusHistory = [];
+    order.statusHistory.push({
+      status: order.orderStatus,
+      changedAt: new Date(),
+      changedBy: 'Customer',
+      note: `Customer submitted UPI UTR Reference: ${cleanUtr}`
+    });
+
+    await order.save();
+
+    res.json({
+      success: true,
+      message: 'UPI UTR reference recorded successfully',
+      paymentReference: cleanUtr,
       order
     });
   } catch (err) {

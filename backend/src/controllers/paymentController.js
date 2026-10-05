@@ -26,9 +26,17 @@ export const getPaymentConfig = async (req, res, next) => {
   try {
     const codSetting = await Setting.findOne({ key: 'COD_ENABLED' });
     const onlineSetting = await Setting.findOne({ key: 'ONLINE_PAYMENT_ENABLED' });
+    const upiSetting = await Setting.findOne({ key: 'UPI_ENABLED' });
+    const upiIdSetting = await Setting.findOne({ key: 'UPI_ID' });
+    const upiPayeeSetting = await Setting.findOne({ key: 'UPI_PAYEE_NAME' });
+    const upiQrSetting = await Setting.findOne({ key: 'UPI_QR_IMAGE' });
 
     const codEnabled = codSetting !== null ? Boolean(codSetting.value) : true;
     const onlineEnabled = onlineSetting !== null ? Boolean(onlineSetting.value) : true;
+    const upiEnabled = upiSetting !== null ? Boolean(upiSetting.value) : true;
+    const upiId = upiIdSetting ? String(upiIdSetting.value).trim() : (process.env.UPI_ID || 'riyaladwa9@oksbi');
+    const upiPayeeName = upiPayeeSetting ? String(upiPayeeSetting.value).trim() : (process.env.UPI_PAYEE_NAME || 'Riya Ladwa');
+    const upiQrImage = upiQrSetting ? String(upiQrSetting.value).trim() : (process.env.UPI_QR_IMAGE || '/assets/payments/google-pay-qr.jpg');
     const isConfigured = Boolean(process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET);
 
     res.json({
@@ -38,7 +46,13 @@ export const getPaymentConfig = async (req, res, next) => {
       keyId: process.env.RAZORPAY_KEY_ID || '', // safe public key
       onlineEnabled,
       codEnabled,
-      currency: 'INR'
+      currency: 'INR',
+      upi: {
+        enabled: upiEnabled,
+        upiId,
+        payeeName: upiPayeeName,
+        qrImage: upiQrImage
+      }
     });
   } catch (err) {
     next(err);

@@ -5,6 +5,7 @@ import {
   getAllOrders,
   getOrderById,
   getOrderByReference,
+  updateUpiReference,
   getDashboardStats,
   updateOrderStatus,
   recordWhatsAppOrder
@@ -16,6 +17,7 @@ const router = express.Router();
 router.post('/', optionalAuth, createOrder);
 router.get('/my-orders', protect, getMyOrders);
 router.get('/track/:reference', getOrderByReference);
+router.post('/track/:reference/upi-reference', updateUpiReference);
 
 // Admin-only order routes
 router.get('/stats', protect, adminOnly, getDashboardStats);

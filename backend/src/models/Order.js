@@ -92,10 +92,14 @@ const orderSchema = new mongoose.Schema({
   },
   paymentMethod: {
     type: String,
-    enum: ['COD', 'Razorpay', 'Online_Razorpay', 'WhatsApp_Manual', 'Test_Gateway'],
+    enum: ['COD', 'Razorpay', 'Online_Razorpay', 'UPI_QR', 'Direct_UPI', 'GooglePay', 'WhatsApp_Manual', 'Test_Gateway'],
     default: 'COD'
   },
   paymentReference: {
+    type: String,
+    default: ''
+  },
+  upiTransactionId: {
     type: String,
     default: ''
   },
