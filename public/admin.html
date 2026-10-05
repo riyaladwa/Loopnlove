@@ -1070,7 +1070,7 @@
 
       tbody.innerHTML = products.map(p => `
         <tr>
-          <td><img src="${p.image}" alt="${p.name}" width="42" height="42" style="border-radius: 6px; object-fit: cover; border: 1px solid var(--border-warm);"></td>
+          <td><img src="${(p.image && (p.image.startsWith('/') || p.image.startsWith('http'))) ? p.image : ('/' + (p.image || 'assets/product-images/bouquet_01.jpg'))}" alt="${p.name}" width="42" height="42" style="border-radius: 6px; object-fit: cover; border: 1px solid var(--border-warm);" onerror="this.onerror=null; this.src='/assets/product-images/' + this.src.split('/').pop();"></td>
           <td>
             <strong>${p.name}</strong>
             <div style="font-size: 0.78rem; color: var(--text-muted); font-family: monospace;">${p.identifier || p.id}</div>

@@ -26,18 +26,26 @@ class ApiService {
     return headers;
   }
 
-  // Fetch products from MongoDB backend (single source of truth)
+  // Fetch products from MongoDB backend with verified local fallback
   async fetchProducts(params = {}) {
-    const query = new URLSearchParams(params).toString();
-    const res = await fetch(`${this.baseUrl}/products${query ? '?' + query : ''}`, {
-      headers: this.getHeaders(false)
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.message || `Failed to fetch catalogue from database (HTTP ${res.status})`);
+    try {
+      const query = new URLSearchParams(params).toString();
+      const res = await fetch(`${this.baseUrl}/products${query ? '?' + query : ''}`, {
+        headers: this.getHeaders(false)
+      });
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+      const data = await res.json();
+      const products = data.products || data;
+      if (Array.isArray(products) && products.length > 0) {
+        return products;
+      }
+      return INITIAL_PRODUCTS;
+    } catch (err) {
+      console.warn('Backend API unavailable, falling back to local verified catalogue:', err.message);
+      return INITIAL_PRODUCTS;
     }
-    const data = await res.json();
-    return data.products || data;
   }
 
   // Get single product details

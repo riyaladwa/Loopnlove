@@ -54,6 +54,14 @@ export const getProducts = async (req, res, next) => {
 
     const products = await Product.find(query).sort(sortOption);
 
+    const normalizeImagePath = (src) => {
+      if (!src) return '/assets/product-images/bouquet_01.jpg';
+      if (src.startsWith('http://') || src.startsWith('https://') || src.startsWith('/') || src.startsWith('data:')) {
+        return src;
+      }
+      return `/${src}`;
+    };
+
     // Normalize id field for frontend convenience
     const formatted = products.map(p => ({
       id: p.identifier || p._id.toString(),
@@ -63,8 +71,8 @@ export const getProducts = async (req, res, next) => {
       category: p.category,
       price: p.price,
       description: p.description,
-      image: p.image,
-      images: p.images && p.images.length > 0 ? p.images : [p.image],
+      image: normalizeImagePath(p.image),
+      images: (p.images && p.images.length > 0 ? p.images : [p.image]).map(normalizeImagePath),
       inStock: p.inStock,
       stockQuantity: p.stockQuantity !== undefined ? p.stockQuantity : 10,
       madeToOrder: p.madeToOrder !== undefined ? p.madeToOrder : true,
@@ -107,6 +115,14 @@ export const getProductById = async (req, res, next) => {
       return res.status(404).json({ message: 'Product not found.' });
     }
 
+    const normalizeImagePath = (src) => {
+      if (!src) return '/assets/product-images/bouquet_01.jpg';
+      if (src.startsWith('http://') || src.startsWith('https://') || src.startsWith('/') || src.startsWith('data:')) {
+        return src;
+      }
+      return `/${src}`;
+    };
+
     res.json({
       id: product.identifier || product._id.toString(),
       _id: product._id,
@@ -114,8 +130,8 @@ export const getProductById = async (req, res, next) => {
       category: product.category,
       price: product.price,
       description: product.description,
-      image: product.image,
-      images: product.images && product.images.length > 0 ? product.images : [product.image],
+      image: normalizeImagePath(product.image),
+      images: (product.images && product.images.length > 0 ? product.images : [product.image]).map(normalizeImagePath),
       inStock: product.inStock,
       stockQuantity: product.stockQuantity,
       featured: product.featured,

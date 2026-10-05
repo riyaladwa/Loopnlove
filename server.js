@@ -73,6 +73,7 @@ app.get('/api/categories', getCategories);
 
 // Serve static frontend files
 const frontendDir = path.resolve(__dirname, 'public');
+app.use('/assets', express.static(path.join(frontendDir, 'assets')));
 app.use(express.static(frontendDir));
 
 // Fallback to index.html for root or direct navigation

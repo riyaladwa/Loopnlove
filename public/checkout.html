@@ -581,7 +581,7 @@
       // Items preview
       itemsPreview.innerHTML = items.map(item => `
         <div style="display: flex; gap: 0.8rem; align-items: center; margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-warm);">
-          <img src="${item.image || 'assets/product-images/bouquet_01.jpg'}" alt="${item.name}" width="50" height="50" style="border-radius: var(--radius-sm); object-fit: cover;">
+          <img src="${(item.image && (item.image.startsWith('/') || item.image.startsWith('http'))) ? item.image : ('/' + (item.image || 'assets/product-images/bouquet_01.jpg'))}" alt="${item.name}" width="50" height="50" style="border-radius: var(--radius-sm); object-fit: cover;" onerror="this.onerror=null; this.src='/assets/product-images/' + this.src.split('/').pop();">
           <div style="flex: 1;">
             <div style="font-size: 0.9rem; font-weight: 600; color: var(--text-cocoa-heading);">${item.name}</div>
             <div style="font-size: 0.8rem; color: var(--text-muted);">Qty: ${item.quantity} &times; ₹${item.price}</div>

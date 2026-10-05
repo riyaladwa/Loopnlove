@@ -67,6 +67,13 @@ export function renderProductCard(product) {
     ? `<span class="text-muted" style="font-size: 0.8rem;">(Est. range ₹500–₹600)</span>`
     : `<span class="text-muted" style="font-size: 0.8rem;">(incl. taxes)</span>`;
 
+  const rawImg = product.image || (product.images && product.images[0]) || '';
+  let imgSrc = rawImg;
+  if (imgSrc && !imgSrc.startsWith('http://') && !imgSrc.startsWith('https://') && !imgSrc.startsWith('data:') && !imgSrc.startsWith('/')) {
+    imgSrc = `/${imgSrc}`;
+  }
+  if (!imgSrc) imgSrc = '/assets/product-images/bouquet_01.jpg';
+
   return `
     <article class="product-card" data-product-id="${product.id}">
       <div class="product-image-container">
@@ -82,7 +89,7 @@ export function renderProductCard(product) {
           </svg>
         </button>
         <a href="product.html?id=${product.id}">
-          <img src="${product.image}" alt="${product.name} - Handmade crochet creation" loading="lazy" width="400" height="460">
+          <img src="${imgSrc}" alt="${product.name} - Handmade crochet creation" loading="lazy" width="400" height="460" onerror="this.onerror=null; if(!this.src.includes('/assets/product-images/')) this.src='/assets/product-images/' + this.src.split('/').pop();">
         </a>
       </div>
       <div class="product-content">

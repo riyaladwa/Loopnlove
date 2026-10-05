@@ -235,7 +235,7 @@
                   <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.75rem;">Items in Order</span>
                   ${(ord.items || []).map(item => `
                     <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px dashed var(--border-warm);">
-                      <img src="${item.image || 'assets/product-images/bouquet_01.jpg'}" alt="${item.name}" width="54" height="54" style="border-radius: var(--radius-sm); object-fit: cover; border: 1px solid var(--border-warm);">
+                      <img src="${(item.image && (item.image.startsWith('/') || item.image.startsWith('http'))) ? item.image : ('/' + (item.image || 'assets/product-images/bouquet_01.jpg'))}" alt="${item.name}" width="54" height="54" style="border-radius: var(--radius-sm); object-fit: cover; border: 1px solid var(--border-warm);" onerror="this.onerror=null; this.src='/assets/product-images/' + this.src.split('/').pop();">
                       <div style="flex: 1;">
                         <div style="font-weight: 600; font-size: 0.95rem; color: var(--text-cocoa-heading);">${item.name}</div>
                         <div style="font-size: 0.82rem; color: var(--text-muted);">
