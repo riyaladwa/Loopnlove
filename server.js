@@ -38,7 +38,8 @@ connectDB().catch(err => {
 
 // Security & Utility Middlewares
 app.use(helmet({
-  contentSecurityPolicy: false // Allow loading fonts, scripts, and local images smoothly
+  contentSecurityPolicy: false, // Allow loading fonts, scripts, and local images smoothly
+  hsts: process.env.NODE_ENV === 'production' // Avoid forcing HTTPS on localhost in development
 }));
 app.use(cors({
   origin: '*', // Permissive for local development and static frontend

@@ -1,0 +1,17 @@
+# robots.txt for Loop n Love
+# https://loopnlove.vercel.app/
+
+User-agent: *
+Allow: /
+
+# Disallow private, administrative, and account pages
+Disallow: /admin.html
+Disallow: /admin-login.html
+Disallow: /login.html
+Disallow: /register.html
+Disallow: /account.html
+Disallow: /checkout.html
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://loopnlove.vercel.app/sitemap.xml

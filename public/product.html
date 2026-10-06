@@ -4,9 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Product Details — Loop n Love</title>
-  <meta name="description" content="View handcrafted details, materials, and customization options for Loop n Love crochet bouquets.">
+  <meta name="description" content="View handcrafted details, materials, and customization options for Loop n Love handmade crochet creations.">
+  <link id="canonical-link" rel="canonical" href="https://loopnlove.vercel.app/product.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="product">
+  <meta property="og:title" content="Handmade Crochet Creation — Loop n Love">
+  <meta property="og:description" content="Authentic handmade crochet flower bouquets, hair accessories, and bespoke gifts crafted in India.">
+  <meta property="og:site_name" content="Loop n Love">
+  <meta property="og:image" content="https://loopnlove.vercel.app/assets/product-images/hero_girl_lilies.jpg">
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="apple-touch-icon" href="/favicon.svg">
   <link rel="stylesheet" href="css/styles.css">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23C46D75'><circle cx='12' cy='12' r='9'/></svg>">
 </head>
 <body>
 
@@ -293,6 +303,47 @@
 
         // Set page title
         document.title = `${currentProduct.name} (₹${currentProduct.price}) — Loop n Love`;
+
+        // Update canonical URL and meta description for SEO
+        const canonicalTag = document.getElementById('canonical-link');
+        if (canonicalTag) {
+          canonicalTag.href = `https://loopnlove.vercel.app/product.html?id=${encodeURIComponent(currentProduct.id)}`;
+        }
+        const metaDesc = document.querySelector('meta[name="description"]');
+        if (metaDesc && currentProduct.description) {
+          metaDesc.setAttribute('content', `${currentProduct.name} - ${currentProduct.description} Handcrafted with milk cotton by Loop n Love.`);
+        }
+
+        // Add Product Structured Data (Schema.org JSON-LD)
+        try {
+          const productSchema = {
+            "@context": "https://schema.org/",
+            "@type": "Product",
+            "name": currentProduct.name,
+            "image": [
+              window.location.origin + (currentProduct.image && currentProduct.image.startsWith('/') ? currentProduct.image : '/' + (currentProduct.image || 'assets/product-images/bouquet_01.jpg'))
+            ],
+            "description": currentProduct.description || `${currentProduct.name} handmade crochet item by Loop n Love`,
+            "brand": {
+              "@type": "Brand",
+              "name": "Loop n Love"
+            },
+            "category": currentProduct.category,
+            "offers": {
+              "@type": "Offer",
+              "url": `https://loopnlove.vercel.app/product.html?id=${encodeURIComponent(currentProduct.id)}`,
+              "priceCurrency": "INR",
+              "price": currentProduct.price,
+              "availability": currentProduct.inStock !== false ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
+            }
+          };
+          const schemaScript = document.createElement('script');
+          schemaScript.type = 'application/ld+json';
+          schemaScript.textContent = JSON.stringify(productSchema);
+          document.head.appendChild(schemaScript);
+        } catch (e) {
+          console.debug('Schema generation note:', e);
+        }
 
         // Update breadcrumb & info
         document.getElementById('breadcrumb-product-name').textContent = currentProduct.name;
